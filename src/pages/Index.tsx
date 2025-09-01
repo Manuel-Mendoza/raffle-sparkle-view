@@ -3,6 +3,7 @@ import { RaffleCard } from "@/components/ui/raffle-card";
 import { PurchaseSteps } from "@/components/ui/purchase-steps";
 import { Button } from "@/components/ui/button";
 import { MessageCircle } from "lucide-react";
+import Logo from "@/assets/favico.png";
 
 const Index = () => {
   const raffleData = {
@@ -33,13 +34,13 @@ const Index = () => {
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-2">
               <div className="w-12 h-12 bg-primary rounded-full flex items-center justify-center">
-                <span className="text-2xl">🧈</span>
+                <img src={Logo} alt="Logo" className="w-12 h-12" />
               </div>
               <span className="text-2xl font-bold text-primary-foreground">
                 Rifas q' Mantequilla
               </span>
             </div>
-            <Button 
+            <Button
               onClick={handleWhatsAppContact}
               className="bg-accent hover:bg-accent/90 text-secondary"
             >
@@ -74,9 +75,9 @@ const Index = () => {
       <footer className="bg-secondary/10 py-8 mt-12">
         <div className="container mx-auto px-4 text-center">
           <p className="text-accent">
-            ¿Necesitas ayuda? 
-            <Button 
-              variant="link" 
+            ¿Necesitas ayuda?
+            <Button
+              variant="link"
               className="text-primary hover:text-primary/80 p-0 ml-2"
               onClick={handleWhatsAppContact}
             >

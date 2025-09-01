@@ -61,19 +61,19 @@ export function RaffleCard({
           </div>
         </div>
 
-        {/* Prizes */}
+        {/* Single Prize */}
         <div className="space-y-3">
           <h3 className="font-semibold text-secondary flex items-center">
             <Trophy className="w-4 h-4 mr-2 text-primary" />
-            Premios
+            Premio Único
           </h3>
-          {prizes.map((prize, index) => (
-            <div key={index} className="flex items-center space-x-3 p-2 rounded-lg bg-accent/5">
-              <span className="text-xl">{prize.icon}</span>
-              <span className="font-medium text-accent">{prize.position}:</span>
-              <span className="text-secondary">{prize.prize}</span>
+          <div className="flex items-center justify-center space-x-4 p-4 rounded-lg bg-gradient-to-r from-primary/10 to-accent/10 border border-primary/20">
+            <span className="text-3xl">{prizes[0]?.icon}</span>
+            <div className="text-center">
+              <p className="font-bold text-lg text-primary">🏆 GRAN PREMIO</p>
+              <p className="text-xl font-semibold text-secondary">{prizes[0]?.prize}</p>
             </div>
-          ))}
+          </div>
         </div>
 
         {/* Features */}

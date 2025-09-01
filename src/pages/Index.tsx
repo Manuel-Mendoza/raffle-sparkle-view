@@ -1,41 +1,24 @@
-import { useState } from "react";
 import { HeroSection } from "@/components/ui/hero-section";
 import { RaffleCard } from "@/components/ui/raffle-card";
-import { TicketSelector } from "@/components/ui/ticket-selector";
-import { UserForm } from "@/components/ui/user-form";
+import { PurchaseSteps } from "@/components/ui/purchase-steps";
 import { Button } from "@/components/ui/button";
 import { MessageCircle } from "lucide-react";
 
 const Index = () => {
-  const [selectedTickets, setSelectedTickets] = useState(2);
-  const [totalAmount, setTotalAmount] = useState(4.50);
-
   const raffleData = {
-    title: "Demo Rifa de Prueba 1000",
+    title: "Rifa Especial Mantequilla 1000",
     totalTickets: 1000,
     soldTickets: 0,
     prizes: [
-      { position: "🥇 Primer Premio", prize: "Moto 🏍️", icon: "🏍️" },
-      { position: "🥈 Segundo Lugar", prize: "iPhone 📱", icon: "📱" },
-      { position: "🥉 Tercer Premio", prize: "Efectivo 💴", icon: "💴" }
+      { position: "🏆 Gran Premio", prize: "Moto Deportiva 🏍️", icon: "🏍️" }
     ],
     date: "30 de Diciembre",
     time: "8:00 PM",
     features: [
-      "Descuentos Activados",
-      "Promoción 3x2 Activada",
-      "Transmisión en vivo"
+      "Sorteo transparente en vivo",
+      "Premio único garantizado",
+      "Transmisión en directo"
     ]
-  };
-
-  const handleTicketChange = (tickets: number, total: number) => {
-    setSelectedTickets(tickets);
-    setTotalAmount(total);
-  };
-
-  const handleFormSubmit = (data: any) => {
-    console.log("Form submitted:", { ...data, tickets: selectedTickets, total: totalAmount });
-    // Here you would typically send the data to your backend
   };
 
   const handleWhatsAppContact = () => {
@@ -50,10 +33,10 @@ const Index = () => {
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-2">
               <div className="w-12 h-12 bg-primary rounded-full flex items-center justify-center">
-                <span className="text-2xl">🎰</span>
+                <span className="text-2xl">🧈</span>
               </div>
               <span className="text-2xl font-bold text-primary-foreground">
-                Rifas Premium
+                Rifas q' Mantequilla
               </span>
             </div>
             <Button 
@@ -74,22 +57,15 @@ const Index = () => {
 
       {/* Main Content */}
       <div className="container mx-auto px-4 py-8">
-        <div className="grid lg:grid-cols-2 gap-8">
+        <div className="grid lg:grid-cols-3 gap-8">
           {/* Left Column - Raffle Info */}
-          <div className="space-y-8">
+          <div className="lg:col-span-1">
             <RaffleCard {...raffleData} />
           </div>
 
-          {/* Right Column - Purchase Form */}
-          <div className="space-y-8">
-            <TicketSelector
-              minTickets={2}
-              pricePerTicket={2.25}
-              currency="USD"
-              onTicketChange={handleTicketChange}
-            />
-            
-            <UserForm onSubmit={handleFormSubmit} />
+          {/* Right Column - Purchase Steps */}
+          <div className="lg:col-span-2">
+            <PurchaseSteps raffleData={raffleData} />
           </div>
         </div>
       </div>

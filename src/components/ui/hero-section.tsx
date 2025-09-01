@@ -39,7 +39,7 @@ export function HeroSection({ onVerifyTickets }: HeroSectionProps) {
         </div>
         
         <p className="text-xl text-primary-foreground/90 mb-8 font-medium">
-          ¡Gana increíbles premios en nuestra gran rifa de motos y más!
+          ¡Participa en nuestra rifa especial y gana una moto deportiva!
         </p>
         
         <Button 

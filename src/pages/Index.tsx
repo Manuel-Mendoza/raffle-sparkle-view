@@ -37,7 +37,7 @@ const Index = () => {
                 <img src={Logo} alt="Logo" className="w-12 h-12" />
               </div>
               <span className="text-2xl font-bold text-primary-foreground">
-                Rifas q' Mantequilla
+                Rifas.queMantequilla
               </span>
             </div>
             <Button

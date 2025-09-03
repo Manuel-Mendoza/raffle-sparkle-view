@@ -12,15 +12,15 @@ const Index = () => {
     totalTickets: 1000,
     soldTickets: 0,
     prizes: [
-      { position: "🏆 Gran Premio", prize: "Moto Deportiva 🏍️", icon: "🏍️" }
+      { position: "🏆 Gran Premio", prize: "Moto Deportiva 🏍️", icon: "🏍️" },
     ],
     date: "30 de Diciembre",
     time: "8:00 PM",
     features: [
       "Sorteo transparente en vivo",
       "Premio único garantizado",
-      "Transmisión en directo"
-    ]
+      "Transmisión en directo",
+    ],
   };
 
   const handleWhatsAppContact = () => {

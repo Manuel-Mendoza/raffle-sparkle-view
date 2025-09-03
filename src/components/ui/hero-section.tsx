@@ -1,6 +1,4 @@
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Search } from "lucide-react";
 import heroImage from "@/assets/hero-motorcycle.jpg";
 
 interface HeroSectionProps {

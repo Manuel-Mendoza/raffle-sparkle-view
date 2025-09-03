@@ -12,11 +12,11 @@ interface TicketSelectorProps {
   onTicketChange?: (tickets: number, total: number) => void;
 }
 
-export function TicketSelector({ 
-  minTickets, 
-  pricePerTicket, 
+export function TicketSelector({
+  minTickets,
+  pricePerTicket,
   currency,
-  onTicketChange 
+  onTicketChange,
 }: TicketSelectorProps) {
   const [tickets, setTickets] = useState(minTickets);
   const total = tickets * pricePerTicket;
@@ -59,7 +59,9 @@ export function TicketSelector({
                 onClick={() => updateTickets(quantity)}
                 className={cn(
                   "transition-all duration-200 hover:shadow-glow",
-                  tickets === quantity ? "bg-primary text-primary-foreground border-primary" : "border-accent/30 hover:border-primary/50"
+                  tickets === quantity
+                    ? "bg-primary text-primary-foreground border-primary"
+                    : "border-accent/30 hover:border-primary/50"
                 )}
               >
                 +{quantity}
@@ -79,12 +81,12 @@ export function TicketSelector({
           >
             <Minus className="w-4 h-4" />
           </Button>
-          
+
           <div className="text-center min-w-[80px]">
             <div className="text-3xl font-bold text-primary">{tickets}</div>
             <div className="text-xs text-muted-foreground">tickets</div>
           </div>
-          
+
           <Button
             variant="outline"
             size="icon"
@@ -99,12 +101,16 @@ export function TicketSelector({
         <div className="space-y-3 p-4 bg-gradient-to-r from-primary to-primary/80 rounded-lg text-primary-foreground">
           <div className="text-center">
             <p className="text-sm opacity-90">Total a Pagar</p>
-            <p className="text-3xl font-bold">{total.toFixed(2)} {currency}</p>
+            <p className="text-3xl font-bold">
+              {total.toFixed(2)} {currency}
+            </p>
           </div>
-          
+
           <div className="text-center text-sm opacity-90">
             <p>¡Experimenta la Fiebre de Premios en Nuestra Gran Rifa!</p>
-            <p className="font-medium">Gana Motos, Teléfonos y Premios en Efectivo!</p>
+            <p className="font-medium">
+              Gana Motos, Teléfonos y Premios en Efectivo!
+            </p>
           </div>
         </div>
       </CardContent>

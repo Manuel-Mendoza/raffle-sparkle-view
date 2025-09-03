@@ -13,7 +13,11 @@ interface StepIndicatorProps {
   className?: string;
 }
 
-export function StepIndicator({ steps, currentStep, className }: StepIndicatorProps) {
+export function StepIndicator({
+  steps,
+  currentStep,
+  className,
+}: StepIndicatorProps) {
   return (
     <div className={cn("w-full py-6", className)}>
       <div className="flex items-center justify-between">
@@ -27,8 +31,8 @@ export function StepIndicator({ steps, currentStep, className }: StepIndicatorPr
                   currentStep > step.id
                     ? "bg-primary border-primary text-primary-foreground"
                     : currentStep === step.id
-                    ? "bg-primary/20 border-primary text-primary animate-pulse"
-                    : "bg-muted border-muted-foreground/30 text-muted-foreground"
+                      ? "bg-primary/20 border-primary text-primary animate-pulse"
+                      : "bg-muted border-muted-foreground/30 text-muted-foreground"
                 )}
               >
                 {currentStep > step.id ? (
@@ -37,13 +41,15 @@ export function StepIndicator({ steps, currentStep, className }: StepIndicatorPr
                   <span className="font-bold">{step.id}</span>
                 )}
               </div>
-              
+
               {/* Step Info */}
               <div className="mt-2 text-center">
                 <p
                   className={cn(
                     "text-sm font-medium transition-colors",
-                    currentStep >= step.id ? "text-primary" : "text-muted-foreground"
+                    currentStep >= step.id
+                      ? "text-primary"
+                      : "text-muted-foreground"
                   )}
                 >
                   {step.title}
@@ -53,13 +59,15 @@ export function StepIndicator({ steps, currentStep, className }: StepIndicatorPr
                 </p>
               </div>
             </div>
-            
+
             {/* Connector Line */}
             {index < steps.length - 1 && (
               <div
                 className={cn(
                   "flex-1 h-0.5 mx-4 transition-colors duration-300",
-                  currentStep > step.id ? "bg-primary" : "bg-muted-foreground/30"
+                  currentStep > step.id
+                    ? "bg-primary"
+                    : "bg-muted-foreground/30"
                 )}
               />
             )}

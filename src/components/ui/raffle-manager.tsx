@@ -3,10 +3,32 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
-import { Plus, Edit, Trash2, Eye, Calendar, Trophy, DollarSign, Users } from "lucide-react";
+import {
+  Plus,
+  Edit,
+  Trash2,
+  Eye,
+  Calendar,
+  Trophy,
+  DollarSign,
+  Users,
+} from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
 interface Raffle {
@@ -36,8 +58,8 @@ const mockRaffles: Raffle[] = [
     status: "active" as const,
     startDate: "2024-01-01",
     endDate: "2024-02-15",
-    image: "/src/assets/hero-motorcycle.jpg"
-  }
+    image: "/src/assets/hero-motorcycle.jpg",
+  },
 ];
 
 export const RaffleManager = () => {
@@ -52,7 +74,7 @@ export const RaffleManager = () => {
     totalTickets: 0,
     startDate: "",
     endDate: "",
-    image: ""
+    image: "",
   });
   const { toast } = useToast();
 
@@ -65,24 +87,34 @@ export const RaffleManager = () => {
       totalTickets: 0,
       startDate: "",
       endDate: "",
-      image: ""
+      image: "",
     });
   };
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const handleInputChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
     const { name, value } = e.target;
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      [name]: name === "ticketPrice" || name === "totalTickets" ? Number(value) : value
+      [name]:
+        name === "ticketPrice" || name === "totalTickets"
+          ? Number(value)
+          : value,
     }));
   };
 
   const handleCreateRaffle = () => {
-    if (!formData.title || !formData.prize || !formData.ticketPrice || !formData.totalTickets) {
+    if (
+      !formData.title ||
+      !formData.prize ||
+      !formData.ticketPrice ||
+      !formData.totalTickets
+    ) {
       toast({
         title: "Error",
         description: "Por favor completa todos los campos obligatorios",
-        variant: "destructive"
+        variant: "destructive",
       });
       return;
     }
@@ -91,10 +123,10 @@ export const RaffleManager = () => {
       id: Date.now(),
       ...formData,
       soldTickets: 0,
-      status: "draft"
+      status: "draft",
     };
 
-    setRaffles(prev => [...prev, newRaffle]);
+    setRaffles((prev) => [...prev, newRaffle]);
     resetForm();
     setIsCreateModalOpen(false);
     toast({
@@ -106,14 +138,12 @@ export const RaffleManager = () => {
   const handleEditRaffle = () => {
     if (!editingRaffle) return;
 
-    setRaffles(prev => 
-      prev.map(raffle => 
-        raffle.id === editingRaffle.id 
-          ? { ...raffle, ...formData }
-          : raffle
+    setRaffles((prev) =>
+      prev.map((raffle) =>
+        raffle.id === editingRaffle.id ? { ...raffle, ...formData } : raffle
       )
     );
-    
+
     resetForm();
     setEditingRaffle(null);
     toast({
@@ -123,7 +153,7 @@ export const RaffleManager = () => {
   };
 
   const handleDeleteRaffle = (id: number) => {
-    setRaffles(prev => prev.filter(raffle => raffle.id !== id));
+    setRaffles((prev) => prev.filter((raffle) => raffle.id !== id));
     toast({
       title: "Rifa eliminada",
       description: "La rifa ha sido eliminada del sistema",
@@ -140,17 +170,26 @@ export const RaffleManager = () => {
       totalTickets: raffle.totalTickets,
       startDate: raffle.startDate,
       endDate: raffle.endDate,
-      image: raffle.image
+      image: raffle.image,
     });
   };
 
   const getStatusBadge = (status: string) => {
     const statusConfig = {
-      active: { label: "Activa", className: "bg-green-100 text-green-800 border-green-200" },
-      finished: { label: "Finalizada", className: "bg-gray-100 text-gray-800 border-gray-200" },
-      draft: { label: "Borrador", className: "bg-yellow-100 text-yellow-800 border-yellow-200" }
+      active: {
+        label: "Activa",
+        className: "bg-green-100 text-green-800 border-green-200",
+      },
+      finished: {
+        label: "Finalizada",
+        className: "bg-gray-100 text-gray-800 border-gray-200",
+      },
+      draft: {
+        label: "Borrador",
+        className: "bg-yellow-100 text-yellow-800 border-yellow-200",
+      },
     };
-    
+
     const config = statusConfig[status as keyof typeof statusConfig];
     return (
       <Badge variant="outline" className={config.className}>
@@ -164,8 +203,12 @@ export const RaffleManager = () => {
       {/* Header */}
       <div className="flex justify-between items-center">
         <div>
-          <h2 className="text-2xl font-bold text-secondary">Gestión de Rifas</h2>
-          <p className="text-accent">Administra y controla todas las rifas del sistema</p>
+          <h2 className="text-2xl font-bold text-secondary">
+            Gestión de Rifas
+          </h2>
+          <p className="text-accent">
+            Administra y controla todas las rifas del sistema
+          </p>
         </div>
         <Dialog open={isCreateModalOpen} onOpenChange={setIsCreateModalOpen}>
           <DialogTrigger asChild>
@@ -257,10 +300,16 @@ export const RaffleManager = () => {
               </div>
             </div>
             <div className="flex justify-end space-x-2">
-              <Button variant="outline" onClick={() => setIsCreateModalOpen(false)}>
+              <Button
+                variant="outline"
+                onClick={() => setIsCreateModalOpen(false)}
+              >
                 Cancelar
               </Button>
-              <Button onClick={handleCreateRaffle} className="bg-primary hover:bg-primary/90">
+              <Button
+                onClick={handleCreateRaffle}
+                className="bg-primary hover:bg-primary/90"
+              >
                 Crear Rifa
               </Button>
             </div>
@@ -271,14 +320,21 @@ export const RaffleManager = () => {
       {/* Raffles Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
         {raffles.map((raffle) => {
-          const soldPercentage = Math.round((raffle.soldTickets / raffle.totalTickets) * 100);
+          const soldPercentage = Math.round(
+            (raffle.soldTickets / raffle.totalTickets) * 100
+          );
           const totalRevenue = raffle.soldTickets * raffle.ticketPrice;
-          
+
           return (
-            <Card key={raffle.id} className="border-2 border-primary/20 hover:shadow-lg transition-all">
+            <Card
+              key={raffle.id}
+              className="border-2 border-primary/20 hover:shadow-lg transition-all"
+            >
               <CardHeader>
                 <div className="flex items-center justify-between">
-                  <CardTitle className="text-lg text-secondary truncate">{raffle.title}</CardTitle>
+                  <CardTitle className="text-lg text-secondary truncate">
+                    {raffle.title}
+                  </CardTitle>
                   {getStatusBadge(raffle.status)}
                 </div>
                 <CardDescription className="text-sm">
@@ -289,19 +345,25 @@ export const RaffleManager = () => {
                 {/* Prize Info */}
                 <div className="flex items-center gap-2 p-3 bg-primary/5 rounded-lg">
                   <Trophy className="w-5 h-5 text-primary" />
-                  <span className="font-medium text-secondary">{raffle.prize}</span>
+                  <span className="font-medium text-secondary">
+                    {raffle.prize}
+                  </span>
                 </div>
 
                 {/* Stats */}
                 <div className="grid grid-cols-2 gap-4">
                   <div className="text-center p-2 bg-secondary/5 rounded">
                     <DollarSign className="w-4 h-4 mx-auto text-secondary mb-1" />
-                    <p className="text-sm font-medium text-secondary">${raffle.ticketPrice}</p>
+                    <p className="text-sm font-medium text-secondary">
+                      ${raffle.ticketPrice}
+                    </p>
                     <p className="text-xs text-accent">por ticket</p>
                   </div>
                   <div className="text-center p-2 bg-accent/5 rounded">
                     <Users className="w-4 h-4 mx-auto text-accent mb-1" />
-                    <p className="text-sm font-medium text-secondary">{raffle.soldTickets}/{raffle.totalTickets}</p>
+                    <p className="text-sm font-medium text-secondary">
+                      {raffle.soldTickets}/{raffle.totalTickets}
+                    </p>
                     <p className="text-xs text-accent">vendidos</p>
                   </div>
                 </div>
@@ -310,15 +372,19 @@ export const RaffleManager = () => {
                 <div className="space-y-2">
                   <div className="flex justify-between text-sm">
                     <span className="text-accent">Progreso</span>
-                    <span className="text-secondary font-medium">{soldPercentage}%</span>
+                    <span className="text-secondary font-medium">
+                      {soldPercentage}%
+                    </span>
                   </div>
                   <div className="w-full bg-secondary/10 rounded-full h-2">
-                    <div 
+                    <div
                       className="bg-gradient-to-r from-primary to-primary/80 h-2 rounded-full transition-all"
                       style={{ width: `${soldPercentage}%` }}
                     ></div>
                   </div>
-                  <p className="text-xs text-accent">Total recaudado: ${totalRevenue.toLocaleString()}</p>
+                  <p className="text-xs text-accent">
+                    Total recaudado: ${totalRevenue.toLocaleString()}
+                  </p>
                 </div>
 
                 {/* Actions */}
@@ -348,7 +414,10 @@ export const RaffleManager = () => {
       </div>
 
       {/* Edit Modal */}
-      <Dialog open={!!editingRaffle} onOpenChange={() => setEditingRaffle(null)}>
+      <Dialog
+        open={!!editingRaffle}
+        onOpenChange={() => setEditingRaffle(null)}
+      >
         <DialogContent className="max-w-2xl">
           <DialogHeader>
             <DialogTitle>Editar Rifa</DialogTitle>
@@ -430,7 +499,10 @@ export const RaffleManager = () => {
             <Button variant="outline" onClick={() => setEditingRaffle(null)}>
               Cancelar
             </Button>
-            <Button onClick={handleEditRaffle} className="bg-primary hover:bg-primary/90">
+            <Button
+              onClick={handleEditRaffle}
+              className="bg-primary hover:bg-primary/90"
+            >
               Guardar Cambios
             </Button>
           </div>

@@ -22,18 +22,23 @@ export function RaffleCard({
   date,
   time,
   features,
-  className
+  className,
 }: RaffleCardProps) {
   const progress = (soldTickets / totalTickets) * 100;
 
   return (
-    <Card className={cn(
-      "relative overflow-hidden bg-gradient-to-br from-card to-accent/5 border-accent/20 shadow-card",
-      className
-    )}>
+    <Card
+      className={cn(
+        "relative overflow-hidden bg-gradient-to-br from-card to-accent/5 border-accent/20 shadow-card",
+        className
+      )}
+    >
       <CardHeader className="pb-4">
         <div className="flex items-center justify-between mb-2">
-          <Badge variant="secondary" className="bg-primary/10 text-primary border-primary/20">
+          <Badge
+            variant="secondary"
+            className="bg-primary/10 text-primary border-primary/20"
+          >
             <CalendarDays className="w-3 h-3 mr-1" />
             {date}
           </Badge>
@@ -43,18 +48,24 @@ export function RaffleCard({
           </Badge>
         </div>
         <h2 className="text-2xl font-bold text-secondary">{title}</h2>
-        <p className="text-accent font-medium">{totalTickets.toLocaleString()} Boletos Disponibles</p>
+        <p className="text-accent font-medium">
+          {totalTickets.toLocaleString()} Boletos Disponibles
+        </p>
       </CardHeader>
 
       <CardContent className="space-y-6">
         {/* Progress Bar */}
         <div className="space-y-2">
           <div className="flex justify-between text-sm">
-            <span className="text-muted-foreground">Vendidos: {soldTickets}</span>
-            <span className="text-accent font-medium">{progress.toFixed(1)}%</span>
+            <span className="text-muted-foreground">
+              Vendidos: {soldTickets}
+            </span>
+            <span className="text-accent font-medium">
+              {progress.toFixed(1)}%
+            </span>
           </div>
           <div className="w-full bg-muted rounded-full h-2">
-            <div 
+            <div
               className="bg-gradient-to-r from-primary to-primary/80 h-2 rounded-full transition-all duration-500"
               style={{ width: `${progress}%` }}
             />
@@ -71,7 +82,9 @@ export function RaffleCard({
             <span className="text-3xl">{prizes[0]?.icon}</span>
             <div className="text-center">
               <p className="font-bold text-lg text-primary">🏆 GRAN PREMIO</p>
-              <p className="text-xl font-semibold text-secondary">{prizes[0]?.prize}</p>
+              <p className="text-xl font-semibold text-secondary">
+                {prizes[0]?.prize}
+              </p>
             </div>
           </div>
         </div>
@@ -95,15 +108,21 @@ export function RaffleCard({
           </h4>
           <div className="space-y-2 text-sm text-accent">
             <div className="flex items-center space-x-2">
-              <span className="w-5 h-5 rounded-full bg-primary/20 text-primary text-xs flex items-center justify-center font-bold">1</span>
+              <span className="w-5 h-5 rounded-full bg-primary/20 text-primary text-xs flex items-center justify-center font-bold">
+                1
+              </span>
               <span>Se eligen los boletos 🎟️</span>
             </div>
             <div className="flex items-center space-x-2">
-              <span className="w-5 h-5 rounded-full bg-primary/20 text-primary text-xs flex items-center justify-center font-bold">2</span>
+              <span className="w-5 h-5 rounded-full bg-primary/20 text-primary text-xs flex items-center justify-center font-bold">
+                2
+              </span>
               <span>Se llenan los datos</span>
             </div>
             <div className="flex items-center space-x-2">
-              <span className="w-5 h-5 rounded-full bg-primary/20 text-primary text-xs flex items-center justify-center font-bold">3</span>
+              <span className="w-5 h-5 rounded-full bg-primary/20 text-primary text-xs flex items-center justify-center font-bold">
+                3
+              </span>
               <span>Se realiza el registro</span>
             </div>
           </div>

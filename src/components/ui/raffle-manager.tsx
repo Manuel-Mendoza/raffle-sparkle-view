@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -28,44 +28,19 @@ import {
   Trophy,
   DollarSign,
   Users,
+  Loader2,
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
-
-interface Raffle {
-  id: number;
-  title: string;
-  description: string;
-  prize: string;
-  ticketPrice: number;
-  totalTickets: number;
-  soldTickets: number;
-  status: "active" | "finished" | "draft";
-  startDate: string;
-  endDate: string;
-  image: string;
-}
-
-// Datos simulados de rifas
-const mockRaffles: Raffle[] = [
-  {
-    id: 1,
-    title: "Moto Deportiva 2024",
-    description: "Increíble moto deportiva modelo 2024, completamente nueva",
-    prize: "Moto Deportiva Yamaha R15",
-    ticketPrice: 50,
-    totalTickets: 500,
-    soldTickets: 247,
-    status: "active" as const,
-    startDate: "2024-01-01",
-    endDate: "2024-02-15",
-    image: "/src/assets/hero-motorcycle.jpg",
-  },
-];
+import { raffleService, Raffle } from "@/services/raffle";
 
 export const RaffleManager = () => {
-  const [raffles, setRaffles] = useState<Raffle[]>(mockRaffles);
+  const [raffles, setRaffles] = useState<Raffle[]>([]);
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [editingRaffle, setEditingRaffle] = useState<Raffle | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [isCreating, setIsCreating] = useState(false);
+  const [isUpdating, setIsUpdating] = useState(false);
+  const [deletingId, setDeletingId] = useState<string | null>(null);
   const [formData, setFormData] = useState({
     title: "",
     description: "",
@@ -77,6 +52,28 @@ export const RaffleManager = () => {
     image: "",
   });
   const { toast } = useToast();
+
+  // Load raffles on component mount
+  useEffect(() => {
+    loadRaffles();
+  }, []);
+
+  const loadRaffles = async () => {
+    try {
+      setIsLoading(true);
+      const raffleData = await raffleService.getAllRaffles();
+      setRaffles(raffleData);
+    } catch (error) {
+      console.error("Error loading raffles:", error);
+      toast({
+        title: "Error",
+        description: "No se pudieron cargar las rifas. Inténtalo de nuevo.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   const resetForm = () => {
     setFormData({
@@ -104,7 +101,7 @@ export const RaffleManager = () => {
     }));
   };
 
-  const handleCreateRaffle = () => {
+  const handleCreateRaffle = async () => {
     if (
       !formData.title ||
       !formData.prize ||
@@ -119,45 +116,76 @@ export const RaffleManager = () => {
       return;
     }
 
-    const newRaffle: Raffle = {
-      id: Date.now(),
-      ...formData,
-      soldTickets: 0,
-      status: "draft",
-    };
-
-    setRaffles((prev) => [...prev, newRaffle]);
-    resetForm();
-    setIsCreateModalOpen(false);
-    toast({
-      title: "¡Rifa creada!",
-      description: "La nueva rifa ha sido creada exitosamente",
-    });
+    try {
+      setIsCreating(true);
+      const newRaffle = await raffleService.createRaffle(formData);
+      setRaffles((prev) => [...prev, newRaffle]);
+      resetForm();
+      setIsCreateModalOpen(false);
+      toast({
+        title: "¡Rifa creada!",
+        description: "La nueva rifa ha sido creada exitosamente",
+      });
+    } catch (error) {
+      console.error("Error creating raffle:", error);
+      toast({
+        title: "Error",
+        description: "No se pudo crear la rifa. Inténtalo de nuevo.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsCreating(false);
+    }
   };
 
-  const handleEditRaffle = () => {
+  const handleEditRaffle = async () => {
     if (!editingRaffle) return;
 
-    setRaffles((prev) =>
-      prev.map((raffle) =>
-        raffle.id === editingRaffle.id ? { ...raffle, ...formData } : raffle
-      )
-    );
-
-    resetForm();
-    setEditingRaffle(null);
-    toast({
-      title: "¡Rifa actualizada!",
-      description: "Los cambios han sido guardados exitosamente",
-    });
+    try {
+      setIsUpdating(true);
+      const updatedRaffle = await raffleService.updateRaffle(editingRaffle.id, formData);
+      setRaffles((prev) =>
+        prev.map((raffle) =>
+          raffle.id === editingRaffle.id ? updatedRaffle : raffle
+        )
+      );
+      resetForm();
+      setEditingRaffle(null);
+      toast({
+        title: "¡Rifa actualizada!",
+        description: "Los cambios han sido guardados exitosamente",
+      });
+    } catch (error) {
+      console.error("Error updating raffle:", error);
+      toast({
+        title: "Error",
+        description: "No se pudo actualizar la rifa. Inténtalo de nuevo.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsUpdating(false);
+    }
   };
 
-  const handleDeleteRaffle = (id: number) => {
-    setRaffles((prev) => prev.filter((raffle) => raffle.id !== id));
-    toast({
-      title: "Rifa eliminada",
-      description: "La rifa ha sido eliminada del sistema",
-    });
+  const handleDeleteRaffle = async (id: string) => {
+    try {
+      setDeletingId(id);
+      await raffleService.deleteRaffle(id);
+      setRaffles((prev) => prev.filter((raffle) => raffle.id !== id));
+      toast({
+        title: "Rifa eliminada",
+        description: "La rifa ha sido eliminada del sistema",
+      });
+    } catch (error) {
+      console.error("Error deleting raffle:", error);
+      toast({
+        title: "Error",
+        description: "No se pudo eliminar la rifa. Inténtalo de nuevo.",
+        variant: "destructive",
+      });
+    } finally {
+      setDeletingId(null);
+    }
   };
 
   const openEditModal = (raffle: Raffle) => {
@@ -308,8 +336,10 @@ export const RaffleManager = () => {
               </Button>
               <Button
                 onClick={handleCreateRaffle}
+                disabled={isCreating}
                 className="bg-primary hover:bg-primary/90"
               >
+                {isCreating && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
                 Crear Rifa
               </Button>
             </div>
@@ -318,8 +348,19 @@ export const RaffleManager = () => {
       </div>
 
       {/* Raffles Grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
-        {raffles.map((raffle) => {
+      {isLoading ? (
+        <div className="flex justify-center items-center py-12">
+          <Loader2 className="w-8 h-8 animate-spin text-primary" />
+          <span className="ml-2 text-secondary">Cargando rifas...</span>
+        </div>
+      ) : raffles.length === 0 ? (
+        <div className="text-center py-12">
+          <p className="text-accent">No hay rifas disponibles</p>
+          <p className="text-sm text-accent mt-2">Crea tu primera rifa usando el botón "Nueva Rifa"</p>
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
+          {raffles.map((raffle) => {
           const soldPercentage = Math.round(
             (raffle.soldTickets / raffle.totalTickets) * 100
           );
@@ -402,16 +443,22 @@ export const RaffleManager = () => {
                     size="sm"
                     variant="outline"
                     onClick={() => handleDeleteRaffle(raffle.id)}
+                    disabled={deletingId === raffle.id}
                     className="text-red-600 hover:text-red-700 hover:border-red-300"
                   >
-                    <Trash2 className="w-3 h-3" />
+                    {deletingId === raffle.id ? (
+                      <Loader2 className="w-3 h-3 animate-spin" />
+                    ) : (
+                      <Trash2 className="w-3 h-3" />
+                    )}
                   </Button>
                 </div>
               </CardContent>
             </Card>
           );
         })}
-      </div>
+        </div>
+      )}
 
       {/* Edit Modal */}
       <Dialog
@@ -501,8 +548,10 @@ export const RaffleManager = () => {
             </Button>
             <Button
               onClick={handleEditRaffle}
+              disabled={isUpdating}
               className="bg-primary hover:bg-primary/90"
             >
+              {isUpdating && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
               Guardar Cambios
             </Button>
           </div>

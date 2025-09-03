@@ -2,7 +2,8 @@ import { HeroSection } from "@/components/ui/hero-section";
 import { RaffleCard } from "@/components/ui/raffle-card";
 import { PurchaseSteps } from "@/components/ui/purchase-steps";
 import { Button } from "@/components/ui/button";
-import { MessageCircle } from "lucide-react";
+import { MessageCircle, Settings } from "lucide-react";
+import { Link } from "react-router-dom";
 import Logo from "@/assets/favico.png";
 
 const Index = () => {
@@ -40,13 +41,25 @@ const Index = () => {
                 Rifas.queMantequilla
               </span>
             </div>
-            <Button
-              onClick={handleWhatsAppContact}
-              className="bg-accent hover:bg-accent/90 text-secondary"
-            >
-              <MessageCircle className="w-4 h-4 mr-2" />
-              Contáctanos
-            </Button>
+            <div className="flex items-center space-x-3">
+              <Link to="/login">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="border-accent/30 text-accent hover:text-primary hover:border-primary"
+                >
+                  <Settings className="w-4 h-4 mr-2" />
+                  Admin
+                </Button>
+              </Link>
+              <Button
+                onClick={handleWhatsAppContact}
+                className="bg-accent hover:bg-accent/90 text-secondary"
+              >
+                <MessageCircle className="w-4 h-4 mr-2" />
+                Contáctanos
+              </Button>
+            </div>
           </div>
         </div>
       </header>

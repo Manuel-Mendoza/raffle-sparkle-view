@@ -11,6 +11,7 @@ const Index = () => {
     title: "Rifa Especial Mantequilla 1000",
     totalTickets: 1000,
     soldTickets: 0,
+    price: 2.25,
     prizes: [
       { position: "🏆 Gran Premio", prize: "Moto Deportiva 🏍️", icon: "🏍️" },
     ],
@@ -42,16 +43,6 @@ const Index = () => {
               </span>
             </div>
             <div className="flex items-center space-x-3">
-              <Link to="/login">
-                <Button
-                  variant="outline"
-                  size="sm"
-                  className="border-accent/30 text-accent hover:text-primary hover:border-primary"
-                >
-                  <Settings className="w-4 h-4 mr-2" />
-                  Admin
-                </Button>
-              </Link>
               <Button
                 onClick={handleWhatsAppContact}
                 className="bg-accent hover:bg-accent/90 text-secondary"
@@ -90,7 +81,6 @@ const Index = () => {
           <p className="text-accent">
             ¿Necesitas ayuda?
             <Button
-              variant="link"
               className="text-primary hover:text-primary/80 p-0 ml-2"
               onClick={handleWhatsAppContact}
             >

@@ -11,39 +11,33 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Eye, EyeOff, ArrowLeft } from "lucide-react";
-import { useToast } from "@/hooks/use-toast";
+import { authService } from "@/services/auth";
+import { AxiosErrorResponse } from "@/types/api";
+import { toast } from "sonner";
 
 const Login = () => {
-  const [email, setEmail] = useState("");
+  const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
-  const { toast } = useToast();
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
 
-    // Simular login
-    setTimeout(() => {
-      if (email === "admin@rifas.com" && password === "admin123") {
-        localStorage.setItem("isAuthenticated", "true");
-        localStorage.setItem("userRole", "admin");
-        toast({
-          title: "¡Bienvenido!",
-          description: "Inicio de sesión exitoso",
-        });
-        navigate("/dashboard");
-      } else {
-        toast({
-          title: "Error",
-          description: "Credenciales incorrectas",
-          variant: "destructive",
-        });
-      }
+    try {
+      await authService.login({ username, password });
+      toast.success("¡Bienvenido! Inicio de sesión exitoso");
+      navigate("/dashboard");
+    } catch (error: unknown) {
+      const axiosError = error as AxiosErrorResponse;
+      const message =
+        axiosError.response?.data?.error || "Error al iniciar sesión";
+      toast.error(message);
+    } finally {
       setIsLoading(false);
-    }, 1000);
+    }
   };
 
   return (
@@ -71,15 +65,18 @@ const Login = () => {
           <CardContent>
             <form onSubmit={handleLogin} className="space-y-6">
               <div className="space-y-2">
-                <Label htmlFor="email" className="text-secondary font-medium">
-                  Correo Electrónico
+                <Label
+                  htmlFor="username"
+                  className="text-secondary font-medium"
+                >
+                  Usuario
                 </Label>
                 <Input
-                  id="email"
-                  type="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  placeholder="admin@rifas.com"
+                  id="username"
+                  type="text"
+                  value={username}
+                  onChange={(e) => setUsername(e.target.value)}
+                  placeholder="admin"
                   required
                   className="border-primary/20 focus:border-primary"
                 />
@@ -119,24 +116,6 @@ const Login = () => {
               >
                 {isLoading ? "Iniciando sesión..." : "Iniciar Sesión"}
               </Button>
-
-              <div className="text-center text-sm text-accent">
-                ¿No tienes cuenta?{" "}
-                <Link
-                  to="/register"
-                  className="text-primary hover:text-primary/80 font-medium"
-                >
-                  Registrarse
-                </Link>
-              </div>
-
-              <div className="text-xs text-accent/60 text-center p-4 bg-accent/5 rounded-lg">
-                <strong>Credenciales de prueba:</strong>
-                <br />
-                Email: admin@rifas.com
-                <br />
-                Contraseña: admin123
-              </div>
             </form>
           </CardContent>
         </Card>

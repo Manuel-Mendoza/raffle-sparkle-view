@@ -21,20 +21,17 @@ import {
   Plus,
   Eye,
 } from "lucide-react";
-import { useToast } from "@/hooks/use-toast";
+import { authService } from "@/services/auth";
+import { toast } from "sonner";
 import { DashboardStats } from "@/components/ui/dashboard-stats";
 import { RaffleManager } from "@/components/ui/raffle-manager";
 
 const Dashboard = () => {
   const navigate = useNavigate();
-  const { toast } = useToast();
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
   useEffect(() => {
-    const auth = localStorage.getItem("isAuthenticated");
-    const role = localStorage.getItem("userRole");
-
-    if (!auth || role !== "admin") {
+    if (!authService.isAuthenticated()) {
       navigate("/login");
       return;
     }
@@ -42,12 +39,8 @@ const Dashboard = () => {
   }, [navigate]);
 
   const handleLogout = () => {
-    localStorage.removeItem("isAuthenticated");
-    localStorage.removeItem("userRole");
-    toast({
-      title: "Sesión cerrada",
-      description: "Has salido del panel administrativo",
-    });
+    authService.logout();
+    toast.success("Sesión cerrada correctamente");
     navigate("/");
   };
 

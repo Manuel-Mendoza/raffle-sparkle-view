@@ -88,45 +88,6 @@ export function RaffleCard({
             </div>
           </div>
         </div>
-
-        {/* Features */}
-        <div className="space-y-2">
-          <h4 className="font-semibold text-secondary">Características</h4>
-          {features.map((feature, index) => (
-            <div key={index} className="flex items-center space-x-2">
-              <div className="w-2 h-2 rounded-full bg-primary" />
-              <span className="text-sm text-accent">{feature}</span>
-            </div>
-          ))}
-        </div>
-
-        {/* How it works */}
-        <div className="border-t border-accent/10 pt-4">
-          <h4 className="font-semibold text-secondary mb-3 flex items-center">
-            <Users className="w-4 h-4 mr-2" />
-            ¿Cómo funciona? 🍀
-          </h4>
-          <div className="space-y-2 text-sm text-accent">
-            <div className="flex items-center space-x-2">
-              <span className="w-5 h-5 rounded-full bg-primary/20 text-primary text-xs flex items-center justify-center font-bold">
-                1
-              </span>
-              <span>Se eligen los boletos 🎟️</span>
-            </div>
-            <div className="flex items-center space-x-2">
-              <span className="w-5 h-5 rounded-full bg-primary/20 text-primary text-xs flex items-center justify-center font-bold">
-                2
-              </span>
-              <span>Se llenan los datos</span>
-            </div>
-            <div className="flex items-center space-x-2">
-              <span className="w-5 h-5 rounded-full bg-primary/20 text-primary text-xs flex items-center justify-center font-bold">
-                3
-              </span>
-              <span>Se realiza el registro</span>
-            </div>
-          </div>
-        </div>
       </CardContent>
     </Card>
   );

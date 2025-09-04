@@ -7,21 +7,31 @@ import { MessageCircle, Loader2 } from "lucide-react";
 import { Link } from "react-router-dom";
 import Logo from "@/assets/favico.png";
 import { raffleService, type Raffle } from "@/services/raffle";
+import { statisticsService, type TopCustomerResponse } from "@/services/statistics";
 import { toast } from "sonner";
 
 const Index = () => {
   const [currentRaffle, setCurrentRaffle] = useState<Raffle | null>(null);
+  const [topCustomer, setTopCustomer] = useState<TopCustomerResponse | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const fetchCurrentRaffle = async () => {
+    const fetchData = async () => {
       try {
         const raffle = await raffleService.getCurrentRaffle();
         setCurrentRaffle(raffle);
+
+        // Fetch top customer data
+        try {
+          const stats = await statisticsService.getDashboardStats();
+          setTopCustomer(stats.topCustomer);
+        } catch (error) {
+          console.warn("Could not fetch top customer data:", error);
+        }
       } catch (error) {
         console.error("Error fetching current raffle:", error);
         toast.error("Error al cargar la rifa actual");
-        
+
         // Fallback data if API fails
         setCurrentRaffle({
           id: "fallback-id",
@@ -41,7 +51,7 @@ const Index = () => {
       }
     };
 
-    fetchCurrentRaffle();
+    fetchData();
   }, []);
 
   const handleWhatsAppContact = () => {
@@ -63,7 +73,9 @@ const Index = () => {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
         <div className="text-center">
-          <p className="text-accent">No hay rifas disponibles en este momento</p>
+          <p className="text-accent">
+            No hay rifas disponibles en este momento
+          </p>
         </div>
       </div>
     );
@@ -78,9 +90,9 @@ const Index = () => {
     prizes: [
       { position: "🏆 Gran Premio", prize: currentRaffle.prize, icon: "🏍️" },
     ],
-    date: new Date(currentRaffle.endDate).toLocaleDateString('es-ES', {
-      day: 'numeric',
-      month: 'long'
+    date: new Date(currentRaffle.endDate).toLocaleDateString("es-ES", {
+      day: "numeric",
+      month: "long",
     }),
     time: "8:00 PM",
     features: [
@@ -119,7 +131,7 @@ const Index = () => {
 
       {/* Hero Section */}
       <section className="container mx-auto px-4 py-8">
-        <HeroSection raffleData={currentRaffle} />
+        <HeroSection raffleData={currentRaffle} topCustomer={topCustomer} />
       </section>
 
       {/* Main Content */}
@@ -140,15 +152,9 @@ const Index = () => {
       {/* Footer */}
       <footer className="bg-secondary/10 py-8 mt-12">
         <div className="container mx-auto px-4 text-center">
-          <p className="text-accent">
-            ¿Necesitas ayuda?
-            <Button
-              className="text-primary hover:text-primary/80 p-0 ml-2"
-              onClick={handleWhatsAppContact}
-            >
-              Chatea con nosotros
-            </Button>
-          </p>
+          <div className="mt-4">
+            <Link to="/login">Iniciar Sesión</Link>
+          </div>
         </div>
       </footer>
     </div>

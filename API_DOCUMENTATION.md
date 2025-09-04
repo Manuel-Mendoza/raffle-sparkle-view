@@ -1,12 +1,15 @@
 # API Documentation - Sistema de Rifas
 
 ## Base URL
+
 ```
 http://localhost:3000/api
 ```
 
 ## Autenticación
+
 Para endpoints protegidos, incluir el header:
+
 ```
 Authorization: Bearer <token>
 ```
@@ -16,11 +19,13 @@ Authorization: Bearer <token>
 ## 🔐 Admin Endpoints
 
 ### Registrar Admin
+
 ```http
 POST /admin/register
 ```
 
 **Body:**
+
 ```json
 {
   "username": "admin",
@@ -30,6 +35,7 @@ POST /admin/register
 ```
 
 **Response:**
+
 ```json
 {
   "message": "Admin registrado exitosamente",
@@ -42,11 +48,13 @@ POST /admin/register
 ```
 
 ### Login Admin
+
 ```http
 POST /admin/login
 ```
 
 **Body:**
+
 ```json
 {
   "username": "admin",
@@ -55,6 +63,7 @@ POST /admin/login
 ```
 
 **Response:**
+
 ```json
 {
   "token": "paseto-token-here",
@@ -71,12 +80,14 @@ POST /admin/login
 ## 🎲 Raffle Endpoints
 
 ### Crear Rifa (Protegido)
+
 ```http
 POST /raffle/create
 Authorization: Bearer <token>
 ```
 
 **Body:**
+
 ```json
 {
   "title": "Rifa iPhone 15",
@@ -89,6 +100,7 @@ Authorization: Bearer <token>
 ```
 
 **Response:**
+
 ```json
 {
   "message": "Rifa creada exitosamente",
@@ -108,11 +120,13 @@ Authorization: Bearer <token>
 ```
 
 ### Obtener Rifa Actual
+
 ```http
 GET /raffle/current
 ```
 
 **Response:**
+
 ```json
 {
   "id": "uuid",
@@ -130,11 +144,13 @@ GET /raffle/current
 ```
 
 ### Obtener Todas las Rifas
+
 ```http
 GET /raffle/all
 ```
 
 **Response:**
+
 ```json
 {
   "raffles": [
@@ -160,17 +176,20 @@ GET /raffle/all
 ## 👥 Customer Endpoints
 
 ### Subir Comprobante de Pago
+
 ```http
 POST /customers/upload-proof
 Content-Type: multipart/form-data
 ```
 
 **Body (FormData):**
+
 ```
 image: <archivo-imagen>
 ```
 
 **Response:**
+
 ```json
 {
   "message": "Imagen subida exitosamente",
@@ -179,11 +198,13 @@ image: <archivo-imagen>
 ```
 
 ### Comprar Tickets
+
 ```http
 POST /customers/buy-ticket
 ```
 
 **Body:**
+
 ```json
 {
   "name": "Juan Pérez",
@@ -196,6 +217,7 @@ POST /customers/buy-ticket
 ```
 
 **Response:**
+
 ```json
 {
   "message": "3 ticket(s) comprado(s) exitosamente",
@@ -206,7 +228,7 @@ POST /customers/buy-ticket
       "status": "pending"
     },
     {
-      "id": "uuid-2", 
+      "id": "uuid-2",
       "ticketNumber": "3842",
       "status": "pending"
     },
@@ -223,11 +245,13 @@ POST /customers/buy-ticket
 ```
 
 ### Test Endpoint
+
 ```http
 GET /customers/test
 ```
 
 **Response:**
+
 ```json
 {
   "message": "Customer routes working!"
@@ -239,6 +263,7 @@ GET /customers/test
 ## 📋 Validaciones
 
 ### Crear Rifa
+
 - `title`: Mínimo 3 caracteres
 - `description`: Requerido
 - `prize`: Mínimo 3 caracteres
@@ -247,15 +272,18 @@ GET /customers/test
 - `endDate`: Formato YYYY-MM-DD
 
 ### Registro Admin
+
 - `username`: Mínimo 3 caracteres
 - `password`: Mínimo 6 caracteres
 - `email`: Email válido
 
 ### Login Admin
+
 - `username`: Mínimo 3 caracteres
 - `password`: Mínimo 6 caracteres
 
 ### Comprar Tickets
+
 - `name`: Mínimo 2 caracteres
 - `phone`: Mínimo 10 caracteres
 - `paymentMethod`: Mínimo 3 caracteres
@@ -268,17 +296,20 @@ GET /customers/test
 ## 🎯 Características del Sistema
 
 ### Números de Tickets
+
 - **Formato**: 4 dígitos (0000-9999)
 - **Generación**: Aleatoria
 - **Unicidad**: Garantizada por rifa
 - **Máximo**: 10,000 números únicos por rifa
 
 ### Estados de Tickets
+
 - `pending`: Esperando aprobación
 - `confirmed`: Confirmado por admin
 - `rejected`: Rechazado por admin
 
 ### Almacenamiento de Imágenes
+
 - **Servicio**: Cloudinary
 - **Formato**: JPG
 - **Carpeta**: payment_proofs/
@@ -289,21 +320,25 @@ GET /customers/test
 ## ⚠️ Códigos de Error
 
 ### 400 Bad Request
+
 - Datos de entrada inválidos
 - No hay tickets disponibles
 - Cantidad excede disponibles
 
 ### 401 Unauthorized
+
 - Token requerido
 - Token inválido
 - Credenciales incorrectas
 
 ### 404 Not Found
+
 - Rifa no encontrada
 - Rifa inactiva
 - Endpoint no existe
 
 ### 500 Internal Server Error
+
 - Error del servidor
 - Error de base de datos
 - Error de Cloudinary
@@ -313,6 +348,7 @@ GET /customers/test
 ## 🔧 Configuración Requerida
 
 ### Variables de Entorno (.env)
+
 ```env
 DATABASE_URL=postgresql://user:pass@host:port/db
 PASETO_SECRET=-----BEGIN PRIVATE KEY-----...-----END PRIVATE KEY-----
@@ -322,6 +358,7 @@ CLOUDINARY_API_SECRET=your_api_secret
 ```
 
 ### Dependencias Principales
+
 - Hono (Framework web)
 - Drizzle ORM (Base de datos)
 - PASETO (Autenticación)

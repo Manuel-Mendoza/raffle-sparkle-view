@@ -1,10 +1,14 @@
 import { api } from "@/lib/api";
-import { BuyTicketRequest, BuyTicketResponse, UploadProofResponse } from "@/types/api";
+import {
+  BuyTicketRequest,
+  BuyTicketResponse,
+  UploadProofResponse,
+} from "@/types/api";
 
 export const customerService = {
   async uploadPaymentProof(imageFile: File): Promise<string> {
     const formData = new FormData();
-    formData.append('image', imageFile);
+    formData.append("image", imageFile);
 
     const response = await api.post<UploadProofResponse>(
       "/customers/upload-proof",

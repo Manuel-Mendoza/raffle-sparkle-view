@@ -32,7 +32,7 @@ export function TicketNumbersModal({
   raffleName,
   total,
 }: TicketNumbersModalProps) {
-  const ticketNumbers = tickets.map(t => t.ticketNumber).join(", ");
+  const ticketNumbers = tickets.map((t) => t.ticketNumber).join(", ");
 
   const handleCopyNumbers = () => {
     navigator.clipboard.writeText(ticketNumbers);
@@ -57,7 +57,9 @@ export function TicketNumbersModal({
 
         <div className="space-y-6 py-4">
           <div className="text-center">
-            <h3 className="font-semibold text-secondary mb-2">Tus Números de la Suerte</h3>
+            <h3 className="font-semibold text-secondary mb-2">
+              Tus Números de la Suerte
+            </h3>
             <div className="flex flex-wrap gap-2 justify-center">
               {tickets.map((ticket) => (
                 <Badge
@@ -79,19 +81,28 @@ export function TicketNumbersModal({
               </div>
               <div className="flex justify-between">
                 <span className="text-accent">Participante:</span>
-                <span className="text-secondary font-medium">{customerName}</span>
+                <span className="text-secondary font-medium">
+                  {customerName}
+                </span>
               </div>
               <div className="flex justify-between">
                 <span className="text-accent">Cantidad:</span>
-                <span className="text-secondary font-medium">{tickets.length} tickets</span>
+                <span className="text-secondary font-medium">
+                  {tickets.length} tickets
+                </span>
               </div>
               <div className="flex justify-between">
                 <span className="text-accent">Total:</span>
-                <span className="text-primary font-bold">${total.toFixed(2)} USD</span>
+                <span className="text-primary font-bold">
+                  ${total.toFixed(2)} USD
+                </span>
               </div>
               <div className="flex justify-between">
                 <span className="text-accent">Estado:</span>
-                <Badge variant="outline" className="border-yellow-500 text-yellow-600">
+                <Badge
+                  variant="outline"
+                  className="border-yellow-500 text-yellow-600"
+                >
                   Pendiente de aprobación
                 </Badge>
               </div>
@@ -121,11 +132,7 @@ export function TicketNumbersModal({
               Compartir por WhatsApp
             </Button>
 
-            <Button
-              onClick={onClose}
-              variant="outline"
-              className="w-full"
-            >
+            <Button onClick={onClose} variant="outline" className="w-full">
               Cerrar
             </Button>
           </div>

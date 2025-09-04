@@ -1,3 +1,4 @@
+import { useState, useEffect } from "react";
 import {
   Card,
   CardContent,
@@ -13,59 +14,49 @@ import {
   Ticket,
   TrendingUp,
   Calendar,
-  Star,
-  Award,
+  Loader2,
 } from "lucide-react";
-
-// Datos simulados
-const mockData = {
-  totalSales: 15450,
-  ticketsSold: 247,
-  totalTickets: 500,
-  topBuyer: {
-    name: "María González",
-    tickets: 15,
-    total: 750,
-  },
-  recentSales: [
-    { id: 1, buyer: "Juan Pérez", tickets: 5, amount: 250, date: "2024-01-15" },
-    { id: 2, buyer: "Ana Silva", tickets: 8, amount: 400, date: "2024-01-15" },
-    {
-      id: 3,
-      buyer: "Carlos Ruiz",
-      tickets: 3,
-      amount: 150,
-      date: "2024-01-14",
-    },
-    {
-      id: 4,
-      buyer: "Lucia Torres",
-      tickets: 12,
-      amount: 600,
-      date: "2024-01-14",
-    },
-    {
-      id: 5,
-      buyer: "Roberto Díaz",
-      tickets: 2,
-      amount: 100,
-      date: "2024-01-13",
-    },
-  ],
-  dailyStats: [
-    { date: "15 Ene", sales: 1250, tickets: 25 },
-    { date: "14 Ene", sales: 2100, tickets: 42 },
-    { date: "13 Ene", sales: 800, tickets: 16 },
-    { date: "12 Ene", sales: 1500, tickets: 30 },
-    { date: "11 Ene", sales: 950, tickets: 19 },
-  ],
-};
+import { statisticsService, type DashboardStatistics } from "@/services/statistics";
+import { toast } from "sonner";
 
 export const DashboardStats = () => {
-  const soldPercentage = Math.round(
-    (mockData.ticketsSold / mockData.totalTickets) * 100
-  );
-  const remainingTickets = mockData.totalTickets - mockData.ticketsSold;
+  const [stats, setStats] = useState<DashboardStatistics | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchStats = async () => {
+      try {
+        const data = await statisticsService.getDashboardStats();
+        setStats(data);
+      } catch (error) {
+        console.error("Error fetching statistics:", error);
+        toast.error("Error al cargar las estadísticas");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchStats();
+  }, []);
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center py-12">
+        <div className="text-center">
+          <Loader2 className="w-8 h-8 animate-spin mx-auto mb-4 text-primary" />
+          <p className="text-accent">Cargando estadísticas...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (!stats) {
+    return (
+      <div className="text-center py-12">
+        <p className="text-accent">No se pudieron cargar las estadísticas</p>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6">
@@ -80,11 +71,11 @@ export const DashboardStats = () => {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold text-secondary">
-              ${mockData.totalSales.toLocaleString()}
+              ${stats.totalSales.toLocaleString()}
             </div>
             <p className="text-xs text-accent flex items-center mt-1">
               <TrendingUp className="h-3 w-3 mr-1" />
-              +12% desde ayer
+              Rifa actual
             </p>
           </CardContent>
         </Card>
@@ -98,10 +89,10 @@ export const DashboardStats = () => {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold text-secondary">
-              {mockData.ticketsSold}
+              {stats.ticketsSold}
             </div>
             <p className="text-xs text-accent">
-              de {mockData.totalTickets} disponibles ({soldPercentage}%)
+              de {stats.totalTickets} disponibles ({stats.soldPercentage}%)
             </p>
           </CardContent>
         </Card>
@@ -115,10 +106,10 @@ export const DashboardStats = () => {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold text-secondary">
-              {remainingTickets}
+              {stats.remainingTickets}
             </div>
             <p className="text-xs text-accent">
-              {100 - soldPercentage}% disponible
+              {100 - stats.soldPercentage}% disponible
             </p>
           </CardContent>
         </Card>
@@ -131,12 +122,25 @@ export const DashboardStats = () => {
             <Users className="h-4 w-4 text-primary" />
           </CardHeader>
           <CardContent>
-            <div className="text-lg font-bold text-secondary">
-              {mockData.topBuyer.name}
-            </div>
-            <p className="text-xs text-accent">
-              {mockData.topBuyer.tickets} tickets - ${mockData.topBuyer.total}
-            </p>
+            {stats.topCustomer ? (
+              <>
+                <div className="text-lg font-bold text-secondary">
+                  {stats.topCustomer.customer.name}
+                </div>
+                <p className="text-xs text-accent">
+                  {stats.topCustomer.totalTickets} tickets comprados
+                </p>
+              </>
+            ) : (
+              <>
+                <div className="text-lg font-bold text-secondary">
+                  Sin datos
+                </div>
+                <p className="text-xs text-accent">
+                  No hay compras registradas
+                </p>
+              </>
+            )}
           </CardContent>
         </Card>
       </div>
@@ -148,113 +152,77 @@ export const DashboardStats = () => {
             <Trophy className="h-5 w-5 text-primary" />
             Progreso de la Rifa
           </CardTitle>
-          <CardDescription>Estado actual de las ventas</CardDescription>
+          <CardDescription>
+            {stats.currentRaffle?.title} - {stats.currentRaffle?.prize}
+          </CardDescription>
         </CardHeader>
         <CardContent>
           <div className="space-y-4">
             <div className="flex items-center justify-between">
               <span className="text-sm font-medium text-secondary">
-                Vendidos: {mockData.ticketsSold}
+                Vendidos: {stats.ticketsSold}
               </span>
               <span className="text-sm text-accent">
-                Restantes: {remainingTickets}
+                Restantes: {stats.remainingTickets}
               </span>
             </div>
             <div className="w-full bg-secondary/10 rounded-full h-3">
               <div
                 className="bg-gradient-to-r from-primary to-primary/80 h-3 rounded-full transition-all duration-500"
-                style={{ width: `${soldPercentage}%` }}
+                style={{ width: `${stats.soldPercentage}%` }}
               ></div>
             </div>
             <div className="flex items-center justify-between">
               <Badge variant="outline" className="text-primary border-primary">
-                {soldPercentage}% Completado
+                {stats.soldPercentage}% Completado
               </Badge>
               <span className="text-sm text-accent">
-                ${mockData.totalSales.toLocaleString()} recaudado
+                ${stats.totalSales.toLocaleString()} recaudado
               </span>
             </div>
           </div>
         </CardContent>
       </Card>
 
-      {/* Recent Sales & Daily Stats */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Recent Sales */}
-        <Card className="border-2 border-primary/20">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2 text-secondary">
-              <Calendar className="h-5 w-5 text-primary" />
-              Ventas Recientes
-            </CardTitle>
-            <CardDescription>Últimas transacciones realizadas</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
-              {mockData.recentSales.map((sale) => (
-                <div
-                  key={sale.id}
-                  className="flex items-center justify-between p-3 bg-primary/5 rounded-lg"
-                >
-                  <div>
-                    <p className="font-medium text-secondary">{sale.buyer}</p>
-                    <p className="text-sm text-accent">{sale.date}</p>
-                  </div>
-                  <div className="text-right">
-                    <p className="font-bold text-secondary">${sale.amount}</p>
-                    <p className="text-sm text-accent">
-                      {sale.tickets} tickets
-                    </p>
-                  </div>
-                </div>
-              ))}
+      {/* Current Raffle Info */}
+      <Card className="border-2 border-primary/20">
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2 text-secondary">
+            <Calendar className="h-5 w-5 text-primary" />
+            Información de la Rifa Actual
+          </CardTitle>
+          <CardDescription>Detalles de la rifa en curso</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="p-4 bg-primary/5 rounded-lg">
+              <h4 className="font-semibold text-secondary mb-2">Título</h4>
+              <p className="text-accent">{stats.currentRaffle?.title}</p>
             </div>
-          </CardContent>
-        </Card>
-
-        {/* Daily Stats */}
-        <Card className="border-2 border-primary/20">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2 text-secondary">
-              <TrendingUp className="h-5 w-5 text-primary" />
-              Estadísticas Diarias
-            </CardTitle>
-            <CardDescription>Rendimiento de los últimos 5 días</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
-              {mockData.dailyStats.map((day, index) => (
-                <div
-                  key={index}
-                  className="flex items-center justify-between p-3 bg-secondary/5 rounded-lg"
-                >
-                  <div>
-                    <p className="font-medium text-secondary">{day.date}</p>
-                    <p className="text-sm text-accent">
-                      {day.tickets} tickets vendidos
-                    </p>
-                  </div>
-                  <div className="text-right">
-                    <p className="font-bold text-secondary">
-                      ${day.sales.toLocaleString()}
-                    </p>
-                    <Badge
-                      variant="outline"
-                      className={
-                        index === 0
-                          ? "border-primary text-primary"
-                          : "border-accent/30 text-accent"
-                      }
-                    >
-                      {index === 0 ? "Hoy" : "Histórico"}
-                    </Badge>
-                  </div>
-                </div>
-              ))}
+            <div className="p-4 bg-secondary/5 rounded-lg">
+              <h4 className="font-semibold text-secondary mb-2">Premio</h4>
+              <p className="text-accent">{stats.currentRaffle?.prize}</p>
             </div>
-          </CardContent>
-        </Card>
-      </div>
+            <div className="p-4 bg-accent/5 rounded-lg">
+              <h4 className="font-semibold text-secondary mb-2">Fecha de Cierre</h4>
+              <p className="text-accent">
+                {stats.currentRaffle?.endDate ? 
+                  new Date(stats.currentRaffle.endDate).toLocaleDateString('es-ES', {
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric'
+                  }) : 'No definida'}
+              </p>
+            </div>
+            <div className="p-4 bg-primary/10 rounded-lg">
+              <h4 className="font-semibold text-secondary mb-2">Total Posible</h4>
+              <p className="text-accent font-bold">
+                ${(stats.totalTickets * (stats.currentRaffle?.ticketPrice || 0)).toLocaleString()}
+              </p>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
     </div>
   );
 };

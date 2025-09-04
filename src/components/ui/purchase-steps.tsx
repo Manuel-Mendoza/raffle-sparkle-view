@@ -8,12 +8,7 @@ import { TicketNumbersModal } from "@/components/ui/ticket-numbers-modal";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import {
-  CheckCircle,
-  ArrowRight,
-  ArrowLeft,
-  Loader2,
-} from "lucide-react";
+import { CheckCircle, ArrowRight, ArrowLeft, Loader2 } from "lucide-react";
 import { customerService } from "@/services/customer";
 import { toast } from "sonner";
 import type { Ticket } from "@/types/api";
@@ -46,7 +41,7 @@ export function PurchaseSteps({ raffleData }: PurchaseStepsProps) {
   const [purchaseData, setPurchaseData] = useState({
     tickets: 1,
     total: raffleData.ticketPrice,
-    userData: null as any,
+    userData: null as { name: string; phone: string; email: string } | null,
     paymentProof: null as string | null,
     paymentMethod: "Transferencia Bancaria",
   });
@@ -55,7 +50,11 @@ export function PurchaseSteps({ raffleData }: PurchaseStepsProps) {
     setPurchaseData((prev) => ({ ...prev, tickets, total }));
   };
 
-  const handleUserFormSubmit = (userData: any) => {
+  const handleUserFormSubmit = (userData: {
+    name: string;
+    phone: string;
+    email: string;
+  }) => {
     setPurchaseData((prev) => ({ ...prev, userData }));
     setCurrentStep(3);
   };
@@ -65,7 +64,7 @@ export function PurchaseSteps({ raffleData }: PurchaseStepsProps) {
     if (!file) return;
 
     // Validar tipo de archivo
-    if (!file.type.startsWith('image/')) {
+    if (!file.type.startsWith("image/")) {
       toast.error("Por favor selecciona un archivo de imagen válido");
       return;
     }
@@ -82,9 +81,12 @@ export function PurchaseSteps({ raffleData }: PurchaseStepsProps) {
       const url = await customerService.uploadPaymentProof(file);
       setPurchaseData((prev) => ({ ...prev, paymentProof: url }));
       toast.success("Comprobante subido exitosamente");
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error("Error completo:", error);
-      const errorMessage = error.response?.data?.error || error.message || "Error al subir el comprobante";
+      const errorMessage =
+        error instanceof Error
+          ? error.message
+          : "Error al subir el comprobante";
       toast.error(errorMessage);
     } finally {
       setLoading(false);
@@ -114,12 +116,12 @@ export function PurchaseSteps({ raffleData }: PurchaseStepsProps) {
         customerName: response.customer,
         total: response.total,
       });
-      
+
       setShowModal(true);
       toast.success("¡Compra procesada exitosamente!");
-      
-    } catch (error: any) {
-      const errorMessage = error.response?.data?.error || "Error al procesar la compra";
+    } catch (error: unknown) {
+      const errorMessage =
+        error instanceof Error ? error.message : "Error al procesar la compra";
       toast.error(errorMessage);
       console.error(error);
     } finally {
@@ -210,7 +212,10 @@ export function PurchaseSteps({ raffleData }: PurchaseStepsProps) {
               <div className="bg-primary/10 p-4 rounded-lg border border-primary/20">
                 <div className="flex justify-between items-center">
                   <span className="text-accent">Boletos seleccionados:</span>
-                  <Badge variant="secondary" className="bg-primary text-primary-foreground">
+                  <Badge
+                    variant="secondary"
+                    className="bg-primary text-primary-foreground"
+                  >
                     {purchaseData.tickets} boletos
                   </Badge>
                 </div>
@@ -222,15 +227,22 @@ export function PurchaseSteps({ raffleData }: PurchaseStepsProps) {
                 </div>
               </div>
 
-              <UserForm 
+              <UserForm
                 onSubmit={handleUserFormSubmit}
-                onPaymentMethodChange={(method) => 
-                  setPurchaseData(prev => ({ ...prev, paymentMethod: method }))
+                onPaymentMethodChange={(method) =>
+                  setPurchaseData((prev) => ({
+                    ...prev,
+                    paymentMethod: method,
+                  }))
                 }
               />
 
               <div className="flex justify-between pt-4">
-                <Button variant="outline" onClick={handlePrevStep} className="border-accent/30">
+                <Button
+                  variant="outline"
+                  onClick={handlePrevStep}
+                  className="border-accent/30"
+                >
                   <ArrowLeft className="w-4 h-4 mr-2" />
                   Volver
                 </Button>
@@ -246,7 +258,8 @@ export function PurchaseSteps({ raffleData }: PurchaseStepsProps) {
                   Paso 3: Comprobante de pago
                 </h3>
                 <p className="text-accent">
-                  Sube tu comprobante de pago de ${purchaseData.total.toFixed(2)} USD
+                  Sube tu comprobante de pago de $
+                  {purchaseData.total.toFixed(2)} USD
                 </p>
               </div>
 
@@ -255,9 +268,12 @@ export function PurchaseSteps({ raffleData }: PurchaseStepsProps) {
                   <h4 className="font-semibold text-secondary mb-4">
                     Método de pago: {purchaseData.paymentMethod}
                   </h4>
-                  
+
                   <div className="space-y-4">
-                    <Label htmlFor="payment-proof" className="text-accent font-medium">
+                    <Label
+                      htmlFor="payment-proof"
+                      className="text-accent font-medium"
+                    >
                       Subir comprobante *
                     </Label>
                     <Input
@@ -268,14 +284,14 @@ export function PurchaseSteps({ raffleData }: PurchaseStepsProps) {
                       disabled={loading}
                       className="border-accent/30"
                     />
-                    
+
                     {loading && (
                       <div className="flex items-center text-accent">
                         <Loader2 className="w-4 h-4 mr-2 animate-spin" />
                         Subiendo comprobante...
                       </div>
                     )}
-                    
+
                     {purchaseData.paymentProof && (
                       <div className="flex items-center text-green-600">
                         <CheckCircle className="w-4 h-4 mr-2" />
@@ -287,11 +303,15 @@ export function PurchaseSteps({ raffleData }: PurchaseStepsProps) {
               </Card>
 
               <div className="flex justify-between pt-4">
-                <Button variant="outline" onClick={handlePrevStep} className="border-accent/30">
+                <Button
+                  variant="outline"
+                  onClick={handlePrevStep}
+                  className="border-accent/30"
+                >
                   <ArrowLeft className="w-4 h-4 mr-2" />
                   Volver
                 </Button>
-                
+
                 <Button
                   onClick={handleNextStep}
                   disabled={!purchaseData.paymentProof}
@@ -319,7 +339,9 @@ export function PurchaseSteps({ raffleData }: PurchaseStepsProps) {
 
               <Card className="bg-gradient-to-r from-primary/10 to-accent/10 border-primary/20">
                 <CardContent className="p-6">
-                  <h4 className="font-semibold text-secondary mb-4">Resumen de Compra</h4>
+                  <h4 className="font-semibold text-secondary mb-4">
+                    Resumen de Compra
+                  </h4>
 
                   <div className="grid md:grid-cols-2 gap-4">
                     <div>
@@ -329,7 +351,9 @@ export function PurchaseSteps({ raffleData }: PurchaseStepsProps) {
 
                     <div>
                       <h5 className="font-medium text-accent mb-2">Boletos:</h5>
-                      <p className="text-secondary">{purchaseData.tickets} boletos</p>
+                      <p className="text-secondary">
+                        {purchaseData.tickets} boletos
+                      </p>
                       <p className="text-lg font-bold text-primary">
                         Total: ${purchaseData.total.toFixed(2)} USD
                       </p>
@@ -338,10 +362,15 @@ export function PurchaseSteps({ raffleData }: PurchaseStepsProps) {
 
                   {purchaseData.userData && (
                     <div className="mt-4 pt-4 border-t border-accent/20">
-                      <h5 className="font-medium text-accent mb-2">Datos del Participante:</h5>
-                      <p className="text-secondary">{purchaseData.userData.fullName}</p>
+                      <h5 className="font-medium text-accent mb-2">
+                        Datos del Participante:
+                      </h5>
+                      <p className="text-secondary">
+                        {purchaseData.userData.fullName}
+                      </p>
                       <p className="text-sm text-muted-foreground">
-                        {purchaseData.userData.countryCode} {purchaseData.userData.phone}
+                        {purchaseData.userData.countryCode}{" "}
+                        {purchaseData.userData.phone}
                       </p>
                       <p className="text-sm text-muted-foreground">
                         Método de pago: {purchaseData.paymentMethod}

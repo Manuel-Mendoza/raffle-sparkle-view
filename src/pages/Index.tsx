@@ -18,7 +18,9 @@ const Index = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
+        console.log("Fetching current raffle from API...");
         const raffle = await raffleService.getCurrentRaffle();
+        console.log("Raffle data received:", raffle);
         setCurrentRaffle(raffle);
 
         // Fetch top customer data
@@ -30,22 +32,8 @@ const Index = () => {
         }
       } catch (error) {
         console.error("Error fetching current raffle:", error);
-        toast.error("Error al cargar la rifa actual");
-
-        // Fallback data if API fails
-        setCurrentRaffle({
-          id: "fallback-id",
-          title: "Rifa Especial Mantequilla 1000",
-          description: "Gana una increíble moto deportiva",
-          prize: "Moto Deportiva 🏍️",
-          ticketPrice: 2.25,
-          totalTickets: 1000,
-          soldTickets: 0,
-          status: "active",
-          startDate: new Date().toISOString(),
-          endDate: "2024-12-30",
-          image: "",
-        });
+        toast.error("Error al cargar la rifa actual. Verifica que la API esté funcionando.");
+        // Remove fallback data to see API issues clearly
       } finally {
         setLoading(false);
       }

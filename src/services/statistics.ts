@@ -33,19 +33,24 @@ export const statisticsService = {
     try {
       // Get current raffle data
       const currentRaffle = await raffleService.getCurrentRaffle();
-      
+
       // Get top customer data
       let topCustomer: TopCustomerResponse | null = null;
       try {
-        const topCustomerResponse = await api.get<TopCustomerResponse>("/customers/top-customer");
+        const topCustomerResponse = await api.get<TopCustomerResponse>(
+          "/customers/top-customer"
+        );
         topCustomer = topCustomerResponse.data;
       } catch (error) {
         console.warn("No top customer data available:", error);
       }
-      
+
       const totalSales = currentRaffle.soldTickets * currentRaffle.ticketPrice;
-      const remainingTickets = currentRaffle.totalTickets - currentRaffle.soldTickets;
-      const soldPercentage = Math.round((currentRaffle.soldTickets / currentRaffle.totalTickets) * 100);
+      const remainingTickets =
+        currentRaffle.totalTickets - currentRaffle.soldTickets;
+      const soldPercentage = Math.round(
+        (currentRaffle.soldTickets / currentRaffle.totalTickets) * 100
+      );
 
       return {
         totalSales,

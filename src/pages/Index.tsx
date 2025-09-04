@@ -7,12 +7,17 @@ import { MessageCircle, Loader2 } from "lucide-react";
 import { Link } from "react-router-dom";
 import Logo from "@/assets/favico.png";
 import { raffleService, type Raffle } from "@/services/raffle";
-import { statisticsService, type TopCustomerResponse } from "@/services/statistics";
+import {
+  statisticsService,
+  type TopCustomerResponse,
+} from "@/services/statistics";
 import { toast } from "sonner";
 
 const Index = () => {
   const [currentRaffle, setCurrentRaffle] = useState<Raffle | null>(null);
-  const [topCustomer, setTopCustomer] = useState<TopCustomerResponse | null>(null);
+  const [topCustomer, setTopCustomer] = useState<TopCustomerResponse | null>(
+    null
+  );
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -32,7 +37,9 @@ const Index = () => {
         }
       } catch (error) {
         console.error("Error fetching current raffle:", error);
-        toast.error("Error al cargar la rifa actual. Verifica que la API esté funcionando.");
+        toast.error(
+          "Error al cargar la rifa actual. Verifica que la API esté funcionando."
+        );
         // Remove fallback data to see API issues clearly
       } finally {
         setLoading(false);
@@ -97,17 +104,25 @@ const Index = () => {
         <div className="container mx-auto px-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-2">
-              <div className="w-12 h-12 bg-primary rounded-full flex items-center justify-center">
-                <img src={Logo} alt="Logo" className="w-12 h-12" />
+              <div className="w-10 h-10 sm:w-12 sm:h-12 bg-primary rounded-full flex items-center justify-center">
+                <img
+                  src={Logo}
+                  alt="Logo"
+                  className="w-10 h-10 sm:w-12 sm:h-12"
+                />
               </div>
+              <span className="text-lg sm:text-2xl font-bold text-primary-foreground">
+                Rifas.queMantequilla
+              </span>
             </div>
-            <div className="flex items-center space-x-3">
+            <div className="flex items-center space-x-2 sm:space-x-3">
               <Button
                 onClick={handleWhatsAppContact}
-                className="bg-accent hover:bg-accent/90 text-secondary"
+                className="bg-accent hover:bg-accent/90 text-secondary text-sm sm:text-base px-3 sm:px-4"
               >
-                <MessageCircle className="w-4 h-4 mr-2" />
-                Contáctanos
+                <MessageCircle className="w-4 h-4 mr-1 sm:mr-2" />
+                <span className="hidden sm:inline">Contáctanos</span>
+                <span className="sm:hidden">Chat</span>
               </Button>
             </div>
           </div>
@@ -121,24 +136,40 @@ const Index = () => {
 
       {/* Main Content */}
       <div className="container mx-auto px-4 py-8">
-        <div className="grid lg:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8">
           {/* Left Column - Raffle Info */}
-          <div className="lg:col-span-1">
+          <div className="lg:col-span-1 order-2 lg:order-1">
             <RaffleCard {...raffleCardData} />
           </div>
 
           {/* Right Column - Purchase Steps */}
-          <div className="lg:col-span-2">
+          <div className="lg:col-span-2 order-1 lg:order-2">
             <PurchaseSteps raffleData={currentRaffle} />
           </div>
         </div>
       </div>
 
       {/* Footer */}
-      <footer className="bg-secondary/10 py-8 mt-12">
+      <footer className="bg-secondary/10 py-6 sm:py-8 mt-12">
         <div className="container mx-auto px-4 text-center">
+          <p className="text-accent text-sm sm:text-base mb-4">
+            ¿Necesitas ayuda?
+            <Button
+              className="text-primary hover:text-primary/80 p-0 ml-2 text-sm sm:text-base"
+              onClick={handleWhatsAppContact}
+            >
+              Chatea con nosotros
+            </Button>
+          </p>
           <div className="mt-4">
-            <Link to="/login">Iniciar Sesión</Link>
+            <Link to="/login">
+              <Button
+                variant="outline"
+                className="text-primary border-primary hover:bg-primary hover:text-primary-foreground text-sm sm:text-base px-4 sm:px-6"
+              >
+                Iniciar Sesión
+              </Button>
+            </Link>
           </div>
         </div>
       </footer>

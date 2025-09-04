@@ -16,7 +16,10 @@ import {
   Calendar,
   Loader2,
 } from "lucide-react";
-import { statisticsService, type DashboardStatistics } from "@/services/statistics";
+import {
+  statisticsService,
+  type DashboardStatistics,
+} from "@/services/statistics";
 import { toast } from "sonner";
 
 export const DashboardStats = () => {
@@ -204,20 +207,31 @@ export const DashboardStats = () => {
               <p className="text-accent">{stats.currentRaffle?.prize}</p>
             </div>
             <div className="p-4 bg-accent/5 rounded-lg">
-              <h4 className="font-semibold text-secondary mb-2">Fecha de Cierre</h4>
+              <h4 className="font-semibold text-secondary mb-2">
+                Fecha de Cierre
+              </h4>
               <p className="text-accent">
-                {stats.currentRaffle?.endDate ? 
-                  new Date(stats.currentRaffle.endDate).toLocaleDateString('es-ES', {
-                    year: 'numeric',
-                    month: 'long',
-                    day: 'numeric'
-                  }) : 'No definida'}
+                {stats.currentRaffle?.endDate
+                  ? new Date(stats.currentRaffle.endDate).toLocaleDateString(
+                      "es-ES",
+                      {
+                        year: "numeric",
+                        month: "long",
+                        day: "numeric",
+                      }
+                    )
+                  : "No definida"}
               </p>
             </div>
             <div className="p-4 bg-primary/10 rounded-lg">
-              <h4 className="font-semibold text-secondary mb-2">Total Posible</h4>
+              <h4 className="font-semibold text-secondary mb-2">
+                Total Posible
+              </h4>
               <p className="text-accent font-bold">
-                ${(stats.totalTickets * (stats.currentRaffle?.ticketPrice || 0)).toLocaleString()}
+                $
+                {(
+                  stats.totalTickets * (stats.currentRaffle?.ticketPrice || 0)
+                ).toLocaleString()}
               </p>
             </div>
           </div>

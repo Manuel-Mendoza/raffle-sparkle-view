@@ -9,7 +9,11 @@ interface HeroSectionProps {
   onVerifyTickets?: () => void;
 }
 
-export function HeroSection({ raffleData, topCustomer, onVerifyTickets }: HeroSectionProps) {
+export function HeroSection({
+  raffleData,
+  topCustomer,
+  onVerifyTickets,
+}: HeroSectionProps) {
   if (!raffleData) {
     return (
       <div className="relative min-h-[600px] flex items-center justify-center overflow-hidden rounded-xl">
@@ -42,25 +46,29 @@ export function HeroSection({ raffleData, topCustomer, onVerifyTickets }: HeroSe
           {raffleData.status === "active" ? "¡RIFA ACTIVA!" : "¡RIFA ESPECIAL!"}
         </Badge>
 
-        <h1 className="text-4xl md:text-5xl font-bold text-primary-foreground mb-4 leading-tight">
+        <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-primary-foreground mb-4 leading-tight">
           {raffleData.title}
         </h1>
 
-        <div className="inline-block bg-gradient-to-r from-primary to-primary/80 px-6 py-3 rounded-lg shadow-glow mb-6">
-          <h2 className="text-2xl md:text-3xl font-bold text-primary-foreground">
+        <div className="inline-block bg-gradient-to-r from-primary to-primary/80 px-4 sm:px-6 py-2 sm:py-3 rounded-lg shadow-glow mb-6">
+          <h2 className="text-xl sm:text-2xl md:text-3xl font-bold text-primary-foreground">
             🏆 {raffleData.prize}
           </h2>
         </div>
 
-        <div className="bg-black/30 backdrop-blur-sm rounded-lg p-4 mb-6">
-          <div className="grid grid-cols-2 gap-4 text-primary-foreground mb-4">
-            <div>
-              <p className="text-sm opacity-80">Precio por ticket</p>
-              <p className="text-2xl font-bold">${raffleData.ticketPrice}</p>
+        <div className="bg-black/30 backdrop-blur-sm rounded-lg p-3 sm:p-4 mb-6">
+          <div className="grid grid-cols-2 gap-2 sm:gap-4 text-primary-foreground mb-4">
+            <div className="text-center sm:text-left">
+              <p className="text-xs sm:text-sm opacity-80">Precio por ticket</p>
+              <p className="text-lg sm:text-2xl font-bold">
+                ${raffleData.ticketPrice}
+              </p>
             </div>
-            <div>
-              <p className="text-sm opacity-80">Tickets disponibles</p>
-              <p className="text-2xl font-bold text-accent">
+            <div className="text-center sm:text-left">
+              <p className="text-xs sm:text-sm opacity-80">
+                Tickets disponibles
+              </p>
+              <p className="text-lg sm:text-2xl font-bold text-accent">
                 {availableTickets}
               </p>
             </div>
@@ -68,11 +76,17 @@ export function HeroSection({ raffleData, topCustomer, onVerifyTickets }: HeroSe
 
           {/* Top Customer Info */}
           {topCustomer && (
-            <div className="border-t border-white/20 pt-4 mb-4">
+            <div className="border-t border-white/20 pt-3 sm:pt-4 mb-3 sm:mb-4">
               <div className="text-center">
-                <p className="text-sm opacity-80 text-primary-foreground">🏅 Mayor comprador</p>
-                <p className="text-lg font-bold text-accent">{topCustomer.customer.name}</p>
-                <p className="text-sm text-primary-foreground/80">{topCustomer.totalTickets} tickets</p>
+                <p className="text-xs sm:text-sm opacity-80 text-primary-foreground">
+                  🏅 Mayor comprador
+                </p>
+                <p className="text-base sm:text-lg font-bold text-accent">
+                  {topCustomer.customer.name}
+                </p>
+                <p className="text-xs sm:text-sm text-primary-foreground/80">
+                  {topCustomer.totalTickets} tickets
+                </p>
               </div>
             </div>
           )}
@@ -92,12 +106,12 @@ export function HeroSection({ raffleData, topCustomer, onVerifyTickets }: HeroSe
           </div>
         </div>
 
-        <p className="text-lg text-primary-foreground/90 mb-6 font-medium">
+        <p className="text-base sm:text-lg text-primary-foreground/90 mb-4 sm:mb-6 font-medium px-2 sm:px-0">
           {raffleData.description}
         </p>
 
         <div className="text-primary-foreground/80">
-          <p className="text-sm">
+          <p className="text-sm sm:text-base">
             Sorteo:{" "}
             {new Date(raffleData.endDate).toLocaleDateString("es-ES", {
               day: "numeric",

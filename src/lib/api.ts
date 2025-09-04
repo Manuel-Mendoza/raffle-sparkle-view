@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const API_BASE_URL = "http://localhost:3000";
+const API_BASE_URL = "http://localhost:3000/api";
 
 export const api = axios.create({
   baseURL: API_BASE_URL,
@@ -15,6 +15,12 @@ api.interceptors.request.use((config) => {
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
   }
+
+  // Si es FormData, remover Content-Type para que axios lo configure automáticamente
+  if (config.data instanceof FormData) {
+    delete config.headers["Content-Type"];
+  }
+
   return config;
 });
 
@@ -22,6 +28,7 @@ api.interceptors.request.use((config) => {
 api.interceptors.response.use(
   (response) => response,
   (error) => {
+    console.error("API Error:", error.response?.data || error.message);
     if (error.response?.status === 401) {
       localStorage.removeItem("token");
       window.location.href = "/login";

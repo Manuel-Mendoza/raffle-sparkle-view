@@ -34,13 +34,15 @@ export const convertApiRaffleToLocal = (apiRaffle: ApiRaffle): Raffle => {
     totalTickets: apiRaffle.totalTickets,
     soldTickets: apiRaffle.soldTickets,
     status: apiRaffle.isActive ? "active" : "finished",
-    startDate: "", // API doesn't provide startDate, so we'll use empty string
+    startDate: apiRaffle.createdAt,
     endDate: apiRaffle.endDate,
     image: "", // API doesn't provide image, so we'll use empty string
   };
 };
 
-export const convertLocalRaffleToCreateRequest = (raffle: Omit<Raffle, "id" | "soldTickets" | "status">): CreateRaffleRequest => {
+export const convertLocalRaffleToCreateRequest = (
+  raffle: Omit<Raffle, "id" | "soldTickets" | "status">
+): CreateRaffleRequest => {
   return {
     title: raffle.title,
     description: raffle.description,
@@ -51,44 +53,45 @@ export const convertLocalRaffleToCreateRequest = (raffle: Omit<Raffle, "id" | "s
   };
 };
 
-export const convertLocalRaffleToUpdateRequest = (raffle: Partial<Raffle>): UpdateRaffleRequest => {
+export const convertLocalRaffleToUpdateRequest = (
+  raffle: Partial<Raffle>
+): UpdateRaffleRequest => {
   const updateData: UpdateRaffleRequest = {};
-  
+
   if (raffle.title !== undefined) updateData.title = raffle.title;
-  if (raffle.description !== undefined) updateData.description = raffle.description;
+  if (raffle.description !== undefined)
+    updateData.description = raffle.description;
   if (raffle.prize !== undefined) updateData.prize = raffle.prize;
-  if (raffle.ticketPrice !== undefined) updateData.ticketPrice = raffle.ticketPrice;
-  if (raffle.totalTickets !== undefined) updateData.totalTickets = raffle.totalTickets;
+  if (raffle.ticketPrice !== undefined)
+    updateData.ticketPrice = raffle.ticketPrice;
+  if (raffle.totalTickets !== undefined)
+    updateData.totalTickets = raffle.totalTickets;
   if (raffle.endDate !== undefined) updateData.endDate = raffle.endDate;
-  if (raffle.status !== undefined) updateData.isActive = raffle.status === "active";
-  
+  if (raffle.status !== undefined)
+    updateData.isActive = raffle.status === "active";
+
   return updateData;
 };
 
 export const raffleService = {
-  async getAllRaffles(): Promise<Raffle[]> {
-    const response = await api.get<ApiRaffle[]>("/api/raffle/");
-    return response.data.map(convertApiRaffleToLocal);
-  },
-
-  async getRaffleById(id: string): Promise<Raffle> {
-    const response = await api.get<ApiRaffle>(`/api/raffle/${id}`);
+  async getCurrentRaffle(): Promise<Raffle> {
+    const response = await api.get<ApiRaffle>("/raffle/current");
     return convertApiRaffleToLocal(response.data);
   },
 
-  async createRaffle(data: Omit<Raffle, "id" | "soldTickets" | "status">): Promise<Raffle> {
+  async getAllRaffles(): Promise<Raffle[]> {
+    const response = await api.get<{ raffles: ApiRaffle[] }>("/raffle/all");
+    return response.data.raffles.map(convertApiRaffleToLocal);
+  },
+
+  async createRaffle(
+    data: Omit<Raffle, "id" | "soldTickets" | "status">
+  ): Promise<Raffle> {
     const createRequest = convertLocalRaffleToCreateRequest(data);
-    const response = await api.post<CreateRaffleResponse>("/api/raffle/", createRequest);
+    const response = await api.post<CreateRaffleResponse>(
+      "/raffle/create",
+      createRequest
+    );
     return convertApiRaffleToLocal(response.data.raffle);
-  },
-
-  async updateRaffle(id: string, data: Partial<Raffle>): Promise<Raffle> {
-    const updateRequest = convertLocalRaffleToUpdateRequest(data);
-    const response = await api.put<UpdateRaffleResponse>(`/api/raffle/${id}`, updateRequest);
-    return convertApiRaffleToLocal(response.data.raffle);
-  },
-
-  async deleteRaffle(id: string): Promise<void> {
-    await api.delete<DeleteRaffleResponse>(`/api/raffle/${id}`);
   },
 };

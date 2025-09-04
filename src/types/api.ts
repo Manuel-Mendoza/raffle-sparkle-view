@@ -1,6 +1,13 @@
+// Auth Types
 export interface LoginRequest {
   username: string;
   password: string;
+}
+
+export interface RegisterRequest {
+  username: string;
+  password: string;
+  email: string;
 }
 
 export interface AuthResponse {
@@ -9,16 +16,7 @@ export interface AuthResponse {
   admin: {
     id: string;
     username: string;
-  };
-}
-
-export interface ApiError {
-  error: string;
-}
-
-export interface AxiosErrorResponse {
-  response?: {
-    data?: ApiError;
+    email: string;
   };
 }
 
@@ -31,8 +29,10 @@ export interface ApiRaffle {
   ticketPrice: number;
   totalTickets: number;
   soldTickets: number;
+  availableTickets: number;
   endDate: string;
   isActive: boolean;
+  createdAt: string;
 }
 
 export interface CreateRaffleRequest {
@@ -44,26 +44,47 @@ export interface CreateRaffleRequest {
   endDate: string;
 }
 
-export interface UpdateRaffleRequest {
-  title?: string;
-  description?: string;
-  prize?: string;
-  ticketPrice?: number;
-  totalTickets?: number;
-  endDate?: string;
-  isActive?: boolean;
-}
-
 export interface CreateRaffleResponse {
   message: string;
   raffle: ApiRaffle;
 }
 
-export interface UpdateRaffleResponse {
-  message: string;
-  raffle: ApiRaffle;
+// Customer Types
+export interface BuyTicketRequest {
+  name: string;
+  phone: string;
+  paymentMethod: string;
+  paymentProof: string;
+  raffleId: string;
+  quantity: number;
 }
 
-export interface DeleteRaffleResponse {
+export interface Ticket {
+  id: string;
+  ticketNumber: string;
+  status: "pending" | "confirmed" | "rejected";
+}
+
+export interface BuyTicketResponse {
   message: string;
+  tickets: Ticket[];
+  raffle: string;
+  customer: string;
+  total: number;
+}
+
+export interface UploadProofResponse {
+  message: string;
+  url: string;
+}
+
+// Error Types
+export interface ApiError {
+  error: string;
+}
+
+export interface AxiosErrorResponse {
+  response?: {
+    data?: ApiError;
+  };
 }

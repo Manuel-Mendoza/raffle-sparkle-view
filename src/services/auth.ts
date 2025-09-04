@@ -1,9 +1,14 @@
 import { api } from "@/lib/api";
-import { LoginRequest, AuthResponse } from "@/types/api";
+import { LoginRequest, AuthResponse, RegisterRequest } from "@/types/api";
 
 export const authService = {
+  async register(data: RegisterRequest): Promise<AuthResponse> {
+    const response = await api.post<AuthResponse>("/admin/register", data);
+    return response.data;
+  },
+
   async login(data: LoginRequest): Promise<AuthResponse> {
-    const response = await api.post<AuthResponse>("/api/admin/login", data);
+    const response = await api.post<AuthResponse>("/admin/login", data);
     const { token } = response.data;
 
     // Guardar token en localStorage

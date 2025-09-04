@@ -24,6 +24,17 @@ const Login = () => {
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    if (username.length < 3) {
+      toast.error("El usuario debe tener al menos 3 caracteres");
+      return;
+    }
+
+    if (password.length < 6) {
+      toast.error("La contraseña debe tener al menos 6 caracteres");
+      return;
+    }
+
     setIsLoading(true);
 
     try {

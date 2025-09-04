@@ -1,31 +1,93 @@
+import { useEffect, useState } from "react";
 import { HeroSection } from "@/components/ui/hero-section";
 import { RaffleCard } from "@/components/ui/raffle-card";
 import { PurchaseSteps } from "@/components/ui/purchase-steps";
 import { Button } from "@/components/ui/button";
-import { MessageCircle, Settings } from "lucide-react";
+import { MessageCircle, Loader2 } from "lucide-react";
 import { Link } from "react-router-dom";
 import Logo from "@/assets/favico.png";
+import { raffleService, type Raffle } from "@/services/raffle";
+import { toast } from "sonner";
 
 const Index = () => {
-  const raffleData = {
-    title: "Rifa Especial Mantequilla 1000",
-    totalTickets: 1000,
-    soldTickets: 0,
-    price: 2.25,
+  const [currentRaffle, setCurrentRaffle] = useState<Raffle | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchCurrentRaffle = async () => {
+      try {
+        const raffle = await raffleService.getCurrentRaffle();
+        setCurrentRaffle(raffle);
+      } catch (error) {
+        console.error("Error fetching current raffle:", error);
+        toast.error("Error al cargar la rifa actual");
+        
+        // Fallback data if API fails
+        setCurrentRaffle({
+          id: "fallback-id",
+          title: "Rifa Especial Mantequilla 1000",
+          description: "Gana una increíble moto deportiva",
+          prize: "Moto Deportiva 🏍️",
+          ticketPrice: 2.25,
+          totalTickets: 1000,
+          soldTickets: 0,
+          status: "active",
+          startDate: new Date().toISOString(),
+          endDate: "2024-12-30",
+          image: "",
+        });
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchCurrentRaffle();
+  }, []);
+
+  const handleWhatsAppContact = () => {
+    window.open("https://wa.me/593978907442", "_blank");
+  };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="text-center">
+          <Loader2 className="w-8 h-8 animate-spin mx-auto mb-4 text-primary" />
+          <p className="text-accent">Cargando rifa...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (!currentRaffle) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="text-center">
+          <p className="text-accent">No hay rifas disponibles en este momento</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Convert raffle data for RaffleCard component
+  const raffleCardData = {
+    title: currentRaffle.title,
+    totalTickets: currentRaffle.totalTickets,
+    soldTickets: currentRaffle.soldTickets,
+    price: currentRaffle.ticketPrice,
     prizes: [
-      { position: "🏆 Gran Premio", prize: "Moto Deportiva 🏍️", icon: "🏍️" },
+      { position: "🏆 Gran Premio", prize: currentRaffle.prize, icon: "🏍️" },
     ],
-    date: "30 de Diciembre",
+    date: new Date(currentRaffle.endDate).toLocaleDateString('es-ES', {
+      day: 'numeric',
+      month: 'long'
+    }),
     time: "8:00 PM",
     features: [
       "Sorteo transparente en vivo",
       "Premio único garantizado",
       "Transmisión en directo",
     ],
-  };
-
-  const handleWhatsAppContact = () => {
-    window.open("https://wa.me/593978907442", "_blank");
   };
 
   return (
@@ -65,12 +127,12 @@ const Index = () => {
         <div className="grid lg:grid-cols-3 gap-8">
           {/* Left Column - Raffle Info */}
           <div className="lg:col-span-1">
-            <RaffleCard {...raffleData} />
+            <RaffleCard {...raffleCardData} />
           </div>
 
           {/* Right Column - Purchase Steps */}
           <div className="lg:col-span-2">
-            <PurchaseSteps raffleData={raffleData} />
+            <PurchaseSteps raffleData={currentRaffle} />
           </div>
         </div>
       </div>

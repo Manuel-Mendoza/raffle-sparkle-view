@@ -25,20 +25,33 @@ const countryCodes = [
   { code: "+591", country: "BO" },
 ];
 
+const paymentMethods = [
+  { id: "Transferencia Bancaria", name: "Transferencia Bancaria", icon: "🏦" },
+  { id: "Zelle", name: "Zelle", icon: "💳" },
+  { id: "Binance Pay", name: "Binance Pay", icon: "₿" },
+];
+
 interface UserFormProps {
   onSubmit?: (data: Record<string, unknown>) => void;
+  onPaymentMethodChange?: (method: string) => void;
 }
 
-export function UserForm({ onSubmit }: UserFormProps) {
+export function UserForm({ onSubmit, onPaymentMethodChange }: UserFormProps) {
   const [formData, setFormData] = useState({
     fullName: "",
     phone: "",
     countryCode: "+58",
+    paymentMethod: "Transferencia Bancaria",
   });
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     onSubmit?.(formData);
+  };
+
+  const handlePaymentMethodChange = (method: string) => {
+    setFormData({ ...formData, paymentMethod: method });
+    onPaymentMethodChange?.(method);
   };
 
   return (
@@ -107,30 +120,26 @@ export function UserForm({ onSubmit }: UserFormProps) {
           <div className="space-y-4 pt-4 border-t border-accent/10">
             <h3 className="flex items-center font-semibold text-secondary">
               <CreditCard className="w-4 h-4 mr-2 text-primary" />
-              Modos de Pago
+              Método de Pago *
             </h3>
 
             <div className="space-y-3">
-              <div className="flex items-center justify-between p-3 border border-accent/20 rounded-lg hover:border-primary/30 transition-colors cursor-pointer">
-                <span className="text-accent">Transferencia Bancaria</span>
-                <div className="w-8 h-8 bg-primary/10 rounded flex items-center justify-center">
-                  🏦
+              {paymentMethods.map((method) => (
+                <div
+                  key={method.id}
+                  onClick={() => handlePaymentMethodChange(method.id)}
+                  className={`flex items-center justify-between p-3 border rounded-lg cursor-pointer transition-colors ${
+                    formData.paymentMethod === method.id
+                      ? "border-primary bg-primary/10"
+                      : "border-accent/20 hover:border-primary/30"
+                  }`}
+                >
+                  <span className="text-accent">{method.name}</span>
+                  <div className="w-8 h-8 bg-primary/10 rounded flex items-center justify-center">
+                    {method.icon}
+                  </div>
                 </div>
-              </div>
-
-              <div className="flex items-center justify-between p-3 border border-accent/20 rounded-lg hover:border-primary/30 transition-colors cursor-pointer">
-                <span className="text-accent">Zelle</span>
-                <div className="w-8 h-8 bg-primary/10 rounded flex items-center justify-center">
-                  💳
-                </div>
-              </div>
-
-              <div className="flex items-center justify-between p-3 border border-accent/20 rounded-lg hover:border-primary/30 transition-colors cursor-pointer">
-                <span className="text-accent">Binance Pay</span>
-                <div className="w-8 h-8 bg-primary/10 rounded flex items-center justify-center">
-                  ₿
-                </div>
-              </div>
+              ))}
             </div>
           </div>
 
@@ -138,7 +147,7 @@ export function UserForm({ onSubmit }: UserFormProps) {
             type="submit"
             className="w-full bg-gradient-to-r from-primary to-primary/80 hover:shadow-glow transition-all duration-300 text-lg py-6"
           >
-            Confirmar Compra
+            Continuar con el Pago
           </Button>
         </form>
       </CardContent>

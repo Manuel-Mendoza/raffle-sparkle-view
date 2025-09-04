@@ -8,6 +8,7 @@ import { TicketNumbersModal } from "@/components/ui/ticket-numbers-modal";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import type { Raffle } from "@/services/raffle";
 import { CheckCircle, ArrowRight, ArrowLeft, Loader2 } from "lucide-react";
 import { customerService } from "@/services/customer";
 import { toast } from "sonner";
@@ -21,12 +22,7 @@ const steps = [
 ];
 
 interface PurchaseStepsProps {
-  raffleData: {
-    id: string;
-    title: string;
-    ticketPrice: number;
-    [key: string]: unknown;
-  };
+  raffleData: Raffle;
 }
 
 export function PurchaseSteps({ raffleData }: PurchaseStepsProps) {

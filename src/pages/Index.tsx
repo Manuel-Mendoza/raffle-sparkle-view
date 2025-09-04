@@ -152,15 +152,6 @@ const Index = () => {
       {/* Footer */}
       <footer className="bg-secondary/10 py-6 sm:py-8 mt-12">
         <div className="container mx-auto px-4 text-center">
-          <p className="text-accent text-sm sm:text-base mb-4">
-            ¿Necesitas ayuda?
-            <Button
-              className="text-primary hover:text-primary/80 p-0 ml-2 text-sm sm:text-base"
-              onClick={handleWhatsAppContact}
-            >
-              Chatea con nosotros
-            </Button>
-          </p>
           <div className="mt-4">
             <Link to="/login">
               <Button

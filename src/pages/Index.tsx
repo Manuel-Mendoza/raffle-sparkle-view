@@ -119,7 +119,7 @@ const Index = () => {
 
       {/* Hero Section */}
       <section className="container mx-auto px-4 py-8">
-        <HeroSection />
+        <HeroSection raffleData={currentRaffle} />
       </section>
 
       {/* Main Content */}

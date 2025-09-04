@@ -1,11 +1,27 @@
 import { Badge } from "@/components/ui/badge";
 import heroImage from "@/assets/hero-motorcycle.jpg";
+import type { Raffle } from "@/services/raffle";
 
 interface HeroSectionProps {
+  raffleData?: Raffle | null;
   onVerifyTickets?: () => void;
 }
 
-export function HeroSection({ onVerifyTickets }: HeroSectionProps) {
+export function HeroSection({ raffleData, onVerifyTickets }: HeroSectionProps) {
+  if (!raffleData) {
+    return (
+      <div className="relative min-h-[600px] flex items-center justify-center overflow-hidden rounded-xl">
+        <div className="absolute inset-0 bg-gradient-to-r from-secondary/90 to-secondary/70" />
+        <div className="relative z-10 text-center text-primary-foreground">
+          <p className="text-xl">Cargando información de la rifa...</p>
+        </div>
+      </div>
+    );
+  }
+
+  const availableTickets = raffleData.totalTickets - raffleData.soldTickets;
+  const progressPercentage = (raffleData.soldTickets / raffleData.totalTickets) * 100;
+
   return (
     <div className="relative min-h-[600px] flex items-center justify-center overflow-hidden rounded-xl">
       {/* Background Image */}
@@ -20,25 +36,57 @@ export function HeroSection({ onVerifyTickets }: HeroSectionProps) {
       {/* Content */}
       <div className="relative z-10 max-w-2xl mx-auto text-center px-6 py-12">
         <Badge className="mb-4 bg-accent/20 text-primary border-primary/30 backdrop-blur-sm hover:bg-accent">
-          ¡RIFA ESPECIAL!
+          {raffleData.status === 'active' ? '¡RIFA ACTIVA!' : '¡RIFA ESPECIAL!'}
         </Badge>
 
-        <h1 className="text-5xl md:text-6xl font-bold text-primary-foreground mb-6 leading-tight">
-          AQUÍ VA TU
-          <span className="block text-accent font-extrabold text-6xl md:text-7xl">
-            IMAGEN
-          </span>
+        <h1 className="text-4xl md:text-5xl font-bold text-primary-foreground mb-4 leading-tight">
+          {raffleData.title}
         </h1>
 
-        <div className="inline-block bg-gradient-to-r from-primary to-primary/80 px-8 py-4 rounded-lg shadow-glow mb-8">
-          <h2 className="text-3xl md:text-4xl font-bold text-primary-foreground">
-            PRECIO
+        <div className="inline-block bg-gradient-to-r from-primary to-primary/80 px-6 py-3 rounded-lg shadow-glow mb-6">
+          <h2 className="text-2xl md:text-3xl font-bold text-primary-foreground">
+            🏆 {raffleData.prize}
           </h2>
         </div>
 
-        <p className="text-xl text-primary-foreground/90 mb-8 font-medium">
-          ¡Participa en nuestra rifa especial y gana una moto deportiva!
+        <div className="bg-black/30 backdrop-blur-sm rounded-lg p-4 mb-6">
+          <div className="grid grid-cols-2 gap-4 text-primary-foreground">
+            <div>
+              <p className="text-sm opacity-80">Precio por ticket</p>
+              <p className="text-2xl font-bold">${raffleData.ticketPrice}</p>
+            </div>
+            <div>
+              <p className="text-sm opacity-80">Tickets disponibles</p>
+              <p className="text-2xl font-bold text-accent">{availableTickets}</p>
+            </div>
+          </div>
+          
+          {/* Progress bar */}
+          <div className="mt-4">
+            <div className="flex justify-between text-sm text-primary-foreground/80 mb-1">
+              <span>Vendidos: {raffleData.soldTickets}</span>
+              <span>Total: {raffleData.totalTickets}</span>
+            </div>
+            <div className="w-full bg-white/20 rounded-full h-2">
+              <div 
+                className="bg-gradient-to-r from-accent to-primary h-2 rounded-full transition-all duration-300"
+                style={{ width: `${progressPercentage}%` }}
+              />
+            </div>
+          </div>
+        </div>
+
+        <p className="text-lg text-primary-foreground/90 mb-6 font-medium">
+          {raffleData.description}
         </p>
+
+        <div className="text-primary-foreground/80">
+          <p className="text-sm">Sorteo: {new Date(raffleData.endDate).toLocaleDateString('es-ES', {
+            day: 'numeric',
+            month: 'long',
+            year: 'numeric'
+          })}</p>
+        </div>
       </div>
 
       {/* Decorative Elements */}

@@ -112,9 +112,6 @@ const Index = () => {
               <div className="w-12 h-12 bg-primary rounded-full flex items-center justify-center">
                 <img src={Logo} alt="Logo" className="w-12 h-12" />
               </div>
-              <span className="text-2xl font-bold text-primary-foreground">
-                Rifas.queMantequilla
-              </span>
             </div>
             <div className="flex items-center space-x-3">
               <Button

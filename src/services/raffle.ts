@@ -36,7 +36,7 @@ export const convertApiRaffleToLocal = (apiRaffle: ApiRaffle): Raffle => {
     status: apiRaffle.isActive ? "active" : "finished",
     startDate: apiRaffle.createdAt,
     endDate: apiRaffle.endDate,
-    image: "", // API doesn't provide image, so we'll use empty string
+    image: apiRaffle.image || "", // Use image from API or empty string as fallback
   };
 };
 
@@ -94,5 +94,9 @@ export const raffleService = {
       createRequest
     );
     return convertApiRaffleToLocal(response.data.raffle);
+  },
+
+  async finishRaffle(): Promise<void> {
+    await api.put("/raffle/finish");
   },
 };

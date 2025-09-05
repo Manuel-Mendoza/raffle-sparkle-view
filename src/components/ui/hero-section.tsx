@@ -29,12 +29,19 @@ export function HeroSection({
   const progressPercentage =
     (raffleData.soldTickets / raffleData.totalTickets) * 100;
 
+  // Use raffle image if available, otherwise use default hero image
+  const backgroundImage = raffleData.image || heroImage;
+  
+  // Debug: Log the image being used
+  console.log('Raffle image from API:', raffleData.image);
+  console.log('Background image being used:', backgroundImage);
+
   return (
     <div className="relative min-h-[600px] flex items-center justify-center overflow-hidden rounded-xl">
       {/* Background Image */}
       <div
         className="absolute inset-0 bg-cover bg-center bg-no-repeat"
-        style={{ backgroundImage: `url(${heroImage})` }}
+        style={{ backgroundImage: `url(${backgroundImage})` }}
       />
 
       {/* Overlay */}

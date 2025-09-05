@@ -86,6 +86,36 @@ export interface Ticket {
   status: "pending" | "confirmed" | "rejected";
 }
 
+// Ticket Request Management Types
+export interface TicketRequest {
+  id: string;
+  ticketNumber: string;
+  status: "pending" | "confirmed" | "rejected";
+  customerName: string;
+  customerPhone: string;
+  paymentMethod: string;
+  paymentProof: string;
+  raffleId: string;
+  quantity: number;
+  total: number;
+  createdAt: string;
+}
+
+export interface GetTicketRequestsResponse {
+  requests: TicketRequest[];
+  totalPending: number;
+}
+
+export interface UpdateTicketStatusRequest {
+  ticketId: string;
+  status: "confirmed" | "rejected";
+}
+
+export interface UpdateTicketStatusResponse {
+  message: string;
+  ticket: TicketRequest;
+}
+
 export interface BuyTicketResponse {
   message: string;
   tickets: Ticket[];

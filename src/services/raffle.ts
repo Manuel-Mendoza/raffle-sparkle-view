@@ -44,6 +44,7 @@ export const convertLocalRaffleToCreateRequest = (
   raffle: Omit<Raffle, "id" | "soldTickets" | "status">
 ): CreateRaffleRequest => {
   return {
+    name: raffle.title, // Backend expects 'name' field
     title: raffle.title,
     description: raffle.description,
     prize: raffle.prize,

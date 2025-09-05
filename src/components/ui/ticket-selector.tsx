@@ -2,7 +2,8 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Minus, Plus, ShoppingCart } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { Minus, Plus, ShoppingCart, Edit3 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface TicketSelectorProps {
@@ -19,6 +20,8 @@ export function TicketSelector({
   onTicketChange,
 }: TicketSelectorProps) {
   const [tickets, setTickets] = useState(minTickets);
+  const [isCustomMode, setIsCustomMode] = useState(false);
+  const [customValue, setCustomValue] = useState("");
   const total = tickets * pricePerTicket;
 
   const quickSelections = [2, 5, 10, 20, 30, 50];
@@ -26,7 +29,23 @@ export function TicketSelector({
   const updateTickets = (newTickets: number) => {
     const validTickets = Math.max(minTickets, newTickets);
     setTickets(validTickets);
+    setIsCustomMode(false);
+    setCustomValue("");
     onTicketChange?.(validTickets, validTickets * pricePerTicket);
+  };
+
+  const handleCustomInput = (value: string) => {
+    setCustomValue(value);
+    const numValue = parseInt(value);
+    if (!isNaN(numValue) && numValue >= minTickets) {
+      setTickets(numValue);
+      onTicketChange?.(numValue, numValue * pricePerTicket);
+    }
+  };
+
+  const enableCustomMode = () => {
+    setIsCustomMode(true);
+    setCustomValue(tickets.toString());
   };
 
   return (
@@ -59,7 +78,7 @@ export function TicketSelector({
                 onClick={() => updateTickets(quantity)}
                 className={cn(
                   "transition-all duration-200 hover:shadow-glow",
-                  tickets === quantity
+                  tickets === quantity && !isCustomMode
                     ? "bg-primary text-primary-foreground border-primary"
                     : "border-accent/30 hover:border-primary/50"
                 )}
@@ -67,34 +86,64 @@ export function TicketSelector({
                 +{quantity}
               </Button>
             ))}
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={enableCustomMode}
+              className={cn(
+                "transition-all duration-200 hover:shadow-glow col-span-3",
+                isCustomMode
+                  ? "bg-primary text-primary-foreground border-primary"
+                  : "border-accent/30 hover:border-primary/50"
+              )}
+            >
+              <Edit3 className="w-3 h-3 mr-1" />
+              Personalizado
+            </Button>
           </div>
         </div>
 
-        {/* Manual Selector */}
+        {/* Manual Selector or Custom Input */}
         <div className="flex items-center justify-center space-x-4 p-4 bg-accent/5 rounded-lg">
-          <Button
-            variant="outline"
-            size="icon"
-            onClick={() => updateTickets(tickets - 1)}
-            disabled={tickets <= minTickets}
-            className="h-12 w-12 rounded-full border-primary/30 hover:bg-primary hover:text-primary-foreground transition-all duration-200"
-          >
-            <Minus className="w-4 h-4" />
-          </Button>
+          {isCustomMode ? (
+            <div className="flex items-center space-x-2 w-full max-w-xs">
+              <Input
+                type="number"
+                min={minTickets}
+                value={customValue}
+                onChange={(e) => handleCustomInput(e.target.value)}
+                placeholder={`Mín. ${minTickets}`}
+                className="text-center text-lg font-bold border-primary/30 focus:border-primary"
+              />
+              <span className="text-sm text-muted-foreground">tickets</span>
+            </div>
+          ) : (
+            <>
+              <Button
+                variant="outline"
+                size="icon"
+                onClick={() => updateTickets(tickets - 1)}
+                disabled={tickets <= minTickets}
+                className="h-12 w-12 rounded-full border-primary/30 hover:bg-primary hover:text-primary-foreground transition-all duration-200"
+              >
+                <Minus className="w-4 h-4" />
+              </Button>
 
-          <div className="text-center min-w-[80px]">
-            <div className="text-3xl font-bold text-primary">{tickets}</div>
-            <div className="text-xs text-muted-foreground">tickets</div>
-          </div>
+              <div className="text-center min-w-[80px]">
+                <div className="text-3xl font-bold text-primary">{tickets}</div>
+                <div className="text-xs text-muted-foreground">tickets</div>
+              </div>
 
-          <Button
-            variant="outline"
-            size="icon"
-            onClick={() => updateTickets(tickets + 1)}
-            className="h-12 w-12 rounded-full border-primary/30 hover:bg-primary hover:text-primary-foreground transition-all duration-200"
-          >
-            <Plus className="w-4 h-4" />
-          </Button>
+              <Button
+                variant="outline"
+                size="icon"
+                onClick={() => updateTickets(tickets + 1)}
+                className="h-12 w-12 rounded-full border-primary/30 hover:bg-primary hover:text-primary-foreground transition-all duration-200"
+              >
+                <Plus className="w-4 h-4" />
+              </Button>
+            </>
+          )}
         </div>
 
         {/* Total Display */}

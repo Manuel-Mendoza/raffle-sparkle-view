@@ -21,7 +21,7 @@ export function PaymentProofModal({
 }: PaymentProofModalProps) {
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-2xl">
+      <DialogContent className="max-w-4xl max-h-[90vh] overflow-auto">
         <DialogHeader>
           <DialogTitle>
             Comprobante de Pago - {customerName}
@@ -33,7 +33,8 @@ export function PaymentProofModal({
             <img
               src={imageUrl}
               alt="Comprobante de pago"
-              className="max-w-full max-h-96 object-contain rounded border"
+              className="max-w-full max-h-[80vh] object-contain rounded border"
+              style={{ imageRendering: 'auto' }}
             />
           </div>
           

@@ -47,7 +47,7 @@ export function TicketNumbersModal({
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-md">
+      <DialogContent className={`${tickets.length > 10 ? 'max-w-lg' : 'max-w-md'}`}>
         <DialogHeader>
           <DialogTitle className="text-center text-xl text-primary flex items-center justify-center">
             <CheckCircle className="w-6 h-6 mr-2 text-green-500" />
@@ -60,17 +60,48 @@ export function TicketNumbersModal({
             <h3 className="font-semibold text-secondary mb-2">
               Tus Números de la Suerte
             </h3>
-            <div className="flex flex-wrap gap-2 justify-center">
-              {tickets.map((ticket) => (
-                <Badge
-                  key={ticket.id}
-                  variant="secondary"
-                  className="bg-primary text-primary-foreground text-lg px-3 py-1"
-                >
-                  {ticket.ticketNumber}
-                </Badge>
-              ))}
-            </div>
+            
+            {tickets.length <= 10 ? (
+              // Mostrar todos los tickets si son 10 o menos
+              <div className="flex flex-wrap gap-2 justify-center">
+                {tickets.map((ticket) => (
+                  <Badge
+                    key={ticket.id}
+                    variant="secondary"
+                    className="bg-primary text-primary-foreground text-lg px-3 py-1"
+                  >
+                    {ticket.ticketNumber}
+                  </Badge>
+                ))}
+              </div>
+            ) : (
+              // Vista compacta para muchos tickets
+              <div className="space-y-3">
+                <div className="bg-primary/10 p-3 rounded-lg border border-primary/20">
+                  <p className="text-lg font-bold text-primary">
+                    {tickets.length} tickets comprados
+                  </p>
+                  <p className="text-sm text-accent">
+                    Números: {tickets[0].ticketNumber} - {tickets[tickets.length - 1].ticketNumber}
+                  </p>
+                </div>
+                
+                {/* Contenedor con scroll para ver todos los números */}
+                <div className="max-h-32 overflow-y-auto border border-accent/20 rounded-lg p-2 bg-muted/30">
+                  <div className="flex flex-wrap gap-1 justify-center">
+                    {tickets.map((ticket) => (
+                      <Badge
+                        key={ticket.id}
+                        variant="outline"
+                        className="text-xs px-2 py-1 border-primary/30"
+                      >
+                        {ticket.ticketNumber}
+                      </Badge>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
 
           <div className="bg-gradient-to-r from-primary/10 to-accent/10 p-4 rounded-lg border border-primary/20">

@@ -66,10 +66,10 @@ export function HeroSection({
             </div>
             <div className="text-center sm:text-left">
               <p className="text-xs sm:text-sm opacity-80">
-                Tickets disponibles
+                Disponible
               </p>
               <p className="text-lg sm:text-2xl font-bold text-accent">
-                {availableTickets}
+                {(100 - progressPercentage).toFixed(1)}%
               </p>
             </div>
           </div>
@@ -94,8 +94,8 @@ export function HeroSection({
           {/* Progress bar */}
           <div className="mt-4">
             <div className="flex justify-between text-sm text-primary-foreground/80 mb-1">
-              <span>Vendidos: {raffleData.soldTickets}</span>
-              <span>Total: {raffleData.totalTickets}</span>
+              <span>Vendido: {progressPercentage.toFixed(1)}%</span>
+              <span>Disponible: {(100 - progressPercentage).toFixed(1)}%</span>
             </div>
             <div className="w-full bg-white/20 rounded-full h-2">
               <div

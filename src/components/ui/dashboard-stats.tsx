@@ -86,16 +86,16 @@ export const DashboardStats = () => {
         <Card className="border-2 border-primary/20 bg-gradient-to-br from-secondary/5 to-secondary/10 hover:shadow-lg transition-all">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium text-secondary">
-              Tickets Vendidos
+              Vendido
             </CardTitle>
             <Ticket className="h-4 w-4 text-secondary" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold text-secondary">
-              {stats.ticketsSold}
+              {stats.soldPercentage.toFixed(1)}%
             </div>
             <p className="text-xs text-accent">
-              de {stats.totalTickets} disponibles ({stats.soldPercentage}%)
+              {stats.ticketsSold} tickets vendidos
             </p>
           </CardContent>
         </Card>
@@ -103,16 +103,16 @@ export const DashboardStats = () => {
         <Card className="border-2 border-primary/20 bg-gradient-to-br from-accent/5 to-accent/10 hover:shadow-lg transition-all">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium text-secondary">
-              Tickets Restantes
+              Disponible
             </CardTitle>
             <Trophy className="h-4 w-4 text-accent" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold text-secondary">
-              {stats.remainingTickets}
+              {(100 - stats.soldPercentage).toFixed(1)}%
             </div>
             <p className="text-xs text-accent">
-              {100 - stats.soldPercentage}% disponible
+              {stats.remainingTickets} tickets restantes
             </p>
           </CardContent>
         </Card>
@@ -163,10 +163,10 @@ export const DashboardStats = () => {
           <div className="space-y-4">
             <div className="flex items-center justify-between">
               <span className="text-sm font-medium text-secondary">
-                Vendidos: {stats.ticketsSold}
+                Vendido: {stats.soldPercentage.toFixed(1)}%
               </span>
               <span className="text-sm text-accent">
-                Restantes: {stats.remainingTickets}
+                Disponible: {(100 - stats.soldPercentage).toFixed(1)}%
               </span>
             </div>
             <div className="w-full bg-secondary/10 rounded-full h-3">

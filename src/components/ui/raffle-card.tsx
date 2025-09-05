@@ -49,7 +49,7 @@ export function RaffleCard({
         </div>
         <h2 className="text-2xl font-bold text-secondary">{title}</h2>
         <p className="text-accent font-medium">
-          {totalTickets.toLocaleString()} Boletos Disponibles
+          {(100 - progress).toFixed(1)}% Disponible
         </p>
       </CardHeader>
 
@@ -58,10 +58,10 @@ export function RaffleCard({
         <div className="space-y-2">
           <div className="flex justify-between text-sm">
             <span className="text-muted-foreground">
-              Vendidos: {soldTickets}
+              Vendido: {progress.toFixed(1)}%
             </span>
             <span className="text-accent font-medium">
-              {progress.toFixed(1)}%
+              Disponible: {(100 - progress).toFixed(1)}%
             </span>
           </div>
           <div className="w-full bg-muted rounded-full h-2">

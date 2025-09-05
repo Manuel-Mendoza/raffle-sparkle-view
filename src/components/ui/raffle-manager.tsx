@@ -24,21 +24,11 @@ import { PaymentProofModal } from "@/components/ui/payment-proof-modal";
 import { Trophy, DollarSign, Users, Plus, Trophy as TrophyIcon, Upload, Check, X, User, Phone, CreditCard, Eye } from "lucide-react";
 import { raffleService, Raffle } from "@/services/raffle";
 import { uploadImageToCloudinary } from "@/services/cloudinary";
+import { adminService, CustomerTicket } from "@/services/admin";
 import { AxiosErrorResponse } from "@/types/api";
 
-// Interface for purchase requests
-interface PurchaseRequest {
-  id: string;
-  customerName: string;
-  customerPhone: string;
-  paymentMethod: string;
-  paymentProof: string;
-  quantity: number;
-  total: number;
-  raffleTitle: string;
-  createdAt: string;
-  status: "pending" | "approved" | "rejected";
-}
+// Use CustomerTicket for both pending and approved
+type PurchaseRequest = CustomerTicket;
 
 export const RaffleManager = () => {
   const [raffles, setRaffles] = useState<Raffle[]>([]);
@@ -51,6 +41,7 @@ export const RaffleManager = () => {
   const [isUploadingImage, setIsUploadingImage] = useState(false);
   const [purchaseRequests, setPurchaseRequests] = useState<PurchaseRequest[]>([]);
   const [isProcessingRequest, setIsProcessingRequest] = useState<string | null>(null);
+  const [activeTab, setActiveTab] = useState<"pending" | "approved">("pending");
   const [paymentProofModal, setPaymentProofModal] = useState<{
     isOpen: boolean;
     imageUrl: string;
@@ -74,6 +65,10 @@ export const RaffleManager = () => {
     loadPurchaseRequests();
   }, []);
 
+  useEffect(() => {
+    loadPurchaseRequests();
+  }, [activeTab]);
+
   const loadRaffles = async () => {
     try {
       setIsLoading(true);
@@ -87,36 +82,22 @@ export const RaffleManager = () => {
     }
   };
 
-  // Mock function to load purchase requests - in real implementation this would call an API
+  // Load purchase requests from API based on active tab
   const loadPurchaseRequests = async () => {
-    // Mock data for demonstration
-    const mockRequests: PurchaseRequest[] = [
-      {
-        id: "req-1",
-        customerName: "Juan Pérez",
-        customerPhone: "1234567890",
-        paymentMethod: "Transferencia Bancaria",
-        paymentProof: "https://res.cloudinary.com/demo/image/upload/sample.jpg",
-        quantity: 3,
-        total: 150,
-        raffleTitle: "Rifa iPhone 15",
-        createdAt: new Date().toISOString(),
-        status: "pending"
-      },
-      {
-        id: "req-2",
-        customerName: "María García",
-        customerPhone: "0987654321",
-        paymentMethod: "Pago Móvil",
-        paymentProof: "https://res.cloudinary.com/demo/image/upload/sample.jpg",
-        quantity: 1,
-        total: 50,
-        raffleTitle: "Rifa iPhone 15",
-        createdAt: new Date().toISOString(),
-        status: "pending"
-      }
-    ];
-    setPurchaseRequests(mockRequests);
+    try {
+      console.log('Loading purchase requests for tab:', activeTab);
+      const customers = activeTab === "pending" 
+        ? await adminService.getPendingTickets()
+        : await adminService.getApprovedTickets();
+      
+      console.log('Received customers:', customers);
+      console.log('Number of customers:', customers.length);
+      
+      setPurchaseRequests(customers);
+    } catch (error) {
+      console.error("Error loading purchase requests:", error);
+      setPurchaseRequests([]);
+    }
   };
 
   const resetForm = () => {
@@ -254,19 +235,8 @@ export const RaffleManager = () => {
   const handleApprovePurchase = async (requestId: string) => {
     setIsProcessingRequest(requestId);
     try {
-      // In real implementation, this would call an API endpoint
-      console.log(`Aprobando solicitud de compra: ${requestId}`);
-      
-      // Simulate API call delay
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
-      // Update local state
-      setPurchaseRequests(prev => 
-        prev.map(req => 
-          req.id === requestId ? { ...req, status: "approved" as const } : req
-        )
-      );
-      
+      await adminService.approveTicket(requestId);
+      await loadPurchaseRequests(); // Reload to get updated data
       alert("¡Solicitud de compra aprobada exitosamente!");
     } catch (error) {
       console.error("Error approving purchase:", error);
@@ -280,19 +250,8 @@ export const RaffleManager = () => {
   const handleRejectPurchase = async (requestId: string) => {
     setIsProcessingRequest(requestId);
     try {
-      // In real implementation, this would call an API endpoint
-      console.log(`Rechazando solicitud de compra: ${requestId}`);
-      
-      // Simulate API call delay
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
-      // Update local state
-      setPurchaseRequests(prev => 
-        prev.map(req => 
-          req.id === requestId ? { ...req, status: "rejected" as const } : req
-        )
-      );
-      
+      await adminService.rejectTicket(requestId);
+      await loadPurchaseRequests(); // Reload to get updated data
       alert("Solicitud de compra rechazada");
     } catch (error) {
       console.error("Error rejecting purchase:", error);
@@ -300,6 +259,16 @@ export const RaffleManager = () => {
     } finally {
       setIsProcessingRequest(null);
     }
+  };
+
+  // Helper function to get request ID
+  const getRequestId = (request: PurchaseRequest): string => {
+    return request.customerId;
+  };
+
+  // Helper function to get ticket count
+  const getTicketCount = (request: PurchaseRequest): number => {
+    return request.tickets.length;
   };
 
   const openPaymentProofModal = (imageUrl: string, customerName: string) => {
@@ -600,23 +569,48 @@ export const RaffleManager = () => {
               Gestiona las solicitudes de compra de tickets de los clientes
             </p>
           </div>
-          <Badge
-            variant="outline"
-            className="bg-blue-100 text-blue-800 border-blue-200"
+        </div>
+
+        {/* Tabs */}
+        <div className="flex space-x-1 bg-muted p-1 rounded-lg">
+          <button
+            onClick={() => setActiveTab("pending")}
+            className={`flex-1 px-4 py-2 text-sm font-medium rounded-md transition-colors ${
+              activeTab === "pending"
+                ? "bg-primary text-primary-foreground"
+                : "text-muted-foreground hover:text-secondary"
+            }`}
           >
-            {purchaseRequests.filter(req => req.status === "pending").length} Pendientes
-          </Badge>
+            Pendientes
+          </button>
+          <button
+            onClick={() => setActiveTab("approved")}
+            className={`flex-1 px-4 py-2 text-sm font-medium rounded-md transition-colors ${
+              activeTab === "approved"
+                ? "bg-primary text-primary-foreground"
+                : "text-muted-foreground hover:text-secondary"
+            }`}
+          >
+            Aceptadas
+          </button>
         </div>
 
         {purchaseRequests.length === 0 ? (
           <div className="text-center py-8">
-            <p className="text-accent">No hay solicitudes de compra en este momento</p>
+            <p className="text-accent">
+              No hay solicitudes {activeTab === "pending" ? "pendientes" : "aceptadas"} en este momento
+            </p>
           </div>
         ) : (
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-            {purchaseRequests.map((request) => (
+            {purchaseRequests.map((request) => {
+              const requestId = getRequestId(request);
+              const ticketCount = getTicketCount(request);
+              const total = ticketCount * 50; // Calculate total based on ticket count
+              
+              return (
               <Card
-                key={request.id}
+                key={requestId}
                 className="border-2 border-primary/20 hover:shadow-lg transition-all"
               >
                 <CardHeader>
@@ -624,7 +618,6 @@ export const RaffleManager = () => {
                     <CardTitle className="text-lg text-secondary">
                       {request.customerName}
                     </CardTitle>
-                    {getRequestStatusBadge(request.status)}
                   </div>
                   <CardDescription className="text-sm">
                     {request.raffleTitle}
@@ -663,7 +656,7 @@ export const RaffleManager = () => {
                       <div>
                         <p className="text-sm font-medium text-secondary">Total</p>
                         <p className="text-xs text-accent">
-                          {request.quantity} ticket(s) - ${request.total}
+                          {ticketCount} ticket(s) - ${total}
                         </p>
                       </div>
                     </div>
@@ -687,45 +680,43 @@ export const RaffleManager = () => {
                     </Button>
                   </div>
 
-                  {/* Action Buttons */}
-                  {request.status === "pending" && (
+                  {/* Action Buttons - only for pending */}
+                  {activeTab === "pending" && (
                     <div className="flex justify-end space-x-2 pt-4 border-t border-accent/10">
                       <Button
                         variant="outline"
-                        onClick={() => handleRejectPurchase(request.id)}
-                        disabled={isProcessingRequest === request.id}
+                        onClick={() => handleRejectPurchase(requestId)}
+                        disabled={isProcessingRequest === requestId}
                         className="border-red-200 text-red-600 hover:bg-red-50"
                         size="sm"
                       >
                         <X className="w-4 h-4 mr-1" />
-                        {isProcessingRequest === request.id ? "Procesando..." : "Rechazar"}
+                        {isProcessingRequest === requestId ? "Procesando..." : "Rechazar"}
                       </Button>
                       <Button
-                        onClick={() => handleApprovePurchase(request.id)}
-                        disabled={isProcessingRequest === request.id}
+                        onClick={() => handleApprovePurchase(requestId)}
+                        disabled={isProcessingRequest === requestId}
                         className="bg-green-600 hover:bg-green-700 text-white"
                         size="sm"
                       >
                         <Check className="w-4 h-4 mr-1" />
-                        {isProcessingRequest === request.id ? "Procesando..." : "Aceptar"}
+                        {isProcessingRequest === requestId ? "Procesando..." : "Aceptar"}
                       </Button>
                     </div>
                   )}
 
-                  {/* Status message for processed requests */}
-                  {request.status !== "pending" && (
+                  {/* Status message for approved requests */}
+                  {activeTab === "approved" && (
                     <div className="pt-4 border-t border-accent/10">
                       <p className="text-sm text-center text-accent">
-                        {request.status === "approved" 
-                          ? "✅ Solicitud aprobada - Tickets confirmados"
-                          : "❌ Solicitud rechazada"
-                        }
+                        ✅ Solicitud aprobada - Tickets confirmados
                       </p>
                     </div>
                   )}
                 </CardContent>
               </Card>
-            ))}
+            );
+            })}
           </div>
         )}
       </div>

@@ -42,6 +42,27 @@ export interface CreateRaffleRequest {
   ticketPrice: number;
   totalTickets: number;
   endDate: string;
+  image?: string;
+}
+
+export interface UpdateRaffleRequest {
+  title?: string;
+  description?: string;
+  prize?: string;
+  ticketPrice?: number;
+  totalTickets?: number;
+  endDate?: string;
+  isActive?: boolean;
+  image?: string;
+}
+
+export interface UpdateRaffleResponse {
+  message: string;
+  raffle: ApiRaffle;
+}
+
+export interface DeleteRaffleResponse {
+  message: string;
 }
 
 export interface CreateRaffleResponse {
@@ -86,5 +107,7 @@ export interface ApiError {
 export interface AxiosErrorResponse {
   response?: {
     data?: ApiError;
+    status?: number;
   };
+  message?: string;
 }

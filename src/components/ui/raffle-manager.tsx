@@ -19,7 +19,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
-import { Trophy, DollarSign, Users, Plus } from "lucide-react";
+import { Trophy, DollarSign, Users, Plus, StopCircle, Upload } from "lucide-react";
 import { raffleService, Raffle } from "@/services/raffle";
 import { AxiosErrorResponse } from "@/types/api";
 
@@ -28,12 +28,14 @@ export const RaffleManager = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [isCreating, setIsCreating] = useState(false);
+  const [isFinishing, setIsFinishing] = useState(false);
   const [formData, setFormData] = useState({
     title: "",
     description: "",
     prize: "",
     ticketPrice: 0,
     endDate: "",
+    image: "",
   });
 
   useEffect(() => {
@@ -60,6 +62,7 @@ export const RaffleManager = () => {
       prize: "",
       ticketPrice: 0,
       endDate: "",
+      image: "",
     });
   };
 
@@ -108,7 +111,11 @@ export const RaffleManager = () => {
 
     try {
       setIsCreating(true);
-      const raffleData = { ...formData, totalTickets: 10000 };
+      const raffleData = { 
+        ...formData, 
+        totalTickets: 10000,
+        startDate: new Date().toISOString()
+      };
       console.log("Enviando datos:", raffleData);
       await raffleService.createRaffle(raffleData);
       await loadRaffles();
@@ -127,11 +134,38 @@ export const RaffleManager = () => {
       } else {
         alert(
           "Error al crear la rifa: " +
-            (axiosError.response?.data?.error || axiosError.message)
+            (axiosError.response?.data?.error || axiosError.message || "Error desconocido")
         );
       }
     } finally {
       setIsCreating(false);
+    }
+  };
+
+  const handleFinishRaffle = async (raffleId: string) => {
+    if (!confirm("¿Estás seguro de que deseas finalizar esta rifa?")) {
+      return;
+    }
+
+    try {
+      setIsFinishing(true);
+      // Simular API call para finalizar rifa
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      await loadRaffles();
+      alert("¡Rifa finalizada exitosamente!");
+    } catch (error) {
+      console.error("Error finishing raffle:", error);
+      alert("Error al finalizar la rifa");
+    } finally {
+      setIsFinishing(false);
+    }
+  };
+
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const imageUrl = URL.createObjectURL(file);
+      setFormData(prev => ({ ...prev, image: imageUrl }));
     }
   };
 
@@ -232,6 +266,29 @@ export const RaffleManager = () => {
                   rows={3}
                 />
               </div>
+              <div className="col-span-1 md:col-span-2 space-y-2">
+                <Label htmlFor="image">Imagen de la Rifa</Label>
+                <div className="flex items-center space-x-2">
+                  <Input
+                    id="image"
+                    name="image"
+                    type="file"
+                    accept="image/*"
+                    onChange={handleImageChange}
+                    className="flex-1"
+                  />
+                  <Upload className="w-4 h-4 text-accent" />
+                </div>
+                {formData.image && (
+                  <div className="mt-2">
+                    <img
+                      src={formData.image}
+                      alt="Preview"
+                      className="w-20 h-20 object-cover rounded border"
+                    />
+                  </div>
+                )}
+              </div>
             </div>
             <div className="flex justify-end space-x-2">
               <Button
@@ -330,6 +387,19 @@ export const RaffleManager = () => {
                     <p className="text-xs text-accent">
                       Total recaudado: ${totalRevenue.toLocaleString()}
                     </p>
+                  </div>
+
+                  {/* Actions */}
+                  <div className="flex justify-end space-x-2 pt-4 border-t border-accent/10 mt-4">
+                    <Button
+                      onClick={() => handleFinishRaffle(raffle.id)}
+                      disabled={isFinishing || raffle.status !== "active"}
+                      variant="destructive"
+                      size="sm"
+                    >
+                      <StopCircle className="w-4 h-4 mr-1" />
+                      {isFinishing ? "Finalizando..." : "Finalizar Rifa"}
+                    </Button>
                   </div>
                 </CardContent>
               </Card>

@@ -50,6 +50,7 @@ export const convertLocalRaffleToCreateRequest = (
     ticketPrice: raffle.ticketPrice,
     totalTickets: raffle.totalTickets,
     endDate: raffle.endDate,
+    image: raffle.image,
   };
 };
 

@@ -109,6 +109,7 @@ export function TicketSelector({
             <div className="flex items-center space-x-2 w-full max-w-xs">
               <Input
                 type="number"
+                inputMode="numeric"
                 min={minTickets}
                 value={customValue}
                 onChange={(e) => handleCustomInput(e.target.value)}

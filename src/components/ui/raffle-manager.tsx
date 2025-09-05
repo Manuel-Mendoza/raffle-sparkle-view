@@ -20,7 +20,8 @@ import {
 } from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
 import { FinishRaffleModal } from "@/components/ui/finish-raffle-modal";
-import { Trophy, DollarSign, Users, Plus, Trophy as TrophyIcon, Upload, Check, X, User, Phone, CreditCard, Image as ImageIcon } from "lucide-react";
+import { PaymentProofModal } from "@/components/ui/payment-proof-modal";
+import { Trophy, DollarSign, Users, Plus, Trophy as TrophyIcon, Upload, Check, X, User, Phone, CreditCard, Eye } from "lucide-react";
 import { raffleService, Raffle } from "@/services/raffle";
 import { uploadImageToCloudinary } from "@/services/cloudinary";
 import { AxiosErrorResponse } from "@/types/api";
@@ -50,6 +51,15 @@ export const RaffleManager = () => {
   const [isUploadingImage, setIsUploadingImage] = useState(false);
   const [purchaseRequests, setPurchaseRequests] = useState<PurchaseRequest[]>([]);
   const [isProcessingRequest, setIsProcessingRequest] = useState<string | null>(null);
+  const [paymentProofModal, setPaymentProofModal] = useState<{
+    isOpen: boolean;
+    imageUrl: string;
+    customerName: string;
+  }>({
+    isOpen: false,
+    imageUrl: "",
+    customerName: "",
+  });
   const [formData, setFormData] = useState({
     title: "",
     description: "",
@@ -290,6 +300,14 @@ export const RaffleManager = () => {
     } finally {
       setIsProcessingRequest(null);
     }
+  };
+
+  const openPaymentProofModal = (imageUrl: string, customerName: string) => {
+    setPaymentProofModal({
+      isOpen: true,
+      imageUrl,
+      customerName,
+    });
   };
 
   const getStatusBadge = (status: string) => {
@@ -654,24 +672,19 @@ export const RaffleManager = () => {
                   {/* Payment Proof */}
                   <div className="space-y-2">
                     <div className="flex items-center gap-2">
-                      <ImageIcon className="w-4 h-4 text-primary" />
+                      <Eye className="w-4 h-4 text-primary" />
                       <span className="text-sm font-medium text-secondary">
                         Comprobante de Pago
                       </span>
                     </div>
-                    <div className="relative">
-                      <img
-                        src={request.paymentProof}
-                        alt="Comprobante de pago"
-                        className="w-full h-32 object-cover rounded border cursor-pointer hover:opacity-90 transition-opacity"
-                        onClick={() => window.open(request.paymentProof, '_blank')}
-                      />
-                      <div className="absolute inset-0 bg-black/0 hover:bg-black/10 rounded transition-colors flex items-center justify-center">
-                        <span className="text-white opacity-0 hover:opacity-100 transition-opacity text-sm font-medium">
-                          Click para ampliar
-                        </span>
-                      </div>
-                    </div>
+                    <Button
+                      variant="outline"
+                      onClick={() => openPaymentProofModal(request.paymentProof, request.customerName)}
+                      className="w-full"
+                    >
+                      <Eye className="w-4 h-4 mr-2" />
+                      Ver Comprobante
+                    </Button>
                   </div>
 
                   {/* Action Buttons */}
@@ -727,6 +740,14 @@ export const RaffleManager = () => {
         onConfirm={confirmFinishRaffle}
         raffleName={raffleToFinish?.title || ""}
         isLoading={isFinishing}
+      />
+
+      {/* Payment Proof Modal */}
+      <PaymentProofModal
+        isOpen={paymentProofModal.isOpen}
+        onClose={() => setPaymentProofModal({ isOpen: false, imageUrl: "", customerName: "" })}
+        imageUrl={paymentProofModal.imageUrl}
+        customerName={paymentProofModal.customerName}
       />
     </div>
   );

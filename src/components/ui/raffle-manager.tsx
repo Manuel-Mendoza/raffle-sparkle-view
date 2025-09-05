@@ -20,10 +20,24 @@ import {
 } from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
 import { FinishRaffleModal } from "@/components/ui/finish-raffle-modal";
-import { Trophy, DollarSign, Users, Plus, Trophy as TrophyIcon, Upload } from "lucide-react";
+import { Trophy, DollarSign, Users, Plus, Trophy as TrophyIcon, Upload, Check, X, User, Phone, CreditCard, Image as ImageIcon } from "lucide-react";
 import { raffleService, Raffle } from "@/services/raffle";
 import { uploadImageToCloudinary } from "@/services/cloudinary";
 import { AxiosErrorResponse } from "@/types/api";
+
+// Interface for purchase requests
+interface PurchaseRequest {
+  id: string;
+  customerName: string;
+  customerPhone: string;
+  paymentMethod: string;
+  paymentProof: string;
+  quantity: number;
+  total: number;
+  raffleTitle: string;
+  createdAt: string;
+  status: "pending" | "approved" | "rejected";
+}
 
 export const RaffleManager = () => {
   const [raffles, setRaffles] = useState<Raffle[]>([]);
@@ -34,6 +48,8 @@ export const RaffleManager = () => {
   const [finishModalOpen, setFinishModalOpen] = useState(false);
   const [raffleToFinish, setRaffleToFinish] = useState<Raffle | null>(null);
   const [isUploadingImage, setIsUploadingImage] = useState(false);
+  const [purchaseRequests, setPurchaseRequests] = useState<PurchaseRequest[]>([]);
+  const [isProcessingRequest, setIsProcessingRequest] = useState<string | null>(null);
   const [formData, setFormData] = useState({
     title: "",
     description: "",
@@ -45,6 +61,7 @@ export const RaffleManager = () => {
 
   useEffect(() => {
     loadRaffles();
+    loadPurchaseRequests();
   }, []);
 
   const loadRaffles = async () => {
@@ -58,6 +75,38 @@ export const RaffleManager = () => {
     } finally {
       setIsLoading(false);
     }
+  };
+
+  // Mock function to load purchase requests - in real implementation this would call an API
+  const loadPurchaseRequests = async () => {
+    // Mock data for demonstration
+    const mockRequests: PurchaseRequest[] = [
+      {
+        id: "req-1",
+        customerName: "Juan Pérez",
+        customerPhone: "1234567890",
+        paymentMethod: "Transferencia Bancaria",
+        paymentProof: "https://res.cloudinary.com/demo/image/upload/sample.jpg",
+        quantity: 3,
+        total: 150,
+        raffleTitle: "Rifa iPhone 15",
+        createdAt: new Date().toISOString(),
+        status: "pending"
+      },
+      {
+        id: "req-2",
+        customerName: "María García",
+        customerPhone: "0987654321",
+        paymentMethod: "Pago Móvil",
+        paymentProof: "https://res.cloudinary.com/demo/image/upload/sample.jpg",
+        quantity: 1,
+        total: 50,
+        raffleTitle: "Rifa iPhone 15",
+        createdAt: new Date().toISOString(),
+        status: "pending"
+      }
+    ];
+    setPurchaseRequests(mockRequests);
   };
 
   const resetForm = () => {
@@ -191,6 +240,58 @@ export const RaffleManager = () => {
     }
   };
 
+  // Handle purchase request approval
+  const handleApprovePurchase = async (requestId: string) => {
+    setIsProcessingRequest(requestId);
+    try {
+      // In real implementation, this would call an API endpoint
+      console.log(`Aprobando solicitud de compra: ${requestId}`);
+      
+      // Simulate API call delay
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      
+      // Update local state
+      setPurchaseRequests(prev => 
+        prev.map(req => 
+          req.id === requestId ? { ...req, status: "approved" as const } : req
+        )
+      );
+      
+      alert("¡Solicitud de compra aprobada exitosamente!");
+    } catch (error) {
+      console.error("Error approving purchase:", error);
+      alert("Error al aprobar la solicitud");
+    } finally {
+      setIsProcessingRequest(null);
+    }
+  };
+
+  // Handle purchase request rejection
+  const handleRejectPurchase = async (requestId: string) => {
+    setIsProcessingRequest(requestId);
+    try {
+      // In real implementation, this would call an API endpoint
+      console.log(`Rechazando solicitud de compra: ${requestId}`);
+      
+      // Simulate API call delay
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      
+      // Update local state
+      setPurchaseRequests(prev => 
+        prev.map(req => 
+          req.id === requestId ? { ...req, status: "rejected" as const } : req
+        )
+      );
+      
+      alert("Solicitud de compra rechazada");
+    } catch (error) {
+      console.error("Error rejecting purchase:", error);
+      alert("Error al rechazar la solicitud");
+    } finally {
+      setIsProcessingRequest(null);
+    }
+  };
+
   const getStatusBadge = (status: string) => {
     return status === "active" ? (
       <Badge
@@ -207,6 +308,40 @@ export const RaffleManager = () => {
         Inactiva
       </Badge>
     );
+  };
+
+  const getRequestStatusBadge = (status: PurchaseRequest["status"]) => {
+    switch (status) {
+      case "pending":
+        return (
+          <Badge
+            variant="outline"
+            className="bg-yellow-100 text-yellow-800 border-yellow-200"
+          >
+            Pendiente
+          </Badge>
+        );
+      case "approved":
+        return (
+          <Badge
+            variant="outline"
+            className="bg-green-100 text-green-800 border-green-200"
+          >
+            Aprobada
+          </Badge>
+        );
+      case "rejected":
+        return (
+          <Badge
+            variant="outline"
+            className="bg-red-100 text-red-800 border-red-200"
+          >
+            Rechazada
+          </Badge>
+        );
+      default:
+        return null;
+    }
   };
 
   return (
@@ -435,6 +570,152 @@ export const RaffleManager = () => {
           })}
         </div>
       )}
+
+      {/* Purchase Requests Section */}
+      <div className="space-y-4">
+        <div className="flex justify-between items-center">
+          <div>
+            <h3 className="text-xl font-bold text-secondary">
+              Solicitudes de Compra
+            </h3>
+            <p className="text-accent">
+              Gestiona las solicitudes de compra de tickets de los clientes
+            </p>
+          </div>
+          <Badge
+            variant="outline"
+            className="bg-blue-100 text-blue-800 border-blue-200"
+          >
+            {purchaseRequests.filter(req => req.status === "pending").length} Pendientes
+          </Badge>
+        </div>
+
+        {purchaseRequests.length === 0 ? (
+          <div className="text-center py-8">
+            <p className="text-accent">No hay solicitudes de compra en este momento</p>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+            {purchaseRequests.map((request) => (
+              <Card
+                key={request.id}
+                className="border-2 border-primary/20 hover:shadow-lg transition-all"
+              >
+                <CardHeader>
+                  <div className="flex items-center justify-between">
+                    <CardTitle className="text-lg text-secondary">
+                      {request.customerName}
+                    </CardTitle>
+                    {getRequestStatusBadge(request.status)}
+                  </div>
+                  <CardDescription className="text-sm">
+                    {request.raffleTitle}
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  {/* Customer Info */}
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="flex items-center gap-2">
+                      <User className="w-4 h-4 text-primary" />
+                      <div>
+                        <p className="text-sm font-medium text-secondary">Cliente</p>
+                        <p className="text-xs text-accent">{request.customerName}</p>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <Phone className="w-4 h-4 text-primary" />
+                      <div>
+                        <p className="text-sm font-medium text-secondary">Teléfono</p>
+                        <p className="text-xs text-accent">{request.customerPhone}</p>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Payment Info */}
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="flex items-center gap-2">
+                      <CreditCard className="w-4 h-4 text-primary" />
+                      <div>
+                        <p className="text-sm font-medium text-secondary">Método de Pago</p>
+                        <p className="text-xs text-accent">{request.paymentMethod}</p>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <DollarSign className="w-4 h-4 text-primary" />
+                      <div>
+                        <p className="text-sm font-medium text-secondary">Total</p>
+                        <p className="text-xs text-accent">
+                          {request.quantity} ticket(s) - ${request.total}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Payment Proof */}
+                  <div className="space-y-2">
+                    <div className="flex items-center gap-2">
+                      <ImageIcon className="w-4 h-4 text-primary" />
+                      <span className="text-sm font-medium text-secondary">
+                        Comprobante de Pago
+                      </span>
+                    </div>
+                    <div className="relative">
+                      <img
+                        src={request.paymentProof}
+                        alt="Comprobante de pago"
+                        className="w-full h-32 object-cover rounded border cursor-pointer hover:opacity-90 transition-opacity"
+                        onClick={() => window.open(request.paymentProof, '_blank')}
+                      />
+                      <div className="absolute inset-0 bg-black/0 hover:bg-black/10 rounded transition-colors flex items-center justify-center">
+                        <span className="text-white opacity-0 hover:opacity-100 transition-opacity text-sm font-medium">
+                          Click para ampliar
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Action Buttons */}
+                  {request.status === "pending" && (
+                    <div className="flex justify-end space-x-2 pt-4 border-t border-accent/10">
+                      <Button
+                        variant="outline"
+                        onClick={() => handleRejectPurchase(request.id)}
+                        disabled={isProcessingRequest === request.id}
+                        className="border-red-200 text-red-600 hover:bg-red-50"
+                        size="sm"
+                      >
+                        <X className="w-4 h-4 mr-1" />
+                        {isProcessingRequest === request.id ? "Procesando..." : "Rechazar"}
+                      </Button>
+                      <Button
+                        onClick={() => handleApprovePurchase(request.id)}
+                        disabled={isProcessingRequest === request.id}
+                        className="bg-green-600 hover:bg-green-700 text-white"
+                        size="sm"
+                      >
+                        <Check className="w-4 h-4 mr-1" />
+                        {isProcessingRequest === request.id ? "Procesando..." : "Aceptar"}
+                      </Button>
+                    </div>
+                  )}
+
+                  {/* Status message for processed requests */}
+                  {request.status !== "pending" && (
+                    <div className="pt-4 border-t border-accent/10">
+                      <p className="text-sm text-center text-accent">
+                        {request.status === "approved" 
+                          ? "✅ Solicitud aprobada - Tickets confirmados"
+                          : "❌ Solicitud rechazada"
+                        }
+                      </p>
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        )}
+      </div>
 
       {/* Finish Raffle Modal */}
       <FinishRaffleModal

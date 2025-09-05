@@ -24,7 +24,7 @@ export function StepIndicator({
         {steps.map((step, index) => (
           <div key={step.id} className="flex items-center flex-1">
             {/* Step Circle */}
-            <div className="flex flex-col items-center relative z-10 bg-background">
+            <div className="flex flex-col items-center relative z-10">
               <div
                 className={cn(
                   "w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12 rounded-full flex items-center justify-center border-2 transition-all duration-300",

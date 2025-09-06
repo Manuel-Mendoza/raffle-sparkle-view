@@ -1,4 +1,6 @@
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { ShoppingCart, Search } from "lucide-react";
 import heroImage from "@/assets/hero-motorcycle.jpg";
 import type { Raffle } from "@/services/raffle";
 import type { TopCustomerResponse } from "@/services/statistics";
@@ -7,12 +9,14 @@ interface HeroSectionProps {
   raffleData?: Raffle | null;
   topCustomer?: TopCustomerResponse | null;
   onVerifyTickets?: () => void;
+  onBuyTicket?: () => void;
 }
 
 export function HeroSection({
   raffleData,
   topCustomer,
   onVerifyTickets,
+  onBuyTicket,
 }: HeroSectionProps) {
   if (!raffleData) {
     return (
@@ -31,7 +35,7 @@ export function HeroSection({
 
   // Use raffle image if available, otherwise use default hero image
   const backgroundImage = raffleData.image || heroImage;
-  
+
   // Debug: Log the image being used
   console.log('Raffle image from API:', raffleData.image);
   console.log('Background image being used:', backgroundImage);
@@ -116,6 +120,28 @@ export function HeroSection({
         <p className="text-base sm:text-lg text-primary-foreground/90 mb-4 sm:mb-6 font-medium px-2 sm:px-0">
           {raffleData.description}
         </p>
+
+        {/* Action Buttons */}
+        <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center mb-4 sm:mb-6">
+          <Button
+            onClick={onBuyTicket}
+            size="lg"
+            className="bg-gradient-to-r from-primary to-primary/80 hover:shadow-glow transition-all duration-300 text-base sm:text-lg py-3 sm:py-4 px-6 sm:px-8"
+          >
+            <ShoppingCart className="w-5 h-5 mr-2" />
+            Comprar Ticket
+          </Button>
+
+          <Button
+            onClick={onVerifyTickets}
+            variant="outline"
+            size="lg"
+            className="border-2 border-primary-foreground/30 text-primary hover:bg-primary-foreground/10 backdrop-blur-sm transition-all duration-300 text-base sm:text-lg py-3 sm:py-4 px-6 sm:px-8"
+          >
+            <Search className="w-5 h-5 mr-2" />
+            Verificar Tickets
+          </Button>
+        </div>
 
         <div className="text-primary-foreground/80">
           <p className="text-sm sm:text-base">

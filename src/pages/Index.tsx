@@ -97,6 +97,16 @@ const Index = () => {
     ],
   };
 
+  const scrollToPurchase = () => {
+    const purchaseSection = document.getElementById('purchase-section');
+    if (purchaseSection) {
+      purchaseSection.scrollIntoView({ 
+        behavior: 'smooth',
+        block: 'start'
+      });
+    }
+  };
+
   return (
     <div className="min-h-screen bg-background">
       {/* Header */}
@@ -131,11 +141,15 @@ const Index = () => {
 
       {/* Hero Section */}
       <section className="container mx-auto px-4 py-8">
-        <HeroSection raffleData={currentRaffle} topCustomer={topCustomer} />
+        <HeroSection 
+          raffleData={currentRaffle} 
+          topCustomer={topCustomer} 
+          onBuyTicket={scrollToPurchase}
+        />
       </section>
 
       {/* Main Content */}
-      <div className="container mx-auto px-4 py-8">
+      <div id="purchase-section" className="container mx-auto px-4 py-8">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8">
           {/* Left Column - Raffle Info */}
           <div className="lg:col-span-1 order-2 lg:order-1">

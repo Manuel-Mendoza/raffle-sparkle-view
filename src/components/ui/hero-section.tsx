@@ -1,6 +1,6 @@
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { ShoppingCart, Search } from "lucide-react";
+import { ShoppingCart, Search, Trophy, User, Phone, Calendar, Hash } from "lucide-react";
 import heroImage from "@/assets/hero-motorcycle.jpg";
 import type { Raffle } from "@/services/raffle";
 import type { TopCustomerResponse, Winner } from "@/services/statistics";
@@ -24,67 +24,108 @@ export function HeroSection({
   // Si no hay rifa activa pero hay último ganador, mostrar ganador
   if (!raffleData && lastWinner) {
     return (
-      <div className="relative min-h-[600px] flex items-center justify-center overflow-hidden rounded-xl">
-        <div className="absolute inset-0 bg-gradient-to-r from-primary/90 to-accent/80" />
-        <div className="relative z-10 text-center text-primary-foreground max-w-3xl mx-auto px-4">
-          <div className="mb-6">
-            <h1 className="text-4xl md:text-6xl font-bold mb-2">
-              🏆 ¡Tenemos Ganador!
+      <div className="relative min-h-[700px] flex items-center justify-center overflow-hidden rounded-xl">
+        <div className="absolute inset-0 bg-gradient-to-br from-primary/95 via-accent/85 to-secondary/80" />
+        
+        {/* Elementos decorativos de fondo */}
+        <div className="absolute top-12 left-12 w-32 h-32 bg-accent/20 rounded-full blur-2xl animate-pulse" />
+        <div className="absolute bottom-16 right-16 w-24 h-24 bg-primary/30 rounded-full blur-xl animate-pulse delay-1000" />
+        <div className="absolute top-1/3 right-12 w-16 h-16 bg-yellow-400/20 rounded-full blur-lg animate-pulse delay-500" />
+        
+        <div className="relative z-10 text-center text-primary-foreground max-w-4xl mx-auto px-6 py-8">
+          {/* Header con trofeo */}
+          <div className="mb-8">
+            <div className="flex justify-center mb-4">
+              <div className="bg-yellow-400/20 p-6 rounded-full border-4 border-yellow-400/30 animate-pulse">
+                <Trophy className="w-16 h-16 text-yellow-300" />
+              </div>
+            </div>
+            <h1 className="text-5xl md:text-7xl font-bold mb-3 bg-gradient-to-r from-yellow-300 to-yellow-100 bg-clip-text text-transparent">
+              ¡GANADOR!
             </h1>
-            <p className="text-lg opacity-90">Felicitaciones al último ganador</p>
+            <p className="text-xl opacity-90">Felicitaciones al afortunado ganador</p>
           </div>
           
-          <div className="bg-white/10 backdrop-blur-sm rounded-xl p-8 mb-6 border border-white/20">
-            {/* Ganador */}
-            <div className="text-center mb-6">
-              <h2 className="text-3xl md:text-4xl font-bold mb-2 text-accent">
+          <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-8 mb-8 border border-white/20 shadow-2xl">
+            {/* Información del ganador */}
+            <div className="text-center mb-8">
+              <div className="flex justify-center mb-4">
+                <div className="bg-accent/20 p-3 rounded-full">
+                  <User className="w-8 h-8 text-accent" />
+                </div>
+              </div>
+              <h2 className="text-4xl md:text-5xl font-bold mb-4 text-accent">
                 {lastWinner.customerName}
               </h2>
-              <div className="inline-block bg-gradient-to-r from-accent to-primary px-4 py-2 rounded-lg">
-                <p className="text-xl font-bold">Ticket #{lastWinner.ticketNumber}</p>
+              
+              {/* Ticket ganador destacado */}
+              <div className="inline-block bg-gradient-to-r from-yellow-400 to-yellow-300 text-black px-6 py-3 rounded-xl shadow-lg mb-4">
+                <div className="flex items-center gap-2">
+                  <Hash className="w-6 h-6" />
+                  <span className="text-2xl font-bold">TICKET {lastWinner.ticketNumber}</span>
+                </div>
+              </div>
+              
+              {/* Teléfono */}
+              <div className="flex items-center justify-center gap-2 mb-4">
+                <Phone className="w-5 h-5 text-accent" />
+                <span className="text-lg">{lastWinner.customerPhone}</span>
               </div>
             </div>
 
-            {/* Premio */}
-            <div className="bg-white/10 rounded-lg p-6 mb-6">
-              <p className="text-sm opacity-80 mb-2">PREMIO GANADO</p>
-              <h3 className="text-2xl md:text-3xl font-bold text-yellow-300">
-                🏆 {lastWinner.prize}
+            {/* Premio destacado */}
+            <div className="bg-gradient-to-r from-primary/20 to-accent/20 rounded-xl p-6 mb-8 border border-accent/30">
+              <div className="flex justify-center mb-3">
+                <Trophy className="w-8 h-8 text-yellow-300" />
+              </div>
+              <p className="text-sm opacity-80 mb-2 uppercase tracking-wide">Premio Ganado</p>
+              <h3 className="text-3xl md:text-4xl font-bold text-yellow-300">
+                {lastWinner.prize}
               </h3>
             </div>
 
-            {/* Detalles de la rifa */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="bg-white/5 rounded-lg p-4">
-                <p className="text-sm opacity-80 mb-1">RIFA</p>
-                <p className="text-lg font-semibold">{lastWinner.raffleTitle}</p>
+            {/* Detalles de la rifa en grid */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="bg-white/5 rounded-xl p-6 text-center">
+                <div className="flex justify-center mb-3">
+                  <div className="bg-primary/20 p-2 rounded-lg">
+                    <Trophy className="w-6 h-6 text-primary" />
+                  </div>
+                </div>
+                <p className="text-sm opacity-80 mb-2 uppercase tracking-wide">Rifa</p>
+                <p className="text-xl font-semibold">{lastWinner.raffleTitle}</p>
               </div>
-              <div className="bg-white/5 rounded-lg p-4">
-                <p className="text-sm opacity-80 mb-1">FECHA DEL SORTEO</p>
-                <p className="text-lg font-semibold">
+              
+              <div className="bg-white/5 rounded-xl p-6 text-center">
+                <div className="flex justify-center mb-3">
+                  <div className="bg-accent/20 p-2 rounded-lg">
+                    <Calendar className="w-6 h-6 text-accent" />
+                  </div>
+                </div>
+                <p className="text-sm opacity-80 mb-2 uppercase tracking-wide">Fecha del Sorteo</p>
+                <p className="text-xl font-semibold">
                   {new Date(lastWinner.drawnAt).toLocaleDateString('es-ES', {
                     day: 'numeric',
                     month: 'long',
-                    year: 'numeric'
+                    year: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit'
                   })}
                 </p>
               </div>
             </div>
           </div>
           
-          <div className="text-center">
-            <p className="text-lg opacity-90 mb-2">
+          {/* Mensaje final */}
+          <div className="text-center bg-white/5 rounded-xl p-6 border border-white/10">
+            <p className="text-xl font-semibold mb-2 text-accent">
               ¡Mantente atento a nuestras próximas rifas!
             </p>
-            <p className="text-base opacity-75">
-              Tu también puedes ser el próximo ganador
+            <p className="text-lg opacity-80">
+              Tú también puedes ser el próximo ganador
             </p>
           </div>
         </div>
-        
-        {/* Elementos decorativos */}
-        <div className="absolute top-8 left-8 w-24 h-24 bg-accent/30 rounded-full blur-xl animate-pulse" />
-        <div className="absolute bottom-8 right-8 w-20 h-20 bg-primary/40 rounded-full blur-lg animate-pulse delay-1000" />
       </div>
     );
   }

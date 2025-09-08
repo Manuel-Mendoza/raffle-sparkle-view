@@ -14,10 +14,12 @@ export interface TopCustomerResponse {
 }
 
 export interface Winner {
+  id: string;
   raffleTitle: string;
   prize: string;
   ticketNumber: string;
   customerName: string;
+  customerPhone: string;
   drawnAt: string;
 }
 

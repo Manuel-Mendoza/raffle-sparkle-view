@@ -25,30 +25,66 @@ export function HeroSection({
   if (!raffleData && lastWinner) {
     return (
       <div className="relative min-h-[600px] flex items-center justify-center overflow-hidden rounded-xl">
-        <div className="absolute inset-0 bg-gradient-to-r from-yellow-500/90 to-orange-500/70" />
-        <div className="relative z-10 text-center text-white max-w-2xl mx-auto px-4">
-          <h1 className="text-4xl md:text-6xl font-bold mb-4">
-            🏆 Último Ganador
-          </h1>
-          <div className="bg-white/20 backdrop-blur-sm rounded-lg p-6 mb-6">
-            <h2 className="text-2xl font-bold mb-2">{lastWinner.customerName}</h2>
-            <p className="text-lg mb-1">Ticket #{lastWinner.ticketNumber}</p>
-            <p className="text-base mb-2 text-yellow-200">🏆 {lastWinner.prize}</p>
-            <p className="text-sm opacity-90">
-              Rifa: {lastWinner.raffleTitle}
+        <div className="absolute inset-0 bg-gradient-to-r from-primary/90 to-accent/80" />
+        <div className="relative z-10 text-center text-primary-foreground max-w-3xl mx-auto px-4">
+          <div className="mb-6">
+            <h1 className="text-4xl md:text-6xl font-bold mb-2">
+              🏆 ¡Tenemos Ganador!
+            </h1>
+            <p className="text-lg opacity-90">Felicitaciones al último ganador</p>
+          </div>
+          
+          <div className="bg-white/10 backdrop-blur-sm rounded-xl p-8 mb-6 border border-white/20">
+            {/* Ganador */}
+            <div className="text-center mb-6">
+              <h2 className="text-3xl md:text-4xl font-bold mb-2 text-accent">
+                {lastWinner.customerName}
+              </h2>
+              <div className="inline-block bg-gradient-to-r from-accent to-primary px-4 py-2 rounded-lg">
+                <p className="text-xl font-bold">Ticket #{lastWinner.ticketNumber}</p>
+              </div>
+            </div>
+
+            {/* Premio */}
+            <div className="bg-white/10 rounded-lg p-6 mb-6">
+              <p className="text-sm opacity-80 mb-2">PREMIO GANADO</p>
+              <h3 className="text-2xl md:text-3xl font-bold text-yellow-300">
+                🏆 {lastWinner.prize}
+              </h3>
+            </div>
+
+            {/* Detalles de la rifa */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="bg-white/5 rounded-lg p-4">
+                <p className="text-sm opacity-80 mb-1">RIFA</p>
+                <p className="text-lg font-semibold">{lastWinner.raffleTitle}</p>
+              </div>
+              <div className="bg-white/5 rounded-lg p-4">
+                <p className="text-sm opacity-80 mb-1">FECHA DEL SORTEO</p>
+                <p className="text-lg font-semibold">
+                  {new Date(lastWinner.drawnAt).toLocaleDateString('es-ES', {
+                    day: 'numeric',
+                    month: 'long',
+                    year: 'numeric'
+                  })}
+                </p>
+              </div>
+            </div>
+          </div>
+          
+          <div className="text-center">
+            <p className="text-lg opacity-90 mb-2">
+              ¡Mantente atento a nuestras próximas rifas!
             </p>
-            <p className="text-sm opacity-90">
-              Ganó el {new Date(lastWinner.drawnAt).toLocaleDateString('es-ES', {
-                day: 'numeric',
-                month: 'long',
-                year: 'numeric'
-              })}
+            <p className="text-base opacity-75">
+              Tu también puedes ser el próximo ganador
             </p>
           </div>
-          <p className="text-lg opacity-90">
-            ¡Mantente atento a nuestras próximas rifas!
-          </p>
         </div>
+        
+        {/* Elementos decorativos */}
+        <div className="absolute top-8 left-8 w-24 h-24 bg-accent/30 rounded-full blur-xl animate-pulse" />
+        <div className="absolute bottom-8 right-8 w-20 h-20 bg-primary/40 rounded-full blur-lg animate-pulse delay-1000" />
       </div>
     );
   }

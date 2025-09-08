@@ -101,6 +101,7 @@ export function PurchaseSteps({ raffleData }: PurchaseStepsProps) {
       const response = await customerService.buyTickets({
         name: purchaseData.userData.name,
         phone: purchaseData.userData.phone,
+        email: purchaseData.userData.email,
         paymentMethod: purchaseData.paymentMethod,
         paymentProof: purchaseData.paymentProof,
         raffleId: raffleData.id,

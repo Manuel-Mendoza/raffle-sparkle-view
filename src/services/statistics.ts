@@ -13,6 +13,20 @@ export interface TopCustomerResponse {
   totalTickets: number;
 }
 
+export interface Winner {
+  id: string;
+  raffleTitle: string;
+  prize: string;
+  ticketNumber: string;
+  customerName: string;
+  customerPhone: string;
+  drawnAt: string;
+}
+
+export interface WinnerResponse {
+  winner: Winner;
+}
+
 export interface DashboardStatistics {
   totalSales: number;
   ticketsSold: number;
@@ -72,12 +86,13 @@ export const statisticsService = {
     }
   },
 
-  async getLastWinner(): Promise<any> {
-    // Datos de prueba del último ganador
-    return {
-      customerName: "María González",
-      ticketNumber: "0789",
-      drawnAt: "2024-12-15T20:00:00.000Z"
-    };
+  async getLastWinner(): Promise<Winner> {
+    try {
+      const response = await api.get<WinnerResponse>("/admin/winners/history");
+      return response.data.winner;
+    } catch (error) {
+      console.error("Error fetching last winner:", error);
+      throw error;
+    }
   },
 };

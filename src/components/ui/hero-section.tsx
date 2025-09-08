@@ -3,13 +3,13 @@ import { Button } from "@/components/ui/button";
 import { ShoppingCart, Search } from "lucide-react";
 import heroImage from "@/assets/hero-motorcycle.jpg";
 import type { Raffle } from "@/services/raffle";
-import type { TopCustomerResponse } from "@/services/statistics";
+import type { TopCustomerResponse, Winner } from "@/services/statistics";
 import { formatBsV } from "@/lib/currency";
 
 interface HeroSectionProps {
   raffleData?: Raffle | null;
   topCustomer?: TopCustomerResponse | null;
-  lastWinner?: any;
+  lastWinner?: Winner | null;
   onVerifyTickets?: () => void;
   onBuyTicket?: () => void;
 }
@@ -33,8 +33,16 @@ export function HeroSection({
           <div className="bg-white/20 backdrop-blur-sm rounded-lg p-6 mb-6">
             <h2 className="text-2xl font-bold mb-2">{lastWinner.customerName}</h2>
             <p className="text-lg mb-1">Ticket #{lastWinner.ticketNumber}</p>
+            <p className="text-base mb-2 text-yellow-200">🏆 {lastWinner.prize}</p>
             <p className="text-sm opacity-90">
-              Ganó el {new Date(lastWinner.drawnAt).toLocaleDateString('es-ES')}
+              Rifa: {lastWinner.raffleTitle}
+            </p>
+            <p className="text-sm opacity-90">
+              Ganó el {new Date(lastWinner.drawnAt).toLocaleDateString('es-ES', {
+                day: 'numeric',
+                month: 'long',
+                year: 'numeric'
+              })}
             </p>
           </div>
           <p className="text-lg opacity-90">

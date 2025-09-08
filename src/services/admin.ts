@@ -27,16 +27,33 @@ export interface PendingTicket {
   status: "pending" | "approved" | "rejected";
 }
 
+export interface Winner {
+  id: string;
+  ticketNumber: string;
+  customerName: string;
+  customerPhone: string;
+  drawnAt: string;
+}
+
+export interface DrawWinnerResponse {
+  winner: Winner;
+  totalParticipants: number;
+}
+
 export const adminService = {
   async getPendingTickets(): Promise<CustomerTicket[]> {
-    console.log('Making API call to /admin/tickets/pending');
-    const response = await api.get<{ customers: CustomerTicket[] }>("/admin/tickets/pending");
-    console.log('API response:', response.data);
+    console.log("Making API call to /admin/tickets/pending");
+    const response = await api.get<{ customers: CustomerTicket[] }>(
+      "/admin/tickets/pending"
+    );
+    console.log("API response:", response.data);
     return response.data.customers;
   },
 
   async getApprovedTickets(): Promise<CustomerTicket[]> {
-    const response = await api.get<{ customers: CustomerTicket[] }>("/admin/tickets/approved");
+    const response = await api.get<{ customers: CustomerTicket[] }>(
+      "/admin/tickets/approved"
+    );
     return response.data.customers;
   },
 
@@ -46,5 +63,21 @@ export const adminService = {
 
   async rejectTicket(customerId: string): Promise<void> {
     await api.put(`/admin/customers/${customerId}/reject`);
+  },
+
+  async drawWinner(raffleId: string): Promise<DrawWinnerResponse> {
+    const response = await api.post<DrawWinnerResponse>("/admin/draw-winner", {
+      raffleId,
+    });
+    return response.data;
+  },
+
+  async getLastWinner(): Promise<Winner | null> {
+    try {
+      const response = await api.get<Winner>("/admin/last-winner");
+      return response.data;
+    } catch (error) {
+      return null;
+    }
   },
 };

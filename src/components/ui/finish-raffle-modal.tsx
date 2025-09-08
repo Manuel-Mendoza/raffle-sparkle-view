@@ -48,21 +48,19 @@ export function FinishRaffleModal({
               <li>• Se notificará al ganador</li>
             </ul>
           </div>
-          
+
           <div className="bg-amber-50 border border-amber-200 rounded-lg p-3">
             <div className="flex items-center gap-2 text-amber-800">
               <AlertTriangle className="w-4 h-4" />
-              <span className="text-sm font-medium">Esta acción es irreversible</span>
+              <span className="text-sm font-medium">
+                Esta acción es irreversible
+              </span>
             </div>
           </div>
         </div>
 
         <div className="flex justify-end gap-2">
-          <Button
-            variant="outline"
-            onClick={onClose}
-            disabled={isLoading}
-          >
+          <Button variant="outline" onClick={onClose} disabled={isLoading}>
             Cancelar
           </Button>
           <Button

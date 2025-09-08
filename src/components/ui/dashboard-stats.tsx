@@ -21,6 +21,7 @@ import {
   type DashboardStatistics,
 } from "@/services/statistics";
 import { toast } from "sonner";
+import { formatBsV } from "@/lib/currency";
 
 export const DashboardStats = () => {
   const [stats, setStats] = useState<DashboardStatistics | null>(null);
@@ -74,7 +75,7 @@ export const DashboardStats = () => {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold text-secondary">
-              ${stats.totalSales.toLocaleString()}
+              {formatBsV(stats.totalSales)}
             </div>
             <p className="text-xs text-accent flex items-center mt-1">
               <TrendingUp className="h-3 w-3 mr-1" />
@@ -213,13 +214,13 @@ export const DashboardStats = () => {
               <p className="text-accent">
                 {stats.currentRaffle?.endDate
                   ? new Date(stats.currentRaffle.endDate).toLocaleDateString(
-                      "es-ES",
-                      {
-                        year: "numeric",
-                        month: "long",
-                        day: "numeric",
-                      }
-                    )
+                    "es-ES",
+                    {
+                      year: "numeric",
+                      month: "long",
+                      day: "numeric",
+                    }
+                  )
                   : "No definida"}
               </p>
             </div>
@@ -228,10 +229,9 @@ export const DashboardStats = () => {
                 Total Posible
               </h4>
               <p className="text-accent font-bold">
-                $
-                {(
+                {formatBsV(
                   stats.totalTickets * (stats.currentRaffle?.ticketPrice || 0)
-                ).toLocaleString()}
+                )}
               </p>
             </div>
           </div>

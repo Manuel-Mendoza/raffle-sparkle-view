@@ -21,11 +21,26 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { FinishRaffleModal } from "@/components/ui/finish-raffle-modal";
 import { PaymentProofModal } from "@/components/ui/payment-proof-modal";
-import { Trophy, DollarSign, Users, Plus, Trophy as TrophyIcon, Upload, Check, X, User, Phone, CreditCard, Eye } from "lucide-react";
+import { WinnerModal } from "@/components/ui/winner-modal";
+import {
+  Trophy,
+  Banknote,
+  Users,
+  Plus,
+  Trophy as TrophyIcon,
+  Upload,
+  Check,
+  X,
+  User,
+  Phone,
+  CreditCard,
+  Eye,
+} from "lucide-react";
 import { raffleService, Raffle } from "@/services/raffle";
 import { uploadImageToCloudinary } from "@/services/cloudinary";
 import { adminService, CustomerTicket } from "@/services/admin";
 import { AxiosErrorResponse } from "@/types/api";
+import { formatBsV } from "@/lib/currency";
 
 // Use CustomerTicket for both pending and approved
 type PurchaseRequest = CustomerTicket;
@@ -38,9 +53,24 @@ export const RaffleManager = () => {
   const [isFinishing, setIsFinishing] = useState(false);
   const [finishModalOpen, setFinishModalOpen] = useState(false);
   const [raffleToFinish, setRaffleToFinish] = useState<Raffle | null>(null);
+  const [winnerModal, setWinnerModal] = useState<{
+    isOpen: boolean;
+    winner: any;
+    totalParticipants: number;
+    raffleName: string;
+  }>({
+    isOpen: false,
+    winner: null,
+    totalParticipants: 0,
+    raffleName: "",
+  });
   const [isUploadingImage, setIsUploadingImage] = useState(false);
-  const [purchaseRequests, setPurchaseRequests] = useState<PurchaseRequest[]>([]);
-  const [isProcessingRequest, setIsProcessingRequest] = useState<string | null>(null);
+  const [purchaseRequests, setPurchaseRequests] = useState<PurchaseRequest[]>(
+    []
+  );
+  const [isProcessingRequest, setIsProcessingRequest] = useState<string | null>(
+    null
+  );
   const [activeTab, setActiveTab] = useState<"pending" | "approved">("pending");
   const [paymentProofModal, setPaymentProofModal] = useState<{
     isOpen: boolean;
@@ -85,14 +115,15 @@ export const RaffleManager = () => {
   // Load purchase requests from API based on active tab
   const loadPurchaseRequests = async () => {
     try {
-      console.log('Loading purchase requests for tab:', activeTab);
-      const customers = activeTab === "pending" 
-        ? await adminService.getPendingTickets()
-        : await adminService.getApprovedTickets();
-      
-      console.log('Received customers:', customers);
-      console.log('Number of customers:', customers.length);
-      
+      console.log("Loading purchase requests for tab:", activeTab);
+      const customers =
+        activeTab === "pending"
+          ? await adminService.getPendingTickets()
+          : await adminService.getApprovedTickets();
+
+      console.log("Received customers:", customers);
+      console.log("Number of customers:", customers.length);
+
       setPurchaseRequests(customers);
     } catch (error) {
       console.error("Error loading purchase requests:", error);
@@ -164,7 +195,7 @@ export const RaffleManager = () => {
       const raffleData = {
         ...formData,
         totalTickets: 10000,
-        startDate: new Date().toISOString()
+        startDate: new Date().toISOString(),
       };
       console.log("Enviando datos:", raffleData);
       await raffleService.createRaffle(raffleData);
@@ -184,7 +215,9 @@ export const RaffleManager = () => {
       } else {
         alert(
           "Error al crear la rifa: " +
-          (axiosError.response?.data?.error || axiosError.message || "Error desconocido")
+          (axiosError.response?.data?.error ||
+            axiosError.message ||
+            "Error desconocido")
         );
       }
     } finally {
@@ -202,14 +235,25 @@ export const RaffleManager = () => {
 
     try {
       setIsFinishing(true);
-      await raffleService.finishRaffle();
+
+      // Realizar el sorteo (esto también finaliza la rifa)
+      const result = await adminService.drawWinner(raffleToFinish.id);
+
       await loadRaffles();
-      alert("¡Sorteo realizado exitosamente!");
+
+      // Mostrar modal del ganador
+      setWinnerModal({
+        isOpen: true,
+        winner: result.winner,
+        totalParticipants: result.totalParticipants,
+        raffleName: raffleToFinish.title,
+      });
+
       setFinishModalOpen(false);
       setRaffleToFinish(null);
     } catch (error) {
       console.error("Error finishing raffle:", error);
-      alert("Error al finalizar la rifa");
+      alert("Error al realizar el sorteo");
     } finally {
       setIsFinishing(false);
     }
@@ -222,10 +266,10 @@ export const RaffleManager = () => {
     try {
       setIsUploadingImage(true);
       const imageUrl = await uploadImageToCloudinary(file);
-      setFormData(prev => ({ ...prev, image: imageUrl }));
+      setFormData((prev) => ({ ...prev, image: imageUrl }));
     } catch (error) {
-      console.error('Error uploading image:', error);
-      alert('Error al subir la imagen. Intenta de nuevo.');
+      console.error("Error uploading image:", error);
+      alert("Error al subir la imagen. Intenta de nuevo.");
     } finally {
       setIsUploadingImage(false);
     }
@@ -295,40 +339,6 @@ export const RaffleManager = () => {
         Inactiva
       </Badge>
     );
-  };
-
-  const getRequestStatusBadge = (status: PurchaseRequest["status"]) => {
-    switch (status) {
-      case "pending":
-        return (
-          <Badge
-            variant="outline"
-            className="bg-yellow-100 text-yellow-800 border-yellow-200"
-          >
-            Pendiente
-          </Badge>
-        );
-      case "approved":
-        return (
-          <Badge
-            variant="outline"
-            className="bg-green-100 text-green-800 border-green-200"
-          >
-            Aprobada
-          </Badge>
-        );
-      case "rejected":
-        return (
-          <Badge
-            variant="outline"
-            className="bg-red-100 text-red-800 border-red-200"
-          >
-            Rechazada
-          </Badge>
-        );
-      default:
-        return null;
-    }
   };
 
   return (
@@ -505,9 +515,9 @@ export const RaffleManager = () => {
                   {/* Stats */}
                   <div className="grid grid-cols-2 gap-4">
                     <div className="text-center p-2 bg-secondary/5 rounded">
-                      <DollarSign className="w-4 h-4 mx-auto text-secondary mb-1" />
+                      <Banknote className="w-4 h-4 mx-auto text-secondary mb-1" />
                       <p className="text-sm font-medium text-secondary">
-                        ${raffle.ticketPrice}
+                        {formatBsV(raffle.ticketPrice)}
                       </p>
                       <p className="text-xs text-accent">por ticket</p>
                     </div>
@@ -535,7 +545,7 @@ export const RaffleManager = () => {
                       ></div>
                     </div>
                     <p className="text-xs text-accent">
-                      Total recaudado: ${totalRevenue.toLocaleString()}
+                      Total recaudado: {formatBsV(totalRevenue)}
                     </p>
                   </div>
 
@@ -575,21 +585,19 @@ export const RaffleManager = () => {
         <div className="flex space-x-1 bg-muted p-1 rounded-lg">
           <button
             onClick={() => setActiveTab("pending")}
-            className={`flex-1 px-4 py-2 text-sm font-medium rounded-md transition-colors ${
-              activeTab === "pending"
-                ? "bg-primary text-primary-foreground"
-                : "text-muted-foreground hover:text-secondary"
-            }`}
+            className={`flex-1 px-4 py-2 text-sm font-medium rounded-md transition-colors ${activeTab === "pending"
+              ? "bg-primary text-primary-foreground"
+              : "text-muted-foreground hover:text-secondary"
+              }`}
           >
             Pendientes
           </button>
           <button
             onClick={() => setActiveTab("approved")}
-            className={`flex-1 px-4 py-2 text-sm font-medium rounded-md transition-colors ${
-              activeTab === "approved"
-                ? "bg-primary text-primary-foreground"
-                : "text-muted-foreground hover:text-secondary"
-            }`}
+            className={`flex-1 px-4 py-2 text-sm font-medium rounded-md transition-colors ${activeTab === "approved"
+              ? "bg-primary text-primary-foreground"
+              : "text-muted-foreground hover:text-secondary"
+              }`}
           >
             Aceptadas
           </button>
@@ -598,7 +606,9 @@ export const RaffleManager = () => {
         {purchaseRequests.length === 0 ? (
           <div className="text-center py-8">
             <p className="text-accent">
-              No hay solicitudes {activeTab === "pending" ? "pendientes" : "aceptadas"} en este momento
+              No hay solicitudes{" "}
+              {activeTab === "pending" ? "pendientes" : "aceptadas"} en este
+              momento
             </p>
           </div>
         ) : (
@@ -607,115 +617,138 @@ export const RaffleManager = () => {
               const requestId = getRequestId(request);
               const ticketCount = getTicketCount(request);
               const total = ticketCount * 50; // Calculate total based on ticket count
-              
+
               return (
-              <Card
-                key={requestId}
-                className="border-2 border-primary/20 hover:shadow-lg transition-all"
-              >
-                <CardHeader>
-                  <div className="flex items-center justify-between">
-                    <CardTitle className="text-lg text-secondary">
-                      {request.customerName}
-                    </CardTitle>
-                  </div>
-                  <CardDescription className="text-sm">
-                    {request.raffleTitle}
-                  </CardDescription>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  {/* Customer Info */}
-                  <div className="grid grid-cols-2 gap-4">
-                    <div className="flex items-center gap-2">
-                      <User className="w-4 h-4 text-primary" />
-                      <div>
-                        <p className="text-sm font-medium text-secondary">Cliente</p>
-                        <p className="text-xs text-accent">{request.customerName}</p>
+                <Card
+                  key={requestId}
+                  className="border-2 border-primary/20 hover:shadow-lg transition-all"
+                >
+                  <CardHeader>
+                    <div className="flex items-center justify-between">
+                      <CardTitle className="text-lg text-secondary">
+                        {request.customerName}
+                      </CardTitle>
+                    </div>
+                    <CardDescription className="text-sm">
+                      {request.raffleTitle}
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    {/* Customer Info */}
+                    <div className="grid grid-cols-2 gap-4">
+                      <div className="flex items-center gap-2">
+                        <User className="w-4 h-4 text-primary" />
+                        <div>
+                          <p className="text-sm font-medium text-secondary">
+                            Cliente
+                          </p>
+                          <p className="text-xs text-accent">
+                            {request.customerName}
+                          </p>
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <Phone className="w-4 h-4 text-primary" />
+                        <div>
+                          <p className="text-sm font-medium text-secondary">
+                            Teléfono
+                          </p>
+                          <p className="text-xs text-accent">
+                            {request.customerPhone}
+                          </p>
+                        </div>
                       </div>
                     </div>
-                    <div className="flex items-center gap-2">
-                      <Phone className="w-4 h-4 text-primary" />
-                      <div>
-                        <p className="text-sm font-medium text-secondary">Teléfono</p>
-                        <p className="text-xs text-accent">{request.customerPhone}</p>
-                      </div>
-                    </div>
-                  </div>
 
-                  {/* Payment Info */}
-                  <div className="grid grid-cols-2 gap-4">
-                    <div className="flex items-center gap-2">
-                      <CreditCard className="w-4 h-4 text-primary" />
-                      <div>
-                        <p className="text-sm font-medium text-secondary">Método de Pago</p>
-                        <p className="text-xs text-accent">{request.paymentMethod}</p>
+                    {/* Payment Info */}
+                    <div className="grid grid-cols-2 gap-4">
+                      <div className="flex items-center gap-2">
+                        <CreditCard className="w-4 h-4 text-primary" />
+                        <div>
+                          <p className="text-sm font-medium text-secondary">
+                            Método de Pago
+                          </p>
+                          <p className="text-xs text-accent">
+                            {request.paymentMethod}
+                          </p>
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <Banknote className="w-4 h-4 text-primary" />
+                        <div>
+                          <p className="text-sm font-medium text-secondary">
+                            Total
+                          </p>
+                          <p className="text-xs text-accent">
+                            {ticketCount} ticket(s) - ${total}
+                          </p>
+                        </div>
                       </div>
                     </div>
-                    <div className="flex items-center gap-2">
-                      <DollarSign className="w-4 h-4 text-primary" />
-                      <div>
-                        <p className="text-sm font-medium text-secondary">Total</p>
-                        <p className="text-xs text-accent">
-                          {ticketCount} ticket(s) - ${total}
-                        </p>
+
+                    {/* Payment Proof */}
+                    <div className="space-y-2">
+                      <div className="flex items-center gap-2">
+                        <Eye className="w-4 h-4 text-primary" />
+                        <span className="text-sm font-medium text-secondary">
+                          Comprobante de Pago
+                        </span>
                       </div>
-                    </div>
-                  </div>
-
-                  {/* Payment Proof */}
-                  <div className="space-y-2">
-                    <div className="flex items-center gap-2">
-                      <Eye className="w-4 h-4 text-primary" />
-                      <span className="text-sm font-medium text-secondary">
-                        Comprobante de Pago
-                      </span>
-                    </div>
-                    <Button
-                      variant="outline"
-                      onClick={() => openPaymentProofModal(request.paymentProof, request.customerName)}
-                      className="w-full"
-                    >
-                      <Eye className="w-4 h-4 mr-2" />
-                      Ver Comprobante
-                    </Button>
-                  </div>
-
-                  {/* Action Buttons - only for pending */}
-                  {activeTab === "pending" && (
-                    <div className="flex justify-end space-x-2 pt-4 border-t border-accent/10">
                       <Button
                         variant="outline"
-                        onClick={() => handleRejectPurchase(requestId)}
-                        disabled={isProcessingRequest === requestId}
-                        className="border-red-200 text-red-600 hover:bg-red-50"
-                        size="sm"
+                        onClick={() =>
+                          openPaymentProofModal(
+                            request.paymentProof,
+                            request.customerName
+                          )
+                        }
+                        className="w-full"
                       >
-                        <X className="w-4 h-4 mr-1" />
-                        {isProcessingRequest === requestId ? "Procesando..." : "Rechazar"}
-                      </Button>
-                      <Button
-                        onClick={() => handleApprovePurchase(requestId)}
-                        disabled={isProcessingRequest === requestId}
-                        className="bg-green-600 hover:bg-green-700 text-white"
-                        size="sm"
-                      >
-                        <Check className="w-4 h-4 mr-1" />
-                        {isProcessingRequest === requestId ? "Procesando..." : "Aceptar"}
+                        <Eye className="w-4 h-4 mr-2" />
+                        Ver Comprobante
                       </Button>
                     </div>
-                  )}
 
-                  {/* Status message for approved requests */}
-                  {activeTab === "approved" && (
-                    <div className="pt-4 border-t border-accent/10">
-                      <p className="text-sm text-center text-accent">
-                        ✅ Solicitud aprobada - Tickets confirmados
-                      </p>
-                    </div>
-                  )}
-                </CardContent>
-              </Card>
-            );
+                    {/* Action Buttons - only for pending */}
+                    {activeTab === "pending" && (
+                      <div className="flex justify-end space-x-2 pt-4 border-t border-accent/10">
+                        <Button
+                          variant="outline"
+                          onClick={() => handleRejectPurchase(requestId)}
+                          disabled={isProcessingRequest === requestId}
+                          className="border-red-200 text-red-600 hover:bg-red-50"
+                          size="sm"
+                        >
+                          <X className="w-4 h-4 mr-1" />
+                          {isProcessingRequest === requestId
+                            ? "Procesando..."
+                            : "Rechazar"}
+                        </Button>
+                        <Button
+                          onClick={() => handleApprovePurchase(requestId)}
+                          disabled={isProcessingRequest === requestId}
+                          className="bg-green-600 hover:bg-green-700 text-white"
+                          size="sm"
+                        >
+                          <Check className="w-4 h-4 mr-1" />
+                          {isProcessingRequest === requestId
+                            ? "Procesando..."
+                            : "Aceptar"}
+                        </Button>
+                      </div>
+                    )}
+
+                    {/* Status message for approved requests */}
+                    {activeTab === "approved" && (
+                      <div className="pt-4 border-t border-accent/10">
+                        <p className="text-sm text-center text-accent">
+                          ✅ Solicitud aprobada - Tickets confirmados
+                        </p>
+                      </div>
+                    )}
+                  </CardContent>
+                </Card>
+              );
             })}
           </div>
         )}
@@ -736,9 +769,31 @@ export const RaffleManager = () => {
       {/* Payment Proof Modal */}
       <PaymentProofModal
         isOpen={paymentProofModal.isOpen}
-        onClose={() => setPaymentProofModal({ isOpen: false, imageUrl: "", customerName: "" })}
+        onClose={() =>
+          setPaymentProofModal({
+            isOpen: false,
+            imageUrl: "",
+            customerName: "",
+          })
+        }
         imageUrl={paymentProofModal.imageUrl}
         customerName={paymentProofModal.customerName}
+      />
+
+      {/* Winner Modal */}
+      <WinnerModal
+        isOpen={winnerModal.isOpen}
+        onClose={() =>
+          setWinnerModal({
+            isOpen: false,
+            winner: null,
+            totalParticipants: 0,
+            raffleName: "",
+          })
+        }
+        winner={winnerModal.winner}
+        totalParticipants={winnerModal.totalParticipants}
+        raffleName={winnerModal.raffleName}
       />
     </div>
   );

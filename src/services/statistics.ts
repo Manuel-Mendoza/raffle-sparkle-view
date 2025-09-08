@@ -71,4 +71,13 @@ export const statisticsService = {
       throw error;
     }
   },
+
+  async getLastWinner(): Promise<any> {
+    // Datos de prueba del último ganador
+    return {
+      customerName: "María González",
+      ticketNumber: "0789",
+      drawnAt: "2024-12-15T20:00:00.000Z"
+    };
+  },
 };

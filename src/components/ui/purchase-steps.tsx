@@ -13,6 +13,7 @@ import { CheckCircle, ArrowRight, ArrowLeft, Loader2 } from "lucide-react";
 import { customerService } from "@/services/customer";
 import { toast } from "sonner";
 import type { Ticket } from "@/types/api";
+import { formatBsVSimple } from "@/lib/currency";
 
 const steps = [
   { id: 1, title: "Boletos", description: "Selecciona cantidad" },
@@ -177,7 +178,6 @@ export function PurchaseSteps({ raffleData }: PurchaseStepsProps) {
               <TicketSelector
                 minTickets={1}
                 pricePerTicket={raffleData.ticketPrice}
-                currency="USD"
                 onTicketChange={handleTicketChange}
               />
 
@@ -218,7 +218,7 @@ export function PurchaseSteps({ raffleData }: PurchaseStepsProps) {
                 <div className="flex justify-between items-center mt-2">
                   <span className="text-accent">Total a pagar:</span>
                   <span className="text-lg font-bold text-primary">
-                    ${purchaseData.total.toFixed(2)} USD
+                    {formatBsVSimple(purchaseData.total)}
                   </span>
                 </div>
               </div>
@@ -254,8 +254,8 @@ export function PurchaseSteps({ raffleData }: PurchaseStepsProps) {
                   Paso 3: Comprobante de pago
                 </h3>
                 <p className="text-accent">
-                  Sube tu comprobante de pago de $
-                  {purchaseData.total.toFixed(2)} USD
+                  Sube tu comprobante de pago de{" "}
+                  {formatBsVSimple(purchaseData.total)}
                 </p>
               </div>
 
@@ -351,7 +351,7 @@ export function PurchaseSteps({ raffleData }: PurchaseStepsProps) {
                         {purchaseData.tickets} boletos
                       </p>
                       <p className="text-lg font-bold text-primary">
-                        Total: ${purchaseData.total.toFixed(2)} USD
+                        Total: {formatBsVSimple(purchaseData.total)}
                       </p>
                     </div>
                   </div>

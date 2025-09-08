@@ -7,6 +7,7 @@ import { MessageCircle, Loader2 } from "lucide-react";
 import { Link } from "react-router-dom";
 import Logo from "@/assets/favico.png";
 import { raffleService, type Raffle } from "@/services/raffle";
+import { adminService } from "@/services/admin";
 import {
   statisticsService,
   type TopCustomerResponse,
@@ -18,15 +19,28 @@ const Index = () => {
   const [topCustomer, setTopCustomer] = useState<TopCustomerResponse | null>(
     null
   );
+  const [lastWinner, setLastWinner] = useState<any>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         console.log("Fetching current raffle from API...");
-        const raffle = await raffleService.getCurrentRaffle();
-        console.log("Raffle data received:", raffle);
-        setCurrentRaffle(raffle);
+        try {
+          const raffle = await raffleService.getCurrentRaffle();
+          console.log("Raffle data received:", raffle);
+          setCurrentRaffle(raffle);
+        } catch (error) {
+          console.log("No active raffle, fetching last winner...");
+          // Si no hay rifa activa, obtener último ganador
+          try {
+            const winner = await statisticsService.getLastWinner();
+            console.log("Last winner received:", winner);
+            setLastWinner(winner);
+          } catch (winnerError) {
+            console.log("No last winner available:", winnerError);
+          }
+        }
 
         // Fetch top customer data
         try {
@@ -36,11 +50,10 @@ const Index = () => {
           console.warn("Could not fetch top customer data:", error);
         }
       } catch (error) {
-        console.error("Error fetching current raffle:", error);
+        console.error("Error fetching data:", error);
         toast.error(
-          "Error al cargar la rifa actual. Verifica que la API esté funcionando."
+          "Error al cargar los datos. Verifica que la API esté funcionando."
         );
-        // Remove fallback data to see API issues clearly
       } finally {
         setLoading(false);
       }
@@ -64,7 +77,7 @@ const Index = () => {
     );
   }
 
-  if (!currentRaffle) {
+  if (!currentRaffle && !lastWinner) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
         <div className="text-center">
@@ -98,11 +111,11 @@ const Index = () => {
   };
 
   const scrollToPurchase = () => {
-    const purchaseSection = document.getElementById('purchase-section');
+    const purchaseSection = document.getElementById("purchase-section");
     if (purchaseSection) {
-      purchaseSection.scrollIntoView({ 
-        behavior: 'smooth',
-        block: 'start'
+      purchaseSection.scrollIntoView({
+        behavior: "smooth",
+        block: "start",
       });
     }
   };
@@ -141,9 +154,10 @@ const Index = () => {
 
       {/* Hero Section */}
       <section className="container mx-auto px-4 py-8">
-        <HeroSection 
-          raffleData={currentRaffle} 
-          topCustomer={topCustomer} 
+        <HeroSection
+          raffleData={currentRaffle}
+          topCustomer={topCustomer}
+          lastWinner={lastWinner}
           onBuyTicket={scrollToPurchase}
         />
       </section>

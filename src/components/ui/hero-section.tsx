@@ -4,10 +4,12 @@ import { ShoppingCart, Search } from "lucide-react";
 import heroImage from "@/assets/hero-motorcycle.jpg";
 import type { Raffle } from "@/services/raffle";
 import type { TopCustomerResponse } from "@/services/statistics";
+import { formatBsV } from "@/lib/currency";
 
 interface HeroSectionProps {
   raffleData?: Raffle | null;
   topCustomer?: TopCustomerResponse | null;
+  lastWinner?: any;
   onVerifyTickets?: () => void;
   onBuyTicket?: () => void;
 }
@@ -15,9 +17,34 @@ interface HeroSectionProps {
 export function HeroSection({
   raffleData,
   topCustomer,
+  lastWinner,
   onVerifyTickets,
   onBuyTicket,
 }: HeroSectionProps) {
+  // Si no hay rifa activa pero hay último ganador, mostrar ganador
+  if (!raffleData && lastWinner) {
+    return (
+      <div className="relative min-h-[600px] flex items-center justify-center overflow-hidden rounded-xl">
+        <div className="absolute inset-0 bg-gradient-to-r from-yellow-500/90 to-orange-500/70" />
+        <div className="relative z-10 text-center text-white max-w-2xl mx-auto px-4">
+          <h1 className="text-4xl md:text-6xl font-bold mb-4">
+            🏆 Último Ganador
+          </h1>
+          <div className="bg-white/20 backdrop-blur-sm rounded-lg p-6 mb-6">
+            <h2 className="text-2xl font-bold mb-2">{lastWinner.customerName}</h2>
+            <p className="text-lg mb-1">Ticket #{lastWinner.ticketNumber}</p>
+            <p className="text-sm opacity-90">
+              Ganó el {new Date(lastWinner.drawnAt).toLocaleDateString('es-ES')}
+            </p>
+          </div>
+          <p className="text-lg opacity-90">
+            ¡Mantente atento a nuestras próximas rifas!
+          </p>
+        </div>
+      </div>
+    );
+  }
+
   if (!raffleData) {
     return (
       <div className="relative min-h-[600px] flex items-center justify-center overflow-hidden rounded-xl">
@@ -37,8 +64,8 @@ export function HeroSection({
   const backgroundImage = raffleData.image || heroImage;
 
   // Debug: Log the image being used
-  console.log('Raffle image from API:', raffleData.image);
-  console.log('Background image being used:', backgroundImage);
+  console.log("Raffle image from API:", raffleData.image);
+  console.log("Background image being used:", backgroundImage);
 
   return (
     <div className="relative min-h-[600px] flex items-center justify-center overflow-hidden rounded-xl">
@@ -72,13 +99,11 @@ export function HeroSection({
             <div className="text-center sm:text-left">
               <p className="text-xs sm:text-sm opacity-80">Precio por ticket</p>
               <p className="text-lg sm:text-2xl font-bold">
-                ${raffleData.ticketPrice}
+                {formatBsV(raffleData.ticketPrice)}
               </p>
             </div>
             <div className="text-center sm:text-left">
-              <p className="text-xs sm:text-sm opacity-80">
-                Disponible
-              </p>
+              <p className="text-xs sm:text-sm opacity-80">Disponible</p>
               <p className="text-lg sm:text-2xl font-bold text-accent">
                 {(100 - progressPercentage).toFixed(1)}%
               </p>

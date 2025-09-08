@@ -5,18 +5,17 @@ import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Minus, Plus, ShoppingCart, Edit3 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { formatBsVSimple } from "@/lib/currency";
 
 interface TicketSelectorProps {
   minTickets: number;
   pricePerTicket: number;
-  currency: string;
   onTicketChange?: (tickets: number, total: number) => void;
 }
 
 export function TicketSelector({
   minTickets,
   pricePerTicket,
-  currency,
   onTicketChange,
 }: TicketSelectorProps) {
   const [tickets, setTickets] = useState(minTickets);
@@ -60,7 +59,7 @@ export function TicketSelector({
             Min. {minTickets} tickets por compra
           </Badge>
           <Badge variant="outline" className="border-accent text-accent">
-            Precio por ticket: {pricePerTicket} {currency}
+            Precio por ticket: {formatBsVSimple(pricePerTicket)}
           </Badge>
         </div>
       </CardHeader>
@@ -151,9 +150,7 @@ export function TicketSelector({
         <div className="space-y-3 p-4 bg-gradient-to-r from-primary to-primary/80 rounded-lg text-primary-foreground">
           <div className="text-center">
             <p className="text-sm opacity-90">Total a Pagar</p>
-            <p className="text-3xl font-bold">
-              {total.toFixed(2)} {currency}
-            </p>
+            <p className="text-3xl font-bold">{formatBsVSimple(total)}</p>
           </div>
 
           <div className="text-center text-sm opacity-90">

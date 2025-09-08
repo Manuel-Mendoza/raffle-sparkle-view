@@ -38,7 +38,9 @@ export function StepIndicator({
                 {currentStep > step.id ? (
                   <Check className="w-3 h-3 sm:w-4 sm:h-4 md:w-6 md:h-6" />
                 ) : (
-                  <span className="font-bold text-xs sm:text-sm md:text-base">{step.id}</span>
+                  <span className="font-bold text-xs sm:text-sm md:text-base">
+                    {step.id}
+                  </span>
                 )}
               </div>
 

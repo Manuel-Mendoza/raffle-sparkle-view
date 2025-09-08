@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { CheckCircle, Copy, MessageCircle } from "lucide-react";
 import { toast } from "sonner";
+import { formatBsVSimple } from "@/lib/currency";
 
 interface Ticket {
   id: string;
@@ -40,14 +41,16 @@ export function TicketNumbersModal({
   };
 
   const handleWhatsAppShare = () => {
-    const message = `¡Compra exitosa! 🎉\n\nRifa: ${raffleName}\nParticipante: ${customerName}\nNúmeros: ${ticketNumbers}\nTotal: $${total.toFixed(2)} USD\n\n¡Buena suerte! 🍀`;
+    const message = `¡Compra exitosa! 🎉\n\nRifa: ${raffleName}\nParticipante: ${customerName}\nNúmeros: ${ticketNumbers}\nTotal: ${formatBsVSimple(total)}\n\n¡Buena suerte! 🍀`;
     const encodedMessage = encodeURIComponent(message);
     window.open(`https://wa.me/?text=${encodedMessage}`, "_blank");
   };
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className={`${tickets.length > 10 ? 'max-w-lg' : 'max-w-md'}`}>
+      <DialogContent
+        className={`${tickets.length > 10 ? "max-w-lg" : "max-w-md"}`}
+      >
         <DialogHeader>
           <DialogTitle className="text-center text-xl text-primary flex items-center justify-center">
             <CheckCircle className="w-6 h-6 mr-2 text-green-500" />
@@ -60,7 +63,7 @@ export function TicketNumbersModal({
             <h3 className="font-semibold text-secondary mb-2">
               Tus Números de la Suerte
             </h3>
-            
+
             {tickets.length <= 10 ? (
               // Mostrar todos los tickets si son 10 o menos
               <div className="flex flex-wrap gap-2 justify-center">
@@ -82,10 +85,11 @@ export function TicketNumbersModal({
                     {tickets.length} tickets comprados
                   </p>
                   <p className="text-sm text-accent">
-                    Números: {tickets[0].ticketNumber} - {tickets[tickets.length - 1].ticketNumber}
+                    Números: {tickets[0].ticketNumber} -{" "}
+                    {tickets[tickets.length - 1].ticketNumber}
                   </p>
                 </div>
-                
+
                 {/* Contenedor con scroll para ver todos los números */}
                 <div className="max-h-32 overflow-y-auto border border-accent/20 rounded-lg p-2 bg-muted/30">
                   <div className="flex flex-wrap gap-1 justify-center">
@@ -125,7 +129,7 @@ export function TicketNumbersModal({
               <div className="flex justify-between">
                 <span className="text-accent">Total:</span>
                 <span className="text-primary font-bold">
-                  ${total.toFixed(2)} USD
+                  {formatBsVSimple(total)}
                 </span>
               </div>
               <div className="flex justify-between">

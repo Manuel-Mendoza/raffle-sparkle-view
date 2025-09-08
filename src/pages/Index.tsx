@@ -36,18 +36,21 @@ const Index = () => {
           try {
             const winner = await statisticsService.getLastWinner();
             console.log("Last winner received:", winner);
+            console.log("Setting lastWinner state with:", winner);
             setLastWinner(winner);
           } catch (winnerError) {
             console.log("No last winner available:", winnerError);
           }
         }
 
-        // Fetch top customer data
-        try {
-          const stats = await statisticsService.getDashboardStats();
-          setTopCustomer(stats.topCustomer);
-        } catch (error) {
-          console.warn("Could not fetch top customer data:", error);
+        // Fetch top customer data solo si hay rifa activa
+        if (currentRaffle) {
+          try {
+            const stats = await statisticsService.getDashboardStats();
+            setTopCustomer(stats.topCustomer);
+          } catch (error) {
+            console.warn("Could not fetch top customer data:", error);
+          }
         }
       } catch (error) {
         console.error("Error fetching data:", error);
@@ -88,72 +91,6 @@ const Index = () => {
       </div>
     );
   }
-
-  // Only show main content if there's an active raffle
-  if (!currentRaffle) {
-    return (
-      <div className="min-h-screen bg-background">
-        {/* Header */}
-        <header className="bg-gradient-to-r from-secondary to-secondary/90 py-4">
-          <div className="container mx-auto px-4">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center space-x-2">
-                <div className="w-10 h-10 sm:w-12 sm:h-12 bg-primary rounded-full flex items-center justify-center">
-                  <img
-                    src={Logo}
-                    alt="Logo"
-                    className="w-10 h-10 sm:w-12 sm:h-12"
-                  />
-                </div>
-                <span className="text-lg sm:text-2xl font-bold text-primary-foreground">
-                  Rifas.queMantequilla
-                </span>
-              </div>
-            </div>
-          </div>
-        </header>
-        
-        <div className="container mx-auto px-4 py-12 text-center">
-          <h2 className="text-2xl font-bold text-secondary mb-4">
-            No hay rifas activas
-          </h2>
-          <p className="text-accent mb-8">
-            Mantente atento para las próximas rifas
-          </p>
-          {lastWinner && (
-            <div className="bg-accent/10 p-6 rounded-lg mb-8">
-              <h3 className="text-lg font-semibold text-secondary mb-2">
-                🎉 Último Ganador
-              </h3>
-              <p className="text-accent">{lastWinner.name}</p>
-              <p className="text-sm text-muted-foreground">{lastWinner.prize}</p>
-            </div>
-          )}
-        </div>
-      </div>
-    );
-  }
-
-  // Convert raffle data for RaffleCard component
-  const raffleCardData = {
-    title: currentRaffle.title,
-    totalTickets: currentRaffle.totalTickets,
-    soldTickets: currentRaffle.soldTickets,
-    price: currentRaffle.ticketPrice,
-    prizes: [
-      { position: "🏆 Gran Premio", prize: currentRaffle.prize, icon: "🏍️" },
-    ],
-    date: new Date(currentRaffle.endDate).toLocaleDateString("es-ES", {
-      day: "numeric",
-      month: "long",
-    }),
-    time: "8:00 PM",
-    features: [
-      "Sorteo transparente en vivo",
-      "Premio único garantizado",
-      "Transmisión en directo",
-    ],
-  };
 
   const scrollToPurchase = () => {
     const purchaseSection = document.getElementById("purchase-section");
@@ -207,20 +144,40 @@ const Index = () => {
         />
       </section>
 
-      {/* Main Content */}
-      <div id="purchase-section" className="container mx-auto px-4 py-8">
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8">
-          {/* Left Column - Raffle Info */}
-          <div className="lg:col-span-1 order-2 lg:order-1">
-            <RaffleCard {...raffleCardData} />
-          </div>
+      {/* Main Content - Solo mostrar si hay rifa activa */}
+      {currentRaffle && (
+        <div id="purchase-section" className="container mx-auto px-4 py-8">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8">
+            {/* Left Column - Raffle Info */}
+            <div className="lg:col-span-1 order-2 lg:order-1">
+              <RaffleCard {...{
+                title: currentRaffle.title,
+                totalTickets: currentRaffle.totalTickets,
+                soldTickets: currentRaffle.soldTickets,
+                price: currentRaffle.ticketPrice,
+                prizes: [
+                  { position: "🏆 Gran Premio", prize: currentRaffle.prize, icon: "🏍️" },
+                ],
+                date: new Date(currentRaffle.endDate).toLocaleDateString("es-ES", {
+                  day: "numeric",
+                  month: "long",
+                }),
+                time: "8:00 PM",
+                features: [
+                  "Sorteo transparente en vivo",
+                  "Premio único garantizado",
+                  "Transmisión en directo",
+                ],
+              }} />
+            </div>
 
-          {/* Right Column - Purchase Steps */}
-          <div className="lg:col-span-2 order-1 lg:order-2">
-            <PurchaseSteps raffleData={currentRaffle} />
+            {/* Right Column - Purchase Steps */}
+            <div className="lg:col-span-2 order-1 lg:order-2">
+              <PurchaseSteps raffleData={currentRaffle} />
+            </div>
           </div>
         </div>
-      </div>
+      )}
 
       {/* Footer */}
       <footer className="bg-secondary/10 py-6 sm:py-8 mt-12">

@@ -86,13 +86,13 @@ export const statisticsService = {
     }
   },
 
-  async getLastWinner(): Promise<Winner> {
+  async getLastWinner(): Promise<any> {
     try {
-      const response = await api.get<WinnerResponse>("/admin/winners/history");
+      const response = await api.get("/admin/winners/history");
       return response.data.winner;
     } catch (error) {
       console.error("Error fetching last winner:", error);
-      throw error;
+      return null;
     }
   },
 };

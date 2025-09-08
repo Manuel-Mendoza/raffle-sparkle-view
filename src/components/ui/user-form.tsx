@@ -31,8 +31,14 @@ const paymentMethods = [
   { id: "Binance Pay", name: "Binance Pay", icon: "₿" },
 ];
 
+interface UserFormData {
+  name: string;
+  phone: string;
+  email: string;
+}
+
 interface UserFormProps {
-  onSubmit?: (data: Record<string, unknown>) => void;
+  onSubmit?: (data: UserFormData) => void;
   onPaymentMethodChange?: (method: string) => void;
 }
 
@@ -40,13 +46,20 @@ export function UserForm({ onSubmit, onPaymentMethodChange }: UserFormProps) {
   const [formData, setFormData] = useState({
     fullName: "",
     phone: "",
+    email: "",
     countryCode: "+58",
     paymentMethod: "Transferencia Bancaria",
   });
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    onSubmit?.(formData);
+    // Convert to expected format
+    const submitData: UserFormData = {
+      name: formData.fullName,
+      phone: `${formData.countryCode}${formData.phone}`,
+      email: formData.email,
+    };
+    onSubmit?.(submitData);
   };
 
   const handlePaymentMethodChange = (method: string) => {
@@ -114,6 +127,23 @@ export function UserForm({ onSubmit, onPaymentMethodChange }: UserFormProps) {
                 required
               />
             </div>
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="email" className="text-accent font-medium">
+              Correo Electrónico *
+            </Label>
+            <Input
+              id="email"
+              type="email"
+              placeholder="correo@ejemplo.com"
+              value={formData.email}
+              onChange={(e) =>
+                setFormData({ ...formData, email: e.target.value })
+              }
+              className="border-accent/30 focus:border-primary transition-all duration-200"
+              required
+            />
           </div>
 
           {/* Payment Methods */}

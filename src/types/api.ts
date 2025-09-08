@@ -33,6 +33,7 @@ export interface ApiRaffle {
   endDate: string;
   isActive: boolean;
   createdAt: string;
+  image?: string;
 }
 
 export interface CreateRaffleRequest {

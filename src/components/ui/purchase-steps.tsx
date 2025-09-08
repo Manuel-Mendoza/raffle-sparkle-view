@@ -99,8 +99,8 @@ export function PurchaseSteps({ raffleData }: PurchaseStepsProps) {
     setLoading(true);
     try {
       const response = await customerService.buyTickets({
-        name: purchaseData.userData.fullName,
-        phone: `${purchaseData.userData.countryCode}${purchaseData.userData.phone}`,
+        name: purchaseData.userData.name,
+        phone: purchaseData.userData.phone,
         paymentMethod: purchaseData.paymentMethod,
         paymentProof: purchaseData.paymentProof,
         raffleId: raffleData.id,
@@ -362,10 +362,13 @@ export function PurchaseSteps({ raffleData }: PurchaseStepsProps) {
                         Datos del Participante:
                       </h5>
                       <p className="text-secondary">
-                        {purchaseData.userData.fullName}
+                        {purchaseData.userData.name}
                       </p>
                       <p className="text-sm text-muted-foreground">
                         {purchaseData.userData.phone}
+                      </p>
+                      <p className="text-sm text-muted-foreground">
+                        {purchaseData.userData.email}
                       </p>
                       <p className="text-sm text-muted-foreground">
                         Método de pago: {purchaseData.paymentMethod}

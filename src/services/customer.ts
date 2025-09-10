@@ -19,6 +19,7 @@ export const customerService = {
   },
 
   async buyTickets(data: BuyTicketRequest): Promise<BuyTicketResponse> {
+    console.log("Sending buy ticket request:", data);
     const response = await api.post<BuyTicketResponse>(
       "/customers/buy-ticket",
       data

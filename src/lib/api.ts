@@ -22,6 +22,16 @@ api.interceptors.request.use((config) => {
     delete config.headers["Content-Type"];
   }
 
+  // Log para debugging
+  if (config.url?.includes('buy-ticket')) {
+    console.log("🚀 Sending buy-ticket request:", {
+      url: config.url,
+      method: config.method,
+      data: config.data,
+      headers: config.headers
+    });
+  }
+
   return config;
 });
 
@@ -29,7 +39,15 @@ api.interceptors.request.use((config) => {
 api.interceptors.response.use(
   (response) => response,
   (error) => {
-    console.error("API Error:", error.response?.data || error.message);
+    console.error("API Error Details:", {
+      url: error.config?.url,
+      method: error.config?.method,
+      data: error.config?.data,
+      status: error.response?.status,
+      statusText: error.response?.statusText,
+      responseData: error.response?.data,
+      message: error.message
+    });
     if (error.response?.status === 401) {
       localStorage.removeItem("token");
       window.location.href = "/login";

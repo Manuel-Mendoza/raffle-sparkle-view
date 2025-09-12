@@ -5,22 +5,33 @@ import { StepIndicator } from "@/components/ui/step-indicator";
 import { TicketSelector } from "@/components/ui/ticket-selector";
 import { UserForm } from "@/components/ui/user-form";
 import { TicketNumbersModal } from "@/components/ui/ticket-numbers-modal";
-import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import type { Raffle } from "@/services/raffle";
-import { CheckCircle, ArrowRight, ArrowLeft, Loader2 } from "lucide-react";
+import { CheckCircle, ArrowRight, ArrowLeft, Loader2, Copy } from "lucide-react";
 import { customerService } from "@/services/customer";
 import { toast } from "sonner";
 import type { Ticket } from "@/types/api";
 import { formatBsVSimple } from "@/lib/currency";
 
 const steps = [
-  { id: 1, title: "Boletos", description: "Selecciona cantidad" },
-  { id: 2, title: "Datos", description: "Información personal" },
-  { id: 3, title: "Pago", description: "Subir comprobante" },
-  { id: 4, title: "Confirmación", description: "Revisar y confirmar" },
+  { id: 1, title: "Datos y Boletos", description: "Información y cantidad" },
+  { id: 2, title: "Pago", description: "Método y comprobante" },
+  { id: 3, title: "Aceptar", description: "Ver números de tickets" },
 ];
+
+const bankTransferData = {
+  "Nombre": "Renny Colmenarez",
+  "Tipo de cuenta": "Cuenta Corriente",
+  "Número de cuenta": "01050059111059513730",
+  "Documento de identidad": "25520168",
+};
+
+const mobilePaymentData = {
+  "Banco": "0102",
+  "Celular": "04124796280",
+  "Cedula": "25520168",
+};
 
 interface PurchaseStepsProps {
   raffleData: Raffle;
@@ -53,20 +64,17 @@ export function PurchaseSteps({ raffleData }: PurchaseStepsProps) {
     email: string;
   }) => {
     setPurchaseData((prev) => ({ ...prev, userData }));
-    setCurrentStep(3);
   };
 
   const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
-    // Validar tipo de archivo
     if (!file.type.startsWith("image/")) {
       toast.error("Por favor selecciona un archivo de imagen válido");
       return;
     }
 
-    // Validar tamaño (máximo 5MB)
     if (file.size > 5 * 1024 * 1024) {
       toast.error("La imagen debe ser menor a 5MB");
       return;
@@ -90,6 +98,14 @@ export function PurchaseSteps({ raffleData }: PurchaseStepsProps) {
     }
   };
 
+  const handleCopy = (text: string, field: string) => {
+    navigator.clipboard.writeText(text).then(() => {
+      toast.success(`${field} copiado al portapapeles`);
+    }).catch(() => {
+      toast.error(`Error al copiar ${field}`);
+    });
+  };
+
   const handleFinalConfirm = async () => {
     if (!purchaseData.userData || !purchaseData.paymentProof) {
       toast.error("Faltan datos para completar la compra");
@@ -108,7 +124,6 @@ export function PurchaseSteps({ raffleData }: PurchaseStepsProps) {
         quantity: purchaseData.tickets,
       });
 
-      // Configurar datos para el modal
       setPurchaseResult({
         tickets: response.tickets,
         customerName: response.customer,
@@ -128,7 +143,11 @@ export function PurchaseSteps({ raffleData }: PurchaseStepsProps) {
   };
 
   const handleNextStep = () => {
-    if (currentStep < 4) {
+    if (currentStep === 1 && !purchaseData.userData) {
+      toast.error("Por favor completa tus datos personales");
+      return;
+    }
+    if (currentStep < 3) {
       setCurrentStep(currentStep + 1);
     }
   };
@@ -141,7 +160,6 @@ export function PurchaseSteps({ raffleData }: PurchaseStepsProps) {
 
   const handleModalClose = () => {
     setShowModal(false);
-    // Resetear el formulario para nueva compra
     setCurrentStep(1);
     setPurchaseData({
       tickets: 1,
@@ -160,27 +178,34 @@ export function PurchaseSteps({ raffleData }: PurchaseStepsProps) {
           <CardTitle className="text-center text-2xl text-secondary">
             Proceso de Compra
           </CardTitle>
-          <StepIndicator steps={steps} currentStep={currentStep} />
         </CardHeader>
 
         <CardContent className="min-h-[500px]">
-          {/* Step 1: Ticket Selection */}
           {currentStep === 1 && (
             <div className="space-y-6 animate-fade-in">
               <div className="text-center mb-6">
                 <h3 className="text-xl font-semibold text-secondary mb-2">
-                  Paso 1: Selecciona tus boletos
+                  Datos personales y boletos
                 </h3>
                 <p className="text-accent">
-                  Elige la cantidad de boletos que deseas comprar
+                  Completa tu información y selecciona la cantidad de boletos
                 </p>
               </div>
 
-              <TicketSelector
-                minTickets={1}
-                pricePerTicket={raffleData.ticketPrice}
-                onTicketChange={handleTicketChange}
+              <UserForm
+                onChange={(userData) => setPurchaseData(prev => ({ ...prev, userData }))}
               />
+
+              <div className="mt-6 pt-6 border-t border-accent/20">
+                <h4 className="text-lg font-semibold text-secondary mb-4">
+                  Selecciona tus boletos
+                </h4>
+                <TicketSelector
+                  minTickets={1}
+                  pricePerTicket={raffleData.ticketPrice}
+                  onTicketChange={handleTicketChange}
+                />
+              </div>
 
               <div className="flex justify-end pt-4">
                 <Button
@@ -194,68 +219,14 @@ export function PurchaseSteps({ raffleData }: PurchaseStepsProps) {
             </div>
           )}
 
-          {/* Step 2: User Information */}
           {currentStep === 2 && (
             <div className="space-y-6 animate-fade-in">
               <div className="text-center mb-6">
                 <h3 className="text-xl font-semibold text-secondary mb-2">
-                  Paso 2: Tus datos personales
+                  Método de pago y comprobante
                 </h3>
                 <p className="text-accent">
-                  Necesitamos tu información para contactarte si ganas
-                </p>
-              </div>
-
-              <div className="bg-primary/10 p-4 rounded-lg border border-primary/20">
-                <div className="flex justify-between items-center">
-                  <span className="text-accent">Boletos seleccionados:</span>
-                  <Badge
-                    variant="secondary"
-                    className="bg-primary text-primary-foreground"
-                  >
-                    {purchaseData.tickets} boletos
-                  </Badge>
-                </div>
-                <div className="flex justify-between items-center mt-2">
-                  <span className="text-accent">Total a pagar:</span>
-                  <span className="text-lg font-bold text-primary">
-                    {formatBsVSimple(purchaseData.total)}
-                  </span>
-                </div>
-              </div>
-
-              <UserForm
-                onSubmit={handleUserFormSubmit}
-                onPaymentMethodChange={(method) =>
-                  setPurchaseData((prev) => ({
-                    ...prev,
-                    paymentMethod: method,
-                  }))
-                }
-              />
-
-              <div className="flex justify-between pt-4">
-                <Button
-                  variant="outline"
-                  onClick={handlePrevStep}
-                  className="border-accent/30"
-                >
-                  <ArrowLeft className="w-4 h-4 mr-2" />
-                  Volver
-                </Button>
-              </div>
-            </div>
-          )}
-
-          {/* Step 3: Payment Proof */}
-          {currentStep === 3 && (
-            <div className="space-y-6 animate-fade-in">
-              <div className="text-center mb-6">
-                <h3 className="text-xl font-semibold text-secondary mb-2">
-                  Paso 3: Comprobante de pago
-                </h3>
-                <p className="text-accent">
-                  Sube tu comprobante de pago de{" "}
+                  Selecciona tu método de pago y sube el comprobante de{" "}
                   {formatBsVSimple(purchaseData.total)}
                 </p>
               </div>
@@ -263,8 +234,57 @@ export function PurchaseSteps({ raffleData }: PurchaseStepsProps) {
               <Card className="bg-gradient-to-r from-primary/10 to-accent/10 border-primary/20">
                 <CardContent className="p-6">
                   <h4 className="font-semibold text-secondary mb-4">
-                    Método de pago: {purchaseData.paymentMethod}
+                    Selecciona tu método de pago
                   </h4>
+                  
+                  <div className="space-y-3 mb-6">
+                    {[
+                      { id: "Transferencia Bancaria", name: "Transferencia Bancaria", icon: "🏦" },
+                      { id: "Pago Movil", name: "Pago Móvil", icon: "📱" },
+                    ].map((method) => (
+                      <div
+                        key={method.id}
+                        onClick={() => setPurchaseData(prev => ({ ...prev, paymentMethod: method.id }))}
+                        className={`flex items-center justify-between p-3 border rounded-lg cursor-pointer transition-colors ${
+                          purchaseData.paymentMethod === method.id
+                            ? "border-primary bg-primary/10"
+                            : "border-accent/20 hover:border-primary/30"
+                        }`}
+                      >
+                        <span className="text-accent">{method.name}</span>
+                        <div className="w-8 h-8 bg-primary/10 rounded flex items-center justify-center">
+                          {method.icon}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+
+                  <div className="bg-accent/5 p-4 rounded-lg border border-accent/20 mb-4">
+                    <div className="flex justify-between items-center mb-3">
+                      <h5 className="font-medium text-secondary">Datos para el pago:</h5>
+                    </div>
+                    <div className="text-sm text-accent space-y-2">
+                      {purchaseData.paymentMethod === 'Transferencia Bancaria' ? (
+                        Object.entries(bankTransferData).map(([key, value]) => (
+                          <div key={key} className="flex justify-between items-center">
+                            <span><strong>{key}:</strong> {value}</span>
+                            <Button onClick={() => handleCopy(value, key)} variant="ghost" size="sm"><Copy className="w-3 h-3" /></Button>
+                          </div>
+                        ))
+                      ) : (
+                        Object.entries(mobilePaymentData).map(([key, value]) => (
+                          <div key={key} className="flex justify-between items-center">
+                            <span><strong>{key}:</strong> {value}</span>
+                            <Button onClick={() => handleCopy(value, key)} variant="ghost" size="sm"><Copy className="w-3 h-3" /></Button>
+                          </div>
+                        ))
+                      )}
+                      <div className="flex justify-between items-center">
+                        <span><strong>Monto:</strong> {formatBsVSimple(purchaseData.total)}</span>
+                        <Button onClick={() => handleCopy(purchaseData.total.toString(), "Monto")} variant="ghost" size="sm"><Copy className="w-3 h-3" /></Button>
+                      </div>
+                    </div>
+                  </div>
 
                   <div className="space-y-4">
                     <Label
@@ -321,16 +341,16 @@ export function PurchaseSteps({ raffleData }: PurchaseStepsProps) {
             </div>
           )}
 
-          {/* Step 4: Confirmation */}
-          {currentStep === 4 && (
+          {/* Step 3: Accept and View Ticket Numbers */}
+          {currentStep === 3 && (
             <div className="space-y-6 animate-fade-in">
               <div className="text-center mb-6">
                 <CheckCircle className="w-16 h-16 text-primary mx-auto mb-4" />
                 <h3 className="text-xl font-semibold text-secondary mb-2">
-                  Paso 4: Confirma tu compra
+                  Aceptar y ver números de tickets
                 </h3>
                 <p className="text-accent">
-                  Revisa todos los datos antes de confirmar
+                  Confirma tu compra para ver tus números de tickets
                 </p>
               </div>
 
@@ -392,7 +412,7 @@ export function PurchaseSteps({ raffleData }: PurchaseStepsProps) {
                     </>
                   ) : (
                     <>
-                      Confirmar Compra Final
+                      Aceptar y Ver Mis Números
                       <CheckCircle className="w-5 h-5 ml-2" />
                     </>
                   )}
@@ -406,7 +426,7 @@ export function PurchaseSteps({ raffleData }: PurchaseStepsProps) {
                     className="border-accent/30"
                   >
                     <ArrowLeft className="w-4 h-4 mr-2" />
-                    Modificar Datos
+                    Volver
                   </Button>
                 </div>
               </div>

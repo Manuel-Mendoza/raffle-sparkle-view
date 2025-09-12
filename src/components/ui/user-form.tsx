@@ -39,32 +39,39 @@ interface UserFormData {
 
 interface UserFormProps {
   onSubmit?: (data: UserFormData) => void;
-  onPaymentMethodChange?: (method: string) => void;
+  onChange?: (data: UserFormData) => void;
 }
 
-export function UserForm({ onSubmit, onPaymentMethodChange }: UserFormProps) {
+export function UserForm({ onSubmit, onChange }: UserFormProps) {
   const [formData, setFormData] = useState({
     fullName: "",
     phone: "",
     email: "",
-    countryCode: "+58",
-    paymentMethod: "Transferencia Bancaria",
   });
+
+  const updateFormData = (newData: Partial<typeof formData>) => {
+    const updated = { ...formData, ...newData };
+    setFormData(updated);
+    
+    // Call onChange whenever data changes
+    if (onChange && updated.fullName && updated.phone && updated.email) {
+      onChange({
+        name: updated.fullName,
+        phone: updated.phone,
+        email: updated.email,
+      });
+    }
+  };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     // Convert to expected format
     const submitData: UserFormData = {
       name: formData.fullName,
-      phone: `${formData.countryCode}${formData.phone}`,
+      phone: formData.phone,
       email: formData.email,
     };
     onSubmit?.(submitData);
-  };
-
-  const handlePaymentMethodChange = (method: string) => {
-    setFormData({ ...formData, paymentMethod: method });
-    onPaymentMethodChange?.(method);
   };
 
   return (
@@ -86,9 +93,7 @@ export function UserForm({ onSubmit, onPaymentMethodChange }: UserFormProps) {
               id="fullName"
               placeholder="Ingresa tu nombre completo"
               value={formData.fullName}
-              onChange={(e) =>
-                setFormData({ ...formData, fullName: e.target.value })
-              }
+              onChange={(e) => updateFormData({ fullName: e.target.value })}
               className="border-accent/30 focus:border-primary transition-all duration-200"
               required
             />
@@ -98,35 +103,14 @@ export function UserForm({ onSubmit, onPaymentMethodChange }: UserFormProps) {
             <Label htmlFor="phone" className="text-accent font-medium">
               Celular *
             </Label>
-            <div className="flex space-x-2">
-              <Select
-                value={formData.countryCode}
-                onValueChange={(value) =>
-                  setFormData({ ...formData, countryCode: value })
-                }
-              >
-                <SelectTrigger className="w-24 border-accent/30">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  {countryCodes.map((country) => (
-                    <SelectItem key={country.code} value={country.code}>
-                      {country.code}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-              <Input
-                id="phone"
-                placeholder="Número de teléfono"
-                value={formData.phone}
-                onChange={(e) =>
-                  setFormData({ ...formData, phone: e.target.value })
-                }
-                className="flex-1 border-accent/30 focus:border-primary transition-all duration-200"
-                required
-              />
-            </div>
+            <Input
+              id="phone"
+              placeholder="Número de teléfono"
+              value={formData.phone}
+              onChange={(e) => updateFormData({ phone: e.target.value })}
+              className="border-accent/30 focus:border-primary transition-all duration-200"
+              required
+            />
           </div>
 
           <div className="space-y-2">
@@ -138,47 +122,11 @@ export function UserForm({ onSubmit, onPaymentMethodChange }: UserFormProps) {
               type="email"
               placeholder="correo@ejemplo.com"
               value={formData.email}
-              onChange={(e) =>
-                setFormData({ ...formData, email: e.target.value })
-              }
+              onChange={(e) => updateFormData({ email: e.target.value })}
               className="border-accent/30 focus:border-primary transition-all duration-200"
               required
             />
           </div>
-
-          {/* Payment Methods */}
-          <div className="space-y-4 pt-4 border-t border-accent/10">
-            <h3 className="flex items-center font-semibold text-secondary">
-              <CreditCard className="w-4 h-4 mr-2 text-primary" />
-              Método de Pago *
-            </h3>
-
-            <div className="space-y-3">
-              {paymentMethods.map((method) => (
-                <div
-                  key={method.id}
-                  onClick={() => handlePaymentMethodChange(method.id)}
-                  className={`flex items-center justify-between p-3 border rounded-lg cursor-pointer transition-colors ${
-                    formData.paymentMethod === method.id
-                      ? "border-primary bg-primary/10"
-                      : "border-accent/20 hover:border-primary/30"
-                  }`}
-                >
-                  <span className="text-accent">{method.name}</span>
-                  <div className="w-8 h-8 bg-primary/10 rounded flex items-center justify-center">
-                    {method.icon}
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          <Button
-            type="submit"
-            className="w-full bg-gradient-to-r from-primary to-primary/80 hover:shadow-glow transition-all duration-300 text-lg py-6"
-          >
-            Continuar con el Pago
-          </Button>
         </form>
       </CardContent>
     </Card>

@@ -19,7 +19,6 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
-import { FinishRaffleModal } from "@/components/ui/finish-raffle-modal";
 import { PaymentProofModal } from "@/components/ui/payment-proof-modal";
 import { WinnerModal } from "@/components/ui/winner-modal";
 import {
@@ -42,7 +41,6 @@ import { adminService, CustomerTicket } from "@/services/admin";
 import { AxiosErrorResponse } from "@/types/api";
 import { formatBsV } from "@/lib/currency";
 
-// Use CustomerTicket for both pending and approved
 type PurchaseRequest = CustomerTicket;
 
 export const RaffleManager = () => {
@@ -53,6 +51,7 @@ export const RaffleManager = () => {
   const [isFinishing, setIsFinishing] = useState(false);
   const [finishModalOpen, setFinishModalOpen] = useState(false);
   const [raffleToFinish, setRaffleToFinish] = useState<Raffle | null>(null);
+  const [pinDigits, setPinDigits] = useState<string[]>(["", "", "", ""]);
   const [winnerModal, setWinnerModal] = useState<{
     isOpen: boolean;
     winner: any;
@@ -65,12 +64,8 @@ export const RaffleManager = () => {
     raffleName: "",
   });
   const [isUploadingImage, setIsUploadingImage] = useState(false);
-  const [purchaseRequests, setPurchaseRequests] = useState<PurchaseRequest[]>(
-    []
-  );
-  const [isProcessingRequest, setIsProcessingRequest] = useState<string | null>(
-    null
-  );
+  const [purchaseRequests, setPurchaseRequests] = useState<PurchaseRequest[]>([]);
+  const [isProcessingRequest, setIsProcessingRequest] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<"pending" | "approved">("pending");
   const [paymentProofModal, setPaymentProofModal] = useState<{
     isOpen: boolean;
@@ -112,18 +107,11 @@ export const RaffleManager = () => {
     }
   };
 
-  // Load purchase requests from API based on active tab
   const loadPurchaseRequests = async () => {
     try {
-      console.log("Loading purchase requests for tab:", activeTab);
-      const customers =
-        activeTab === "pending"
-          ? await adminService.getPendingTickets()
-          : await adminService.getApprovedTickets();
-
-      console.log("Received customers:", customers);
-      console.log("Number of customers:", customers.length);
-
+      const customers = activeTab === "pending"
+        ? await adminService.getPendingTickets()
+        : await adminService.getApprovedTickets();
       setPurchaseRequests(customers);
     } catch (error) {
       console.error("Error loading purchase requests:", error);
@@ -142,9 +130,7 @@ export const RaffleManager = () => {
     });
   };
 
-  const handleInputChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) => {
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => ({
       ...prev,
@@ -153,40 +139,9 @@ export const RaffleManager = () => {
   };
 
   const handleCreateRaffle = async () => {
-    // Verificar token antes de crear
-    const token = localStorage.getItem("token");
-    console.log("Token disponible para crear rifa:", token ? "SÍ" : "NO");
-    if (token) {
-      console.log("Token (primeros 20 chars):", token.substring(0, 20) + "...");
-    }
-
-    if (!formData.title.trim()) {
-      alert("El título es requerido");
-      return;
-    }
-
-    if (!formData.description.trim()) {
-      alert("La descripción es requerida");
-      return;
-    }
-
-    if (!formData.prize.trim()) {
-      alert("El premio es requerido");
-      return;
-    }
-
-    if (!formData.ticketPrice || formData.ticketPrice <= 0) {
-      alert("El precio del ticket debe ser mayor a 0");
-      return;
-    }
-
-    if (!formData.endDate) {
-      alert("La fecha de fin es requerida");
-      return;
-    }
-
-    if (!formData.image) {
-      alert("La imagen es requerida");
+    if (!formData.title.trim() || !formData.description.trim() || !formData.prize.trim() || 
+        !formData.ticketPrice || formData.ticketPrice <= 0 || !formData.endDate || !formData.image) {
+      alert("Todos los campos son requeridos");
       return;
     }
 
@@ -197,7 +152,6 @@ export const RaffleManager = () => {
         totalTickets: 10000,
         startDate: new Date().toISOString(),
       };
-      console.log("Enviando datos:", raffleData);
       await raffleService.createRaffle(raffleData);
       await loadRaffles();
       resetForm();
@@ -206,20 +160,7 @@ export const RaffleManager = () => {
     } catch (error: unknown) {
       console.error("Error creating raffle:", error);
       const axiosError = error as AxiosErrorResponse;
-      if (axiosError.response?.status === 404) {
-        alert(
-          "Endpoint no encontrado - Verifica que el backend esté corriendo"
-        );
-      } else if (axiosError.response?.status === 401) {
-        alert("Token de autenticación inválido o expirado");
-      } else {
-        alert(
-          "Error al crear la rifa: " +
-          (axiosError.response?.data?.error ||
-            axiosError.message ||
-            "Error desconocido")
-        );
-      }
+      alert("Error al crear la rifa: " + (axiosError.response?.data?.error || axiosError.message || "Error desconocido"));
     } finally {
       setIsCreating(false);
     }
@@ -230,18 +171,39 @@ export const RaffleManager = () => {
     setFinishModalOpen(true);
   };
 
+  const handlePinChange = (index: number, value: string) => {
+    if (value.length > 1) return;
+    if (value && !/^\d$/.test(value)) return;
+    
+    const newDigits = [...pinDigits];
+    newDigits[index] = value;
+    setPinDigits(newDigits);
+    
+    if (value && index < 3) {
+      const nextInput = document.getElementById(`pin-${index + 1}`);
+      nextInput?.focus();
+    }
+  };
+
+  const handlePinKeyDown = (index: number, e: React.KeyboardEvent) => {
+    if (e.key === 'Backspace' && !pinDigits[index] && index > 0) {
+      const prevInput = document.getElementById(`pin-${index - 1}`);
+      prevInput?.focus();
+    }
+  };
+
   const confirmFinishRaffle = async () => {
-    if (!raffleToFinish) return;
+    const fullNumber = parseInt(pinDigits.join(""));
+    if (!raffleToFinish || !fullNumber || fullNumber <= 0) {
+      alert("Por favor ingresa un número ganador válido");
+      return;
+    }
 
     try {
       setIsFinishing(true);
-
-      // Realizar el sorteo (esto también finaliza la rifa)
-      const result = await adminService.drawWinner(raffleToFinish.id);
-
+      const result = await adminService.setWinnerNumber(raffleToFinish.id, fullNumber);
       await loadRaffles();
 
-      // Mostrar modal del ganador
       setWinnerModal({
         isOpen: true,
         winner: result.winner,
@@ -251,9 +213,10 @@ export const RaffleManager = () => {
 
       setFinishModalOpen(false);
       setRaffleToFinish(null);
+      setPinDigits(["", "", "", ""]);
     } catch (error) {
-      console.error("Error finishing raffle:", error);
-      alert("Error al realizar el sorteo");
+      console.error("Error setting winner number:", error);
+      alert("Error al establecer el número ganador");
     } finally {
       setIsFinishing(false);
     }
@@ -275,12 +238,11 @@ export const RaffleManager = () => {
     }
   };
 
-  // Handle purchase request approval
   const handleApprovePurchase = async (requestId: string) => {
     setIsProcessingRequest(requestId);
     try {
       await adminService.approveTicket(requestId);
-      await loadPurchaseRequests(); // Reload to get updated data
+      await loadPurchaseRequests();
       alert("¡Solicitud de compra aprobada exitosamente!");
     } catch (error) {
       console.error("Error approving purchase:", error);
@@ -290,12 +252,11 @@ export const RaffleManager = () => {
     }
   };
 
-  // Handle purchase request rejection
   const handleRejectPurchase = async (requestId: string) => {
     setIsProcessingRequest(requestId);
     try {
       await adminService.rejectTicket(requestId);
-      await loadPurchaseRequests(); // Reload to get updated data
+      await loadPurchaseRequests();
       alert("Solicitud de compra rechazada");
     } catch (error) {
       console.error("Error rejecting purchase:", error);
@@ -305,12 +266,10 @@ export const RaffleManager = () => {
     }
   };
 
-  // Helper function to get request ID
   const getRequestId = (request: PurchaseRequest): string => {
     return request.customerId;
   };
 
-  // Helper function to get ticket count
   const getTicketCount = (request: PurchaseRequest): number => {
     return request.tickets.length;
   };
@@ -325,17 +284,11 @@ export const RaffleManager = () => {
 
   const getStatusBadge = (status: string) => {
     return status === "active" ? (
-      <Badge
-        variant="outline"
-        className="bg-green-100 text-green-800 border-green-200"
-      >
+      <Badge variant="outline" className="bg-green-100 text-green-800 border-green-200">
         Activa
       </Badge>
     ) : (
-      <Badge
-        variant="outline"
-        className="bg-gray-100 text-gray-800 border-gray-200"
-      >
+      <Badge variant="outline" className="bg-gray-100 text-gray-800 border-gray-200">
         Inactiva
       </Badge>
     );
@@ -346,12 +299,8 @@ export const RaffleManager = () => {
       {/* Header */}
       <div className="flex justify-between items-center">
         <div>
-          <h2 className="text-2xl font-bold text-secondary">
-            Gestión de Rifas
-          </h2>
-          <p className="text-accent">
-            Administra y controla las rifas del sistema
-          </p>
+          <h2 className="text-2xl font-bold text-secondary">Gestión de Rifas</h2>
+          <p className="text-accent">Administra y controla las rifas del sistema</p>
         </div>
         <Dialog open={isCreateModalOpen} onOpenChange={setIsCreateModalOpen}>
           <DialogTrigger asChild>
@@ -363,9 +312,7 @@ export const RaffleManager = () => {
           <DialogContent className="max-w-2xl">
             <DialogHeader>
               <DialogTitle>Crear Nueva Rifa</DialogTitle>
-              <DialogDescription>
-                Completa la información para crear una nueva rifa
-              </DialogDescription>
+              <DialogDescription>Completa la información para crear una nueva rifa</DialogDescription>
             </DialogHeader>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 py-4">
               <div className="space-y-2">
@@ -482,21 +429,14 @@ export const RaffleManager = () => {
       ) : (
         <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
           {raffles.map((raffle) => {
-            const soldPercentage = Math.round(
-              (raffle.soldTickets / raffle.totalTickets) * 100
-            );
+            const soldPercentage = Math.round((raffle.soldTickets / raffle.totalTickets) * 100);
             const totalRevenue = raffle.soldTickets * raffle.ticketPrice;
 
             return (
-              <Card
-                key={raffle.id}
-                className="border-2 border-primary/20 hover:shadow-lg transition-all"
-              >
+              <Card key={raffle.id} className="border-2 border-primary/20 hover:shadow-lg transition-all">
                 <CardHeader>
                   <div className="flex items-center justify-between">
-                    <CardTitle className="text-lg text-secondary truncate">
-                      {raffle.title}
-                    </CardTitle>
+                    <CardTitle className="text-lg text-secondary truncate">{raffle.title}</CardTitle>
                     {getStatusBadge(raffle.status)}
                   </div>
                   <CardDescription className="text-sm">
@@ -504,21 +444,15 @@ export const RaffleManager = () => {
                   </CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-4">
-                  {/* Prize Info */}
                   <div className="flex items-center gap-2 p-3 bg-primary/5 rounded-lg">
                     <Trophy className="w-5 h-5 text-primary" />
-                    <span className="font-medium text-secondary">
-                      {raffle.prize}
-                    </span>
+                    <span className="font-medium text-secondary">{raffle.prize}</span>
                   </div>
 
-                  {/* Stats */}
                   <div className="grid grid-cols-2 gap-4">
                     <div className="text-center p-2 bg-secondary/5 rounded">
                       <Banknote className="w-4 h-4 mx-auto text-secondary mb-1" />
-                      <p className="text-sm font-medium text-secondary">
-                        {formatBsV(raffle.ticketPrice)}
-                      </p>
+                      <p className="text-sm font-medium text-secondary">{formatBsV(raffle.ticketPrice)}</p>
                       <p className="text-xs text-accent">por ticket</p>
                     </div>
                     <div className="text-center p-2 bg-accent/5 rounded">
@@ -530,13 +464,10 @@ export const RaffleManager = () => {
                     </div>
                   </div>
 
-                  {/* Progress */}
                   <div className="space-y-2">
                     <div className="flex justify-between text-sm">
                       <span className="text-accent">Progreso</span>
-                      <span className="text-secondary font-medium">
-                        {soldPercentage}%
-                      </span>
+                      <span className="text-secondary font-medium">{soldPercentage}%</span>
                     </div>
                     <div className="w-full bg-secondary/10 rounded-full h-2">
                       <div
@@ -544,12 +475,9 @@ export const RaffleManager = () => {
                         style={{ width: `${soldPercentage}%` }}
                       ></div>
                     </div>
-                    <p className="text-xs text-accent">
-                      Total recaudado: {formatBsV(totalRevenue)}
-                    </p>
+                    <p className="text-xs text-accent">Total recaudado: {formatBsV(totalRevenue)}</p>
                   </div>
 
-                  {/* Actions */}
                   <div className="flex justify-end space-x-2 pt-4 border-t border-accent/10 mt-4">
                     <Button
                       onClick={() => handleFinishRaffle(raffle)}
@@ -558,7 +486,7 @@ export const RaffleManager = () => {
                       size="sm"
                     >
                       <TrophyIcon className="w-4 h-4 mr-1" />
-                      {isFinishing ? "Realizando..." : "Realizar Sorteo"}
+                      {isFinishing ? "Procesando..." : "Establecer Ganador"}
                     </Button>
                   </div>
                 </CardContent>
@@ -572,32 +500,29 @@ export const RaffleManager = () => {
       <div className="space-y-4">
         <div className="flex justify-between items-center">
           <div>
-            <h3 className="text-xl font-bold text-secondary">
-              Solicitudes de Compra
-            </h3>
-            <p className="text-accent">
-              Gestiona las solicitudes de compra de tickets de los clientes
-            </p>
+            <h3 className="text-xl font-bold text-secondary">Solicitudes de Compra</h3>
+            <p className="text-accent">Gestiona las solicitudes de compra de tickets de los clientes</p>
           </div>
         </div>
 
-        {/* Tabs */}
         <div className="flex space-x-1 bg-muted p-1 rounded-lg">
           <button
             onClick={() => setActiveTab("pending")}
-            className={`flex-1 px-4 py-2 text-sm font-medium rounded-md transition-colors ${activeTab === "pending"
-              ? "bg-primary text-primary-foreground"
-              : "text-muted-foreground hover:text-secondary"
-              }`}
+            className={`flex-1 px-4 py-2 text-sm font-medium rounded-md transition-colors ${
+              activeTab === "pending"
+                ? "bg-primary text-primary-foreground"
+                : "text-muted-foreground hover:text-secondary"
+            }`}
           >
             Pendientes
           </button>
           <button
             onClick={() => setActiveTab("approved")}
-            className={`flex-1 px-4 py-2 text-sm font-medium rounded-md transition-colors ${activeTab === "approved"
-              ? "bg-primary text-primary-foreground"
-              : "text-muted-foreground hover:text-secondary"
-              }`}
+            className={`flex-1 px-4 py-2 text-sm font-medium rounded-md transition-colors ${
+              activeTab === "approved"
+                ? "bg-primary text-primary-foreground"
+                : "text-muted-foreground hover:text-secondary"
+            }`}
           >
             Aceptadas
           </button>
@@ -606,9 +531,7 @@ export const RaffleManager = () => {
         {purchaseRequests.length === 0 ? (
           <div className="text-center py-8">
             <p className="text-accent">
-              No hay solicitudes{" "}
-              {activeTab === "pending" ? "pendientes" : "aceptadas"} en este
-              momento
+              No hay solicitudes {activeTab === "pending" ? "pendientes" : "aceptadas"} en este momento
             </p>
           </div>
         ) : (
@@ -616,92 +539,59 @@ export const RaffleManager = () => {
             {purchaseRequests.map((request) => {
               const requestId = getRequestId(request);
               const ticketCount = getTicketCount(request);
-              const total = ticketCount * 50; // Calculate total based on ticket count
+              const total = ticketCount * 50;
 
               return (
-                <Card
-                  key={requestId}
-                  className="border-2 border-primary/20 hover:shadow-lg transition-all"
-                >
+                <Card key={requestId} className="border-2 border-primary/20 hover:shadow-lg transition-all">
                   <CardHeader>
                     <div className="flex items-center justify-between">
-                      <CardTitle className="text-lg text-secondary">
-                        {request.customerName}
-                      </CardTitle>
+                      <CardTitle className="text-lg text-secondary">{request.customerName}</CardTitle>
                     </div>
-                    <CardDescription className="text-sm">
-                      {request.raffleTitle}
-                    </CardDescription>
+                    <CardDescription className="text-sm">{request.raffleTitle}</CardDescription>
                   </CardHeader>
                   <CardContent className="space-y-4">
-                    {/* Customer Info */}
                     <div className="grid grid-cols-2 gap-4">
                       <div className="flex items-center gap-2">
                         <User className="w-4 h-4 text-primary" />
                         <div>
-                          <p className="text-sm font-medium text-secondary">
-                            Cliente
-                          </p>
-                          <p className="text-xs text-accent">
-                            {request.customerName}
-                          </p>
+                          <p className="text-sm font-medium text-secondary">Cliente</p>
+                          <p className="text-xs text-accent">{request.customerName}</p>
                         </div>
                       </div>
                       <div className="flex items-center gap-2">
                         <Phone className="w-4 h-4 text-primary" />
                         <div>
-                          <p className="text-sm font-medium text-secondary">
-                            Teléfono
-                          </p>
-                          <p className="text-xs text-accent">
-                            {request.customerPhone}
-                          </p>
+                          <p className="text-sm font-medium text-secondary">Teléfono</p>
+                          <p className="text-xs text-accent">{request.customerPhone}</p>
                         </div>
                       </div>
                     </div>
 
-                    {/* Payment Info */}
                     <div className="grid grid-cols-2 gap-4">
                       <div className="flex items-center gap-2">
                         <CreditCard className="w-4 h-4 text-primary" />
                         <div>
-                          <p className="text-sm font-medium text-secondary">
-                            Método de Pago
-                          </p>
-                          <p className="text-xs text-accent">
-                            {request.paymentMethod}
-                          </p>
+                          <p className="text-sm font-medium text-secondary">Método de Pago</p>
+                          <p className="text-xs text-accent">{request.paymentMethod}</p>
                         </div>
                       </div>
                       <div className="flex items-center gap-2">
                         <Banknote className="w-4 h-4 text-primary" />
                         <div>
-                          <p className="text-sm font-medium text-secondary">
-                            Total
-                          </p>
-                          <p className="text-xs text-accent">
-                            {ticketCount} ticket(s) - ${total}
-                          </p>
+                          <p className="text-sm font-medium text-secondary">Total</p>
+                          <p className="text-xs text-accent">{ticketCount} ticket(s) - ${total}</p>
                         </div>
                       </div>
                     </div>
 
-                    {/* Payment Proof */}
                     <div className="space-y-2">
                       <div className="flex items-center gap-2">
                         <Eye className="w-4 h-4 text-primary" />
-                        <span className="text-sm font-medium text-secondary">
-                          Comprobante de Pago
-                        </span>
+                        <span className="text-sm font-medium text-secondary">Comprobante de Pago</span>
                       </div>
                       <Button
                         variant="outline"
-                        onClick={() =>
-                          openPaymentProofModal(
-                            request.paymentProof,
-                            request.customerName
-                          )
-                        }
+                        onClick={() => openPaymentProofModal(request.paymentProof, request.customerName)}
                         className="w-full"
                       >
                         <Eye className="w-4 h-4 mr-2" />
@@ -709,7 +599,6 @@ export const RaffleManager = () => {
                       </Button>
                     </div>
 
-                    {/* Action Buttons - only for pending */}
                     {activeTab === "pending" && (
                       <div className="flex justify-end space-x-2 pt-4 border-t border-accent/10">
                         <Button
@@ -720,9 +609,7 @@ export const RaffleManager = () => {
                           size="sm"
                         >
                           <X className="w-4 h-4 mr-1" />
-                          {isProcessingRequest === requestId
-                            ? "Procesando..."
-                            : "Rechazar"}
+                          {isProcessingRequest === requestId ? "Procesando..." : "Rechazar"}
                         </Button>
                         <Button
                           onClick={() => handleApprovePurchase(requestId)}
@@ -731,14 +618,11 @@ export const RaffleManager = () => {
                           size="sm"
                         >
                           <Check className="w-4 h-4 mr-1" />
-                          {isProcessingRequest === requestId
-                            ? "Procesando..."
-                            : "Aceptar"}
+                          {isProcessingRequest === requestId ? "Procesando..." : "Aceptar"}
                         </Button>
                       </div>
                     )}
 
-                    {/* Status message for approved requests */}
                     {activeTab === "approved" && (
                       <div className="pt-4 border-t border-accent/10">
                         <p className="text-sm text-center text-accent">
@@ -755,16 +639,59 @@ export const RaffleManager = () => {
       </div>
 
       {/* Finish Raffle Modal */}
-      <FinishRaffleModal
-        isOpen={finishModalOpen}
-        onClose={() => {
-          setFinishModalOpen(false);
-          setRaffleToFinish(null);
-        }}
-        onConfirm={confirmFinishRaffle}
-        raffleName={raffleToFinish?.title || ""}
-        isLoading={isFinishing}
-      />
+      <Dialog open={finishModalOpen} onOpenChange={setFinishModalOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Establecer Número Ganador</DialogTitle>
+            <DialogDescription>
+              Ingresa el número ganador para la rifa "{raffleToFinish?.title}"
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4 py-4">
+            <div className="space-y-2">
+              <Label>Número Ganador</Label>
+              <div className="flex justify-center space-x-2">
+                {pinDigits.map((digit, index) => (
+                  <Input
+                    key={index}
+                    id={`pin-${index}`}
+                    type="text"
+                    inputMode="numeric"
+                    maxLength={1}
+                    value={digit}
+                    onChange={(e) => handlePinChange(index, e.target.value)}
+                    onKeyDown={(e) => handlePinKeyDown(index, e)}
+                    className="w-12 h-12 text-center text-lg font-bold"
+                  />
+                ))}
+              </div>
+              <p className="text-xs text-center text-accent">
+                Ingresa el número ganador (4 dígitos)
+              </p>
+            </div>
+          </div>
+          <div className="flex justify-end space-x-2">
+            <Button
+              variant="outline"
+              onClick={() => {
+                setFinishModalOpen(false);
+                setRaffleToFinish(null);
+                setPinDigits(["", "", "", ""]);
+              }}
+              disabled={isFinishing}
+            >
+              Cancelar
+            </Button>
+            <Button
+              onClick={confirmFinishRaffle}
+              disabled={isFinishing || pinDigits.some(d => !d)}
+              className="bg-primary hover:bg-primary/90"
+            >
+              {isFinishing ? "Procesando..." : "Establecer Ganador"}
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
 
       {/* Payment Proof Modal */}
       <PaymentProofModal

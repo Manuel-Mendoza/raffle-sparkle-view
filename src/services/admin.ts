@@ -72,6 +72,14 @@ export const adminService = {
     return response.data;
   },
 
+  async setWinnerNumber(raffleId: string, ticketNumber: number): Promise<DrawWinnerResponse> {
+    const response = await api.post<DrawWinnerResponse>("/admin/set-winner", {
+      raffleId,
+      ticketNumber: ticketNumber.toString(),
+    });
+    return response.data;
+  },
+
   async getLastWinner(): Promise<Winner | null> {
     try {
       const response = await api.get<Winner>("/admin/last-winner");

@@ -27,6 +27,15 @@ export interface WinnerResponse {
   winner: Winner;
 }
 
+export interface LastWinner {
+  raffleImage?: string;
+  customerName: string;
+  ticketNumber: string;
+  prize: string;
+  raffleTitle: string;
+  drawnAt: string;
+}
+
 export interface DashboardStatistics {
   totalSales: number;
   ticketsSold: number;
@@ -86,7 +95,7 @@ export const statisticsService = {
     }
   },
 
-  async getLastWinner(): Promise<any> {
+  async getLastWinner(): Promise<LastWinner | null> {
     try {
       const response = await api.get("/admin/winners/history");
       return response.data.winner;

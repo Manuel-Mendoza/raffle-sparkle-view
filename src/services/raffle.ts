@@ -74,6 +74,16 @@ export const convertLocalRaffleToUpdateRequest = (
   return updateData;
 };
 
+export interface TicketInfo {
+  ticketNumber: string;
+  status: string;
+  customerName: string;
+  customerPhone: string;
+  customerEmail: string;
+  raffleTitle: string;
+  rafflePrize: string;
+}
+
 export const raffleService = {
   async getCurrentRaffle(): Promise<Raffle> {
     const response = await api.get<ApiRaffle>("/raffle/current");
@@ -98,5 +108,12 @@ export const raffleService = {
 
   async finishRaffle(): Promise<void> {
     await api.put("/raffle/finish");
+  },
+
+  async verifyTicket(ticketNumber: string): Promise<TicketInfo> {
+    const response = await api.post<{ ticket: TicketInfo }>("/raffle/verify", {
+      ticketNumber,
+    });
+    return response.data.ticket;
   },
 };

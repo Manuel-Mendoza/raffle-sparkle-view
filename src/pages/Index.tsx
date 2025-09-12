@@ -2,7 +2,14 @@ import { useEffect, useState } from "react";
 import { HeroSection } from "@/components/ui/hero-section";
 import { RaffleCard } from "@/components/ui/raffle-card";
 import { PurchaseSteps } from "@/components/ui/purchase-steps";
+import { TicketVerification } from "@/components/ui/ticket-verification";
 import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { MessageCircle, Loader2 } from "lucide-react";
 import { Link } from "react-router-dom";
 import Logo from "@/assets/favico.png";
@@ -21,6 +28,7 @@ const Index = () => {
   );
   const [lastWinner, setLastWinner] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+  const [showVerificationModal, setShowVerificationModal] = useState(false);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -102,6 +110,10 @@ const Index = () => {
     }
   };
 
+  const handleVerifyTickets = () => {
+    setShowVerificationModal(true);
+  };
+
   return (
     <div className="min-h-screen bg-background">
       {/* Header */}
@@ -141,6 +153,7 @@ const Index = () => {
           topCustomer={topCustomer}
           lastWinner={lastWinner}
           onBuyTicket={scrollToPurchase}
+          onVerifyTickets={handleVerifyTickets}
         />
       </section>
 
@@ -194,6 +207,13 @@ const Index = () => {
           </div>
         </div>
       </footer>
+
+      {/* Ticket Verification Modal */}
+      <Dialog open={showVerificationModal} onOpenChange={setShowVerificationModal}>
+        <DialogContent className="max-w-md">
+          <TicketVerification />
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };

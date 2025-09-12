@@ -79,7 +79,6 @@ export function RaffleCard({
             Premio Único
           </h3>
           <div className="flex items-center justify-center space-x-4 p-4 rounded-lg bg-gradient-to-r from-primary/10 to-accent/10 border border-primary/20">
-            <span className="text-3xl">{prizes[0]?.icon}</span>
             <div className="text-center">
               <p className="font-bold text-lg text-primary">🏆 GRAN PREMIO</p>
               <p className="text-xl font-semibold text-secondary">

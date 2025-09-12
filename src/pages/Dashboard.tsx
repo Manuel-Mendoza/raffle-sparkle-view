@@ -25,6 +25,7 @@ import { authService } from "@/services/auth";
 import { toast } from "sonner";
 import { DashboardStats } from "@/components/ui/dashboard-stats";
 import { RaffleManager } from "@/components/ui/raffle-manager";
+import { TicketVerification } from "@/components/ui/ticket-verification";
 
 const Dashboard = () => {
   const navigate = useNavigate();
@@ -54,45 +55,29 @@ const Dashboard = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-primary/5 to-secondary/5">
-      {/* Header */}
-      <header className="bg-white/80 backdrop-blur-sm border-b border-primary/20 sticky top-0 z-50">
-        <div className="container mx-auto px-4 py-4 flex items-center justify-between">
-          <div className="flex items-center space-x-4">
-            <Link to="/" className="text-xl font-bold text-secondary">
-              Rifas q' Mantequilla
-            </Link>
-            <Badge variant="secondary" className="bg-primary/10 text-primary">
-              Panel Admin
-            </Badge>
-          </div>
-          <div className="flex items-center space-x-4">
-            <span className="text-sm text-accent">¡Bienvenido, Admin!</span>
-            <Button
-              onClick={handleLogout}
-              variant="outline"
-              size="sm"
-              className="text-secondary hover:text-primary"
-            >
-              <LogOut className="w-4 h-4 mr-2" />
-              Salir
-            </Button>
-          </div>
-        </div>
-      </header>
-
       {/* Main Content */}
       <main className="container mx-auto px-4 py-8">
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold text-secondary mb-2">
-            Dashboard Administrativo
-          </h1>
-          <p className="text-accent">
-            Gestiona rifas, visualiza estadísticas y administra el sistema
-          </p>
+        <div className="mb-8 flex items-center justify-between">
+          <div>
+            <h1 className="text-3xl font-bold text-secondary mb-2">
+              Dashboard Administrativo
+            </h1>
+            <p className="text-accent">
+              Gestiona rifas, visualiza estadísticas y administra el sistema
+            </p>
+          </div>
+          <Button
+            onClick={handleLogout}
+            variant="outline"
+            className="text-secondary hover:text-primary"
+          >
+            <LogOut className="w-4 h-4 mr-2" />
+            Cerrar Sesión
+          </Button>
         </div>
 
         <Tabs defaultValue="stats" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-2 max-w-md bg-white/50 border border-primary/20">
+          <TabsList className="grid w-full grid-cols-3 max-w-lg bg-white/50 border border-primary/20">
             <TabsTrigger
               value="stats"
               className="data-[state=active]:bg-primary data-[state=active]:text-white"
@@ -107,6 +92,13 @@ const Dashboard = () => {
               <Trophy className="w-4 h-4 mr-2" />
               Gestionar Rifas
             </TabsTrigger>
+            <TabsTrigger
+              value="verify"
+              className="data-[state=active]:bg-primary data-[state=active]:text-white"
+            >
+              <Ticket className="w-4 h-4 mr-2" />
+              Verificar Ticket
+            </TabsTrigger>
           </TabsList>
 
           <TabsContent value="stats" className="space-y-6">
@@ -115,6 +107,10 @@ const Dashboard = () => {
 
           <TabsContent value="raffles" className="space-y-6">
             <RaffleManager />
+          </TabsContent>
+
+          <TabsContent value="verify" className="space-y-6">
+            <TicketVerification />
           </TabsContent>
         </Tabs>
       </main>

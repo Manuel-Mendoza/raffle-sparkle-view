@@ -157,7 +157,7 @@ export function PurchaseSteps({ raffleData }: PurchaseStepsProps) {
         paymentMethod: purchaseData.paymentMethod,
         raffleId: raffleData.id,
         quantity: purchaseData.tickets,
-        hasPaymentProof: !!purchaseData.paymentProof
+        hasPaymentProof: !!purchaseData.paymentProof,
       });
 
       const response = await customerService.buyTickets({
@@ -180,20 +180,26 @@ export function PurchaseSteps({ raffleData }: PurchaseStepsProps) {
       toast.success("¡Compra procesada exitosamente!");
     } catch (error: unknown) {
       console.error("❌ Error completo en handleFinalConfirm:", error);
-      
+
       let errorMessage = "Error al procesar la compra";
-      
+
       if (error instanceof Error) {
         errorMessage = error.message;
-      } else if (typeof error === 'object' && error !== null) {
-        const apiError = error as any;
+      } else if (
+        typeof error === "object" &&
+        error !== null &&
+        "response" in error
+      ) {
+        const apiError = error as {
+          response?: { data?: { error?: string; message?: string } };
+        };
         if (apiError.response?.data?.error) {
           errorMessage = apiError.response.data.error;
         } else if (apiError.response?.data?.message) {
           errorMessage = apiError.response.data.message;
         }
       }
-      
+
       toast.error(errorMessage);
     } finally {
       setLoading(false);
@@ -232,7 +238,7 @@ export function PurchaseSteps({ raffleData }: PurchaseStepsProps) {
   return (
     <>
       {/* Debug Panel - Solo en desarrollo */}
-      <DebugPanel 
+      <DebugPanel
         title="Purchase Data Debug"
         data={{
           currentStep,
@@ -246,7 +252,7 @@ export function PurchaseSteps({ raffleData }: PurchaseStepsProps) {
           hasPaymentProof: !!purchaseData.paymentProof,
           raffleId: raffleData.id,
           raffleTitle: raffleData.title,
-          loading
+          loading,
         }}
       />
 

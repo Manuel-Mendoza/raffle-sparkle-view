@@ -54,12 +54,18 @@ export function UserForm({ onSubmit, onChange }: UserFormProps) {
     setFormData(updated);
 
     // Call onChange whenever data changes with validation
-    if (onChange && updated.fullName.trim() && updated.phone.trim() && updated.email.trim()) {
+    if (
+      onChange &&
+      updated.fullName.trim() &&
+      updated.phone.trim() &&
+      updated.email.trim()
+    ) {
       // Validaciones básicas
-      const isValidEmail = updated.email.includes("@") && updated.email.includes(".");
+      const isValidEmail =
+        updated.email.includes("@") && updated.email.includes(".");
       const isValidPhone = updated.phone.length >= 10;
       const isValidName = updated.fullName.trim().length >= 2;
-      
+
       if (isValidName && isValidPhone && isValidEmail) {
         onChange({
           name: updated.fullName.trim(),
@@ -106,7 +112,9 @@ export function UserForm({ onSubmit, onChange }: UserFormProps) {
               required
             />
             {formData.fullName && formData.fullName.trim().length < 2 && (
-              <p className="text-sm text-red-500">El nombre debe tener al menos 2 caracteres</p>
+              <p className="text-sm text-red-500">
+                El nombre debe tener al menos 2 caracteres
+              </p>
             )}
           </div>
 
@@ -120,7 +128,7 @@ export function UserForm({ onSubmit, onChange }: UserFormProps) {
               value={formData.phone}
               onChange={(e) => {
                 // Solo permitir números y algunos caracteres especiales
-                const value = e.target.value.replace(/[^0-9+\-\s()]/g, '');
+                const value = e.target.value.replace(/[^0-9+\-\s()]/g, "");
                 updateFormData({ phone: value });
               }}
               className="border-accent/30 focus:border-primary transition-all duration-200"
@@ -128,7 +136,9 @@ export function UserForm({ onSubmit, onChange }: UserFormProps) {
               required
             />
             {formData.phone && formData.phone.length < 10 && (
-              <p className="text-sm text-red-500">El teléfono debe tener al menos 10 dígitos</p>
+              <p className="text-sm text-red-500">
+                El teléfono debe tener al menos 10 dígitos
+              </p>
             )}
           </div>
 
@@ -145,9 +155,11 @@ export function UserForm({ onSubmit, onChange }: UserFormProps) {
               className="border-accent/30 focus:border-primary transition-all duration-200"
               required
             />
-            {formData.email && (!formData.email.includes("@") || !formData.email.includes(".")) && (
-              <p className="text-sm text-red-500">Ingresa un email válido</p>
-            )}
+            {formData.email &&
+              (!formData.email.includes("@") ||
+                !formData.email.includes(".")) && (
+                <p className="text-sm text-red-500">Ingresa un email válido</p>
+              )}
           </div>
         </form>
       </CardContent>

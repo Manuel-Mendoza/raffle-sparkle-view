@@ -1,5 +1,6 @@
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { OptimizedImage } from "@/components/ui/optimized-image";
 import { ShoppingCart, Search } from "lucide-react";
 import heroImage from "@/assets/hero-motorcycle.jpg";
 import type { Raffle } from "@/services/raffle";
@@ -42,9 +43,11 @@ export function HeroSection({
     return (
       <div className="relative min-h-[600px] p-4 flex items-center justify-center overflow-hidden rounded-xl">
         {/* Background Image */}
-        <div
-          className="absolute inset-0 bg-cover bg-center bg-no-repeat"
-          style={{ backgroundImage: `url(${backgroundImage})` }}
+        <OptimizedImage
+          src={backgroundImage}
+          alt="Último ganador"
+          className="absolute inset-0 w-full h-full object-cover"
+          priority={true}
         />
 
         {/* Overlay con gradiente consistente */}
@@ -154,9 +157,11 @@ export function HeroSection({
 
   return (
     <div className="relative min-h-[600px] flex items-center justify-center overflow-hidden rounded-xl">
-      <div
-        className="absolute inset-0 bg-cover bg-center bg-no-repeat"
-        style={{ backgroundImage: `url(${backgroundImage})` }}
+      <OptimizedImage
+        src={backgroundImage}
+        alt={raffleData.title}
+        className="absolute inset-0 w-full h-full object-cover"
+        priority={true}
       />
       <div className="absolute inset-0 bg-gradient-to-r from-secondary/90 via-secondary/70 to-transparent" />
 

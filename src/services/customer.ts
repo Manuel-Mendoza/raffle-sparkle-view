@@ -1,4 +1,5 @@
 import { api } from "@/lib/api";
+import type { AxiosError } from "axios";
 import {
   BuyTicketRequest,
   BuyTicketResponse,
@@ -23,32 +24,32 @@ export const customerService = {
     if (!data.name || data.name.trim().length < 2) {
       throw new Error("El nombre debe tener al menos 2 caracteres");
     }
-    
+
     if (!data.phone || data.phone.trim().length < 10) {
       throw new Error("El teléfono debe tener al menos 10 dígitos");
     }
-    
+
     if (!data.email || !data.email.includes("@")) {
       throw new Error("El email debe ser válido");
     }
-    
+
     if (!data.paymentProof || !data.paymentProof.startsWith("http")) {
       throw new Error("Debe subir un comprobante de pago válido");
     }
-    
+
     if (!data.raffleId) {
       throw new Error("ID de rifa requerido");
     }
-    
+
     if (!data.quantity || data.quantity < 1) {
       throw new Error("La cantidad debe ser mayor a 0");
     }
 
     console.log("✅ Validaciones pasadas. Enviando solicitud:", {
       ...data,
-      paymentProof: data.paymentProof.substring(0, 50) + "..." // Solo mostrar parte de la URL
+      paymentProof: data.paymentProof.substring(0, 50) + "...", // Solo mostrar parte de la URL
     });
-    
+
     try {
       const response = await api.post<BuyTicketResponse>(
         "/customers/buy-ticket",
@@ -56,21 +57,24 @@ export const customerService = {
       );
       console.log("✅ Respuesta exitosa:", response.data);
       return response.data;
-    } catch (error: any) {
+    } catch (error: AxiosError) {
       console.error("❌ Error en buyTickets:", {
         status: error.response?.status,
         statusText: error.response?.statusText,
         data: error.response?.data,
         message: error.message,
-        requestData: data
+        requestData: data,
       });
-      
+
       // Mejorar mensajes de error específicos
       if (error.response?.status === 400) {
-        const errorMsg = error.response?.data?.error || error.response?.data?.message || "Datos inválidos";
+        const errorMsg =
+          error.response?.data?.error ||
+          error.response?.data?.message ||
+          "Datos inválidos";
         throw new Error(`Error de validación: ${errorMsg}`);
       }
-      
+
       throw error;
     }
   },

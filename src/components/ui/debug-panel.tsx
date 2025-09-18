@@ -5,14 +5,14 @@ import { Badge } from "@/components/ui/badge";
 import { Eye, EyeOff } from "lucide-react";
 
 interface DebugPanelProps {
-  data: any;
+  data: Record<string, unknown>;
   title?: string;
 }
 
 export function DebugPanel({ data, title = "Debug Info" }: DebugPanelProps) {
   const [isVisible, setIsVisible] = useState(false);
 
-  if (process.env.NODE_ENV === 'production') {
+  if (process.env.NODE_ENV === "production") {
     return null;
   }
 
@@ -29,21 +29,25 @@ export function DebugPanel({ data, title = "Debug Info" }: DebugPanelProps) {
             onClick={() => setIsVisible(!isVisible)}
             className="text-yellow-600 hover:text-yellow-800"
           >
-            {isVisible ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+            {isVisible ? (
+              <EyeOff className="w-4 h-4" />
+            ) : (
+              <Eye className="w-4 h-4" />
+            )}
           </Button>
         </div>
       </CardHeader>
-      
+
       {isVisible && (
         <CardContent className="pt-0">
           <pre className="text-xs bg-gray-100 p-2 rounded overflow-auto max-h-40">
             {JSON.stringify(data, null, 2)}
           </pre>
-          
+
           <div className="mt-2 flex flex-wrap gap-1">
             {Object.entries(data || {}).map(([key, value]) => (
-              <Badge 
-                key={key} 
+              <Badge
+                key={key}
                 variant={value ? "default" : "destructive"}
                 className="text-xs"
               >

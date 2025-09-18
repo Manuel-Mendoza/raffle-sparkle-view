@@ -1,8 +1,7 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, lazy, Suspense } from "react";
 import { HeroSection } from "@/components/ui/hero-section";
 import { RaffleCard } from "@/components/ui/raffle-card";
-import { PurchaseSteps } from "@/components/ui/purchase-steps";
-import { TicketVerification } from "@/components/ui/ticket-verification";
+import { LoadingSkeleton } from "@/components/ui/loading-skeleton";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -21,6 +20,21 @@ import {
 } from "@/services/statistics";
 import type { LastWinner } from "@/components/ui/hero-section";
 import { toast } from "sonner";
+
+// Lazy load components that are not immediately visible
+const PurchaseSteps = lazy(() =>
+  import("@/components/ui/purchase-steps").then((m) => ({
+    default: m.PurchaseSteps,
+  }))
+);
+const TicketVerification = lazy(() =>
+  import("@/components/ui/ticket-verification").then((m) => ({
+    default: m.TicketVerification,
+  }))
+);
+const ApiTest = lazy(() =>
+  import("@/components/ui/api-test").then((m) => ({ default: m.ApiTest }))
+);
 
 const Index = () => {
   const [currentRaffle, setCurrentRaffle] = useState<Raffle | null>(null);
@@ -82,10 +96,31 @@ const Index = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-background flex items-center justify-center">
-        <div className="text-center">
-          <Loader2 className="w-8 h-8 animate-spin mx-auto mb-4 text-primary" />
-          <p className="text-accent">Cargando rifa...</p>
+      <div className="min-h-screen bg-background">
+        {/* Header Skeleton */}
+        <div className="bg-gradient-to-r from-secondary to-secondary/90 py-4">
+          <div className="container mx-auto px-4">
+            <div className="flex items-center justify-between">
+              <LoadingSkeleton className="w-48 h-8" variant="text" />
+              <LoadingSkeleton className="w-24 h-8" variant="button" />
+            </div>
+          </div>
+        </div>
+
+        {/* Hero Skeleton */}
+        <div className="container mx-auto px-4 py-8">
+          <LoadingSkeleton variant="hero" />
+        </div>
+
+        {/* Content Skeleton */}
+        <div className="container mx-auto px-4 py-8">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <LoadingSkeleton variant="card" />
+            <div className="lg:col-span-2 space-y-4">
+              <LoadingSkeleton className="h-32" />
+              <LoadingSkeleton className="h-48" />
+            </div>
+          </div>
         </div>
       </div>
     );
@@ -149,6 +184,13 @@ const Index = () => {
         </div>
       </header>
 
+      {/* API Test Component - Solo en desarrollo */}
+      <div className="container mx-auto px-4 pt-4">
+        <Suspense fallback={<LoadingSkeleton className="w-full h-20" />}>
+          <ApiTest />
+        </Suspense>
+      </div>
+
       {/* Hero Section */}
       <section className="container mx-auto px-4 py-8">
         <HeroSection
@@ -198,7 +240,9 @@ const Index = () => {
 
             {/* Right Column - Purchase Steps */}
             <div className="lg:col-span-2 order-1 lg:order-2">
-              <PurchaseSteps raffleData={currentRaffle} />
+              <Suspense fallback={<LoadingSkeleton className="w-full h-96" />}>
+                <PurchaseSteps raffleData={currentRaffle} />
+              </Suspense>
             </div>
           </div>
         </div>
@@ -226,7 +270,9 @@ const Index = () => {
         onOpenChange={setShowVerificationModal}
       >
         <DialogContent className="max-w-md">
-          <TicketVerification />
+          <Suspense fallback={<LoadingSkeleton className="w-full h-40" />}>
+            <TicketVerification />
+          </Suspense>
         </DialogContent>
       </Dialog>
     </div>

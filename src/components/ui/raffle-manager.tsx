@@ -36,7 +36,7 @@ import {
   Eye,
 } from "lucide-react";
 import { raffleService, Raffle } from "@/services/raffle";
-import { uploadImageToCloudinary } from "@/services/cloudinary";
+import { uploadImageToImgBB } from "@/services/imgbb";
 import { adminService, CustomerTicket } from "@/services/admin";
 import { AxiosErrorResponse } from "@/types/api";
 import { formatBsV } from "@/lib/currency";
@@ -251,7 +251,7 @@ export const RaffleManager = () => {
 
     try {
       setIsUploadingImage(true);
-      const imageUrl = await uploadImageToCloudinary(file);
+      const imageUrl = await uploadImageToImgBB(file);
       setFormData((prev) => ({ ...prev, image: imageUrl }));
     } catch (error) {
       console.error("Error uploading image:", error);

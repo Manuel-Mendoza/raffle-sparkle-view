@@ -31,10 +31,43 @@
       content="https://lovable.dev/opengraph-image-p98pqg.png"
     />
     <link rel="icon" href="/favico.png" />
+
+    <!-- Preload critical resources -->
+    <link
+      rel="preload"
+      href="/src/assets/hero-motorcycle.jpg"
+      as="image"
+      type="image/jpeg"
+    />
+    <link rel="preload" href="/favico.png" as="image" type="image/png" />
+
+    <!-- DNS prefetch for external resources -->
+    <link rel="dns-prefetch" href="//riffaquemantequilla.onrender.com" />
+    <link
+      rel="preconnect"
+      href="https://riffaquemantequilla.onrender.com"
+      crossorigin
+    />
   </head>
 
   <body>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
+
+    <!-- Service Worker Registration -->
+    <script>
+      if ("serviceWorker" in navigator) {
+        window.addEventListener("load", () => {
+          navigator.serviceWorker
+            .register("/sw.js")
+            .then((registration) => {
+              console.log("SW registered: ", registration);
+            })
+            .catch((registrationError) => {
+              console.log("SW registration failed: ", registrationError);
+            });
+        });
+      }
+    </script>
   </body>
 </html>

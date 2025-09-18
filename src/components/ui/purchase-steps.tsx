@@ -8,7 +8,13 @@ import { TicketNumbersModal } from "@/components/ui/ticket-numbers-modal";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import type { Raffle } from "@/services/raffle";
-import { CheckCircle, ArrowRight, ArrowLeft, Loader2, Copy } from "lucide-react";
+import {
+  CheckCircle,
+  ArrowRight,
+  ArrowLeft,
+  Loader2,
+  Copy,
+} from "lucide-react";
 import { customerService } from "@/services/customer";
 import { toast } from "sonner";
 import type { Ticket } from "@/types/api";
@@ -21,16 +27,16 @@ const steps = [
 ];
 
 const bankTransferData = {
-  "Nombre": "Renny Colmenarez",
+  Nombre: "Renny Colmenarez",
   "Tipo de cuenta": "Cuenta Corriente",
   "Número de cuenta": "01050059111059513730",
   "Documento de identidad": "25520168",
 };
 
 const mobilePaymentData = {
-  "Banco": "0102",
-  "Celular": "04124796280",
-  "Cedula": "25520168",
+  Banco: "0102",
+  Celular: "04124796280",
+  Cedula: "25520168",
 };
 
 interface PurchaseStepsProps {
@@ -99,11 +105,14 @@ export function PurchaseSteps({ raffleData }: PurchaseStepsProps) {
   };
 
   const handleCopy = (text: string, field: string) => {
-    navigator.clipboard.writeText(text).then(() => {
-      toast.success(`${field} copiado al portapapeles`);
-    }).catch(() => {
-      toast.error(`Error al copiar ${field}`);
-    });
+    navigator.clipboard
+      .writeText(text)
+      .then(() => {
+        toast.success(`${field} copiado al portapapeles`);
+      })
+      .catch(() => {
+        toast.error(`Error al copiar ${field}`);
+      });
   };
 
   const handleFinalConfirm = async () => {
@@ -193,7 +202,9 @@ export function PurchaseSteps({ raffleData }: PurchaseStepsProps) {
               </div>
 
               <UserForm
-                onChange={(userData) => setPurchaseData(prev => ({ ...prev, userData }))}
+                onChange={(userData) =>
+                  setPurchaseData((prev) => ({ ...prev, userData }))
+                }
               />
 
               <div className="mt-6 pt-6 border-t border-accent/20">
@@ -236,15 +247,24 @@ export function PurchaseSteps({ raffleData }: PurchaseStepsProps) {
                   <h4 className="font-semibold text-secondary mb-4">
                     Selecciona tu método de pago
                   </h4>
-                  
+
                   <div className="space-y-3 mb-6">
                     {[
-                      { id: "Transferencia Bancaria", name: "Transferencia Bancaria", icon: "🏦" },
+                      {
+                        id: "Transferencia Bancaria",
+                        name: "Transferencia Bancaria",
+                        icon: "🏦",
+                      },
                       { id: "Pago Movil", name: "Pago Móvil", icon: "📱" },
                     ].map((method) => (
                       <div
                         key={method.id}
-                        onClick={() => setPurchaseData(prev => ({ ...prev, paymentMethod: method.id }))}
+                        onClick={() =>
+                          setPurchaseData((prev) => ({
+                            ...prev,
+                            paymentMethod: method.id,
+                          }))
+                        }
                         className={`flex items-center justify-between p-3 border rounded-lg cursor-pointer transition-colors ${
                           purchaseData.paymentMethod === method.id
                             ? "border-primary bg-primary/10"
@@ -261,27 +281,64 @@ export function PurchaseSteps({ raffleData }: PurchaseStepsProps) {
 
                   <div className="bg-accent/5 p-4 rounded-lg border border-accent/20 mb-4">
                     <div className="flex justify-between items-center mb-3">
-                      <h5 className="font-medium text-secondary">Datos para el pago:</h5>
+                      <h5 className="font-medium text-secondary">
+                        Datos para el pago:
+                      </h5>
                     </div>
                     <div className="text-sm text-accent space-y-2">
-                      {purchaseData.paymentMethod === 'Transferencia Bancaria' ? (
-                        Object.entries(bankTransferData).map(([key, value]) => (
-                          <div key={key} className="flex justify-between items-center">
-                            <span><strong>{key}:</strong> {value}</span>
-                            <Button onClick={() => handleCopy(value, key)} variant="ghost" size="sm"><Copy className="w-3 h-3" /></Button>
-                          </div>
-                        ))
-                      ) : (
-                        Object.entries(mobilePaymentData).map(([key, value]) => (
-                          <div key={key} className="flex justify-between items-center">
-                            <span><strong>{key}:</strong> {value}</span>
-                            <Button onClick={() => handleCopy(value, key)} variant="ghost" size="sm"><Copy className="w-3 h-3" /></Button>
-                          </div>
-                        ))
-                      )}
+                      {purchaseData.paymentMethod === "Transferencia Bancaria"
+                        ? Object.entries(bankTransferData).map(
+                            ([key, value]) => (
+                              <div
+                                key={key}
+                                className="flex justify-between items-center"
+                              >
+                                <span>
+                                  <strong>{key}:</strong> {value}
+                                </span>
+                                <Button
+                                  onClick={() => handleCopy(value, key)}
+                                  variant="ghost"
+                                  size="sm"
+                                >
+                                  <Copy className="w-3 h-3" />
+                                </Button>
+                              </div>
+                            )
+                          )
+                        : Object.entries(mobilePaymentData).map(
+                            ([key, value]) => (
+                              <div
+                                key={key}
+                                className="flex justify-between items-center"
+                              >
+                                <span>
+                                  <strong>{key}:</strong> {value}
+                                </span>
+                                <Button
+                                  onClick={() => handleCopy(value, key)}
+                                  variant="ghost"
+                                  size="sm"
+                                >
+                                  <Copy className="w-3 h-3" />
+                                </Button>
+                              </div>
+                            )
+                          )}
                       <div className="flex justify-between items-center">
-                        <span><strong>Monto:</strong> {formatBsVSimple(purchaseData.total)}</span>
-                        <Button onClick={() => handleCopy(purchaseData.total.toString(), "Monto")} variant="ghost" size="sm"><Copy className="w-3 h-3" /></Button>
+                        <span>
+                          <strong>Monto:</strong>{" "}
+                          {formatBsVSimple(purchaseData.total)}
+                        </span>
+                        <Button
+                          onClick={() =>
+                            handleCopy(purchaseData.total.toString(), "Monto")
+                          }
+                          variant="ghost"
+                          size="sm"
+                        >
+                          <Copy className="w-3 h-3" />
+                        </Button>
                       </div>
                     </div>
                   </div>

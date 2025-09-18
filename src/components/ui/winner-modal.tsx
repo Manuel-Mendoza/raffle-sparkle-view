@@ -45,10 +45,12 @@ export const WinnerModal = ({
         <div className="space-y-6 py-4">
           {/* Confetti Effect */}
           <div className="text-center text-4xl">🎉 🏆 🎉</div>
-          
+
           {/* Raffle Name */}
           <div className="text-center">
-            <h3 className="font-semibold text-lg text-secondary">{raffleName}</h3>
+            <h3 className="font-semibold text-lg text-secondary">
+              {raffleName}
+            </h3>
           </div>
 
           {/* Winner Info */}
@@ -57,7 +59,9 @@ export const WinnerModal = ({
               <User className="w-5 h-5 text-primary" />
               <div>
                 <p className="text-sm text-muted-foreground">Ganador</p>
-                <p className="font-semibold text-secondary">{winner.customerName}</p>
+                <p className="font-semibold text-secondary">
+                  {winner.customerName}
+                </p>
               </div>
             </div>
 
@@ -65,7 +69,9 @@ export const WinnerModal = ({
               <Phone className="w-5 h-5 text-primary" />
               <div>
                 <p className="text-sm text-muted-foreground">Teléfono</p>
-                <p className="font-semibold text-secondary">{winner.customerPhone}</p>
+                <p className="font-semibold text-secondary">
+                  {winner.customerPhone}
+                </p>
               </div>
             </div>
 
@@ -73,7 +79,9 @@ export const WinnerModal = ({
               <Ticket className="w-5 h-5 text-primary" />
               <div>
                 <p className="text-sm text-muted-foreground">Ticket Ganador</p>
-                <p className="font-bold text-lg text-primary">#{winner.ticketNumber}</p>
+                <p className="font-bold text-lg text-primary">
+                  #{winner.ticketNumber}
+                </p>
               </div>
             </div>
           </div>

@@ -52,7 +52,7 @@ export function UserForm({ onSubmit, onChange }: UserFormProps) {
   const updateFormData = (newData: Partial<typeof formData>) => {
     const updated = { ...formData, ...newData };
     setFormData(updated);
-    
+
     // Call onChange whenever data changes
     if (onChange && updated.fullName && updated.phone && updated.email) {
       onChange({

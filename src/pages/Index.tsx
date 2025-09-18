@@ -19,6 +19,7 @@ import {
   statisticsService,
   type TopCustomerResponse,
 } from "@/services/statistics";
+import type { LastWinner } from "@/components/ui/hero-section";
 import { toast } from "sonner";
 
 const Index = () => {
@@ -26,7 +27,7 @@ const Index = () => {
   const [topCustomer, setTopCustomer] = useState<TopCustomerResponse | null>(
     null
   );
-  const [lastWinner, setLastWinner] = useState<any>(null);
+  const [lastWinner, setLastWinner] = useState<LastWinner | null>(null);
   const [loading, setLoading] = useState(true);
   const [showVerificationModal, setShowVerificationModal] = useState(false);
 
@@ -34,10 +35,12 @@ const Index = () => {
     const fetchData = async () => {
       try {
         console.log("Fetching current raffle from API...");
+        let raffleData = null;
         try {
           const raffle = await raffleService.getCurrentRaffle();
           console.log("Raffle data received:", raffle);
           setCurrentRaffle(raffle);
+          raffleData = raffle;
         } catch (error) {
           console.log("No active raffle, fetching last winner...");
           // Si no hay rifa activa, obtener último ganador
@@ -52,7 +55,7 @@ const Index = () => {
         }
 
         // Fetch top customer data solo si hay rifa activa
-        if (currentRaffle) {
+        if (raffleData) {
           try {
             const stats = await statisticsService.getDashboardStats();
             setTopCustomer(stats.topCustomer);
@@ -163,25 +166,34 @@ const Index = () => {
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8">
             {/* Left Column - Raffle Info */}
             <div className="lg:col-span-1 order-2 lg:order-1">
-              <RaffleCard {...{
-                title: currentRaffle.title,
-                totalTickets: currentRaffle.totalTickets,
-                soldTickets: currentRaffle.soldTickets,
-                price: currentRaffle.ticketPrice,
-                prizes: [
-                  { position: "🏆 Gran Premio", prize: currentRaffle.prize, icon: "🏍️" },
-                ],
-                date: new Date(currentRaffle.endDate).toLocaleDateString("es-ES", {
-                  day: "numeric",
-                  month: "long",
-                }),
-                time: "8:00 PM",
-                features: [
-                  "Sorteo transparente en vivo",
-                  "Premio único garantizado",
-                  "Transmisión en directo",
-                ],
-              }} />
+              <RaffleCard
+                {...{
+                  title: currentRaffle.title,
+                  totalTickets: currentRaffle.totalTickets,
+                  soldTickets: currentRaffle.soldTickets,
+                  price: currentRaffle.ticketPrice,
+                  prizes: [
+                    {
+                      position: "🏆 Gran Premio",
+                      prize: currentRaffle.prize,
+                      icon: "🏍️",
+                    },
+                  ],
+                  date: new Date(currentRaffle.endDate).toLocaleDateString(
+                    "es-ES",
+                    {
+                      day: "numeric",
+                      month: "long",
+                    }
+                  ),
+                  time: "8:00 PM",
+                  features: [
+                    "Sorteo transparente en vivo",
+                    "Premio único garantizado",
+                    "Transmisión en directo",
+                  ],
+                }}
+              />
             </div>
 
             {/* Right Column - Purchase Steps */}
@@ -209,7 +221,10 @@ const Index = () => {
       </footer>
 
       {/* Ticket Verification Modal */}
-      <Dialog open={showVerificationModal} onOpenChange={setShowVerificationModal}>
+      <Dialog
+        open={showVerificationModal}
+        onOpenChange={setShowVerificationModal}
+      >
         <DialogContent className="max-w-md">
           <TicketVerification />
         </DialogContent>

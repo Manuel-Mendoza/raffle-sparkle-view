@@ -214,13 +214,13 @@ export const DashboardStats = () => {
               <p className="text-accent">
                 {stats.currentRaffle?.endDate
                   ? new Date(stats.currentRaffle.endDate).toLocaleDateString(
-                    "es-ES",
-                    {
-                      year: "numeric",
-                      month: "long",
-                      day: "numeric",
-                    }
-                  )
+                      "es-ES",
+                      {
+                        year: "numeric",
+                        month: "long",
+                        day: "numeric",
+                      }
+                    )
                   : "No definida"}
               </p>
             </div>

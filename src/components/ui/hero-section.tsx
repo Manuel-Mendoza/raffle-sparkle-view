@@ -6,10 +6,19 @@ import type { Raffle } from "@/services/raffle";
 import type { TopCustomerResponse } from "@/services/statistics";
 import { formatBsV } from "@/lib/currency";
 
+interface LastWinner {
+  raffleImage?: string;
+  customerName: string;
+  ticketNumber: number;
+  prize: string;
+  raffleTitle: string;
+  drawnAt: string;
+}
+
 interface HeroSectionProps {
   raffleData?: Raffle | null;
   topCustomer?: TopCustomerResponse | null;
-  lastWinner?: any;
+  lastWinner?: LastWinner | null;
   onVerifyTickets?: () => void;
   onBuyTicket?: () => void;
 }
@@ -67,32 +76,46 @@ export function HeroSection({
             {/* Grid de información con estilo consistente */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
               <div className="bg-primary-foreground/10 backdrop-blur-sm rounded-lg p-4 border border-primary-foreground/20">
-                <p className="text-sm opacity-80 mb-1 text-primary-foreground/80">🎫 Ticket Ganador</p>
-                <p className="text-xl font-bold text-primary">#{lastWinner.ticketNumber}</p>
+                <p className="text-sm opacity-80 mb-1 text-primary-foreground/80">
+                  🎫 Ticket Ganador
+                </p>
+                <p className="text-xl font-bold text-primary">
+                  #{lastWinner.ticketNumber}
+                </p>
               </div>
               <div className="bg-primary-foreground/10 backdrop-blur-sm rounded-lg p-4 border border-primary-foreground/20">
-                <p className="text-sm opacity-80 mb-1 text-primary-foreground/80">🏆 Premio</p>
-                <p className="text-xl font-bold text-primary">{lastWinner.prize}</p>
+                <p className="text-sm opacity-80 mb-1 text-primary-foreground/80">
+                  🏆 Premio
+                </p>
+                <p className="text-xl font-bold text-primary">
+                  {lastWinner.prize}
+                </p>
               </div>
             </div>
 
             <div className="grid grid-cols-1 gap-4">
               <div className="bg-primary-foreground/5 rounded-lg p-4">
-                <p className="text-sm opacity-80 mb-1 text-primary-foreground/80">🎲 Rifa</p>
-                <p className="text-lg font-semibold text-primary-foreground">{lastWinner.raffleTitle}</p>
+                <p className="text-sm opacity-80 mb-1 text-primary-foreground/80">
+                  🎲 Rifa
+                </p>
+                <p className="text-lg font-semibold text-primary-foreground">
+                  {lastWinner.raffleTitle}
+                </p>
               </div>
             </div>
 
             {/* Fecha con estilo consistente */}
             <div className="mt-6 pt-4 border-t border-primary-foreground/20">
-              <p className="text-sm opacity-80 text-primary-foreground/80">📅 Fecha del Sorteo</p>
+              <p className="text-sm opacity-80 text-primary-foreground/80">
+                📅 Fecha del Sorteo
+              </p>
               <p className="text-lg font-semibold text-primary-foreground">
-                {new Date(lastWinner.drawnAt).toLocaleDateString('es-ES', {
-                  day: 'numeric',
-                  month: 'long',
-                  year: 'numeric',
-                  hour: '2-digit',
-                  minute: '2-digit'
+                {new Date(lastWinner.drawnAt).toLocaleDateString("es-ES", {
+                  day: "numeric",
+                  month: "long",
+                  year: "numeric",
+                  hour: "2-digit",
+                  minute: "2-digit",
                 })}
               </p>
             </div>

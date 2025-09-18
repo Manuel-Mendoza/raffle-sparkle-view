@@ -23,12 +23,12 @@ api.interceptors.request.use((config) => {
   }
 
   // Log para debugging
-  if (config.url?.includes('buy-ticket')) {
+  if (config.url?.includes("buy-ticket")) {
     console.log("🚀 Sending buy-ticket request:", {
       url: config.url,
       method: config.method,
       data: config.data,
-      headers: config.headers
+      headers: config.headers,
     });
   }
 
@@ -46,7 +46,7 @@ api.interceptors.response.use(
       status: error.response?.status,
       statusText: error.response?.statusText,
       responseData: error.response?.data,
-      message: error.message
+      message: error.message,
     });
     if (error.response?.status === 401) {
       localStorage.removeItem("token");

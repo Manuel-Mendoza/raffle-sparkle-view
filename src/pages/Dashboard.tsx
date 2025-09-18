@@ -75,7 +75,7 @@ const Dashboard = () => {
         </div>
 
         <Tabs defaultValue="stats" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-3 max-w-lg bg-white/50 border border-primary/20">
+          <TabsList className="grid w-full grid-cols-2 max-w-lg bg-white/50 border border-primary/20">
             <TabsTrigger
               value="stats"
               className="data-[state=active]:bg-primary data-[state=active]:text-white"

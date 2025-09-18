@@ -15,7 +15,6 @@ import {
   Users,
   Trophy,
   DollarSign,
-  Ticket,
   Edit,
   Trash2,
   Plus,
@@ -25,7 +24,6 @@ import { authService } from "@/services/auth";
 import { toast } from "sonner";
 import { DashboardStats } from "@/components/ui/dashboard-stats";
 import { RaffleManager } from "@/components/ui/raffle-manager";
-import { TicketVerification } from "@/components/ui/ticket-verification";
 
 const Dashboard = () => {
   const navigate = useNavigate();
@@ -92,13 +90,7 @@ const Dashboard = () => {
               <Trophy className="w-4 h-4 mr-2" />
               Gestionar Rifas
             </TabsTrigger>
-            <TabsTrigger
-              value="verify"
-              className="data-[state=active]:bg-primary data-[state=active]:text-white"
-            >
-              <Ticket className="w-4 h-4 mr-2" />
-              Verificar Ticket
-            </TabsTrigger>
+
           </TabsList>
 
           <TabsContent value="stats" className="space-y-6">
@@ -109,9 +101,7 @@ const Dashboard = () => {
             <RaffleManager />
           </TabsContent>
 
-          <TabsContent value="verify" className="space-y-6">
-            <TicketVerification />
-          </TabsContent>
+
         </Tabs>
       </main>
     </div>

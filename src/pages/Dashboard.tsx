@@ -90,7 +90,6 @@ const Dashboard = () => {
               <Trophy className="w-4 h-4 mr-2" />
               Gestionar Rifas
             </TabsTrigger>
-
           </TabsList>
 
           <TabsContent value="stats" className="space-y-6">
@@ -100,8 +99,6 @@ const Dashboard = () => {
           <TabsContent value="raffles" className="space-y-6">
             <RaffleManager />
           </TabsContent>
-
-
         </Tabs>
       </main>
     </div>

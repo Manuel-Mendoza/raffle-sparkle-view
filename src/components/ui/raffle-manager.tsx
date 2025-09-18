@@ -75,7 +75,6 @@ export const RaffleManager = () => {
   const [isProcessingRequest, setIsProcessingRequest] = useState<string | null>(
     null
   );
-  const [activeTab, setActiveTab] = useState<"pending" | "approved">("pending");
   const [paymentProofModal, setPaymentProofModal] = useState<{
     isOpen: boolean;
     imageUrl: string;
@@ -96,16 +95,13 @@ export const RaffleManager = () => {
 
   const loadPurchaseRequests = useCallback(async () => {
     try {
-      const customers =
-        activeTab === "pending"
-          ? await adminService.getPendingTickets()
-          : await adminService.getApprovedTickets();
+      const customers = await adminService.getPendingTickets();
       setPurchaseRequests(customers);
     } catch (error) {
       console.error("Error loading purchase requests:", error);
       setPurchaseRequests([]);
     }
-  }, [activeTab]);
+  }, []);
 
   useEffect(() => {
     loadRaffles();
@@ -563,35 +559,10 @@ export const RaffleManager = () => {
           </div>
         </div>
 
-        <div className="flex space-x-1 bg-muted p-1 rounded-lg">
-          <button
-            onClick={() => setActiveTab("pending")}
-            className={`flex-1 px-4 py-2 text-sm font-medium rounded-md transition-colors ${
-              activeTab === "pending"
-                ? "bg-primary text-primary-foreground"
-                : "text-muted-foreground hover:text-secondary"
-            }`}
-          >
-            Pendientes
-          </button>
-          <button
-            onClick={() => setActiveTab("approved")}
-            className={`flex-1 px-4 py-2 text-sm font-medium rounded-md transition-colors ${
-              activeTab === "approved"
-                ? "bg-primary text-primary-foreground"
-                : "text-muted-foreground hover:text-secondary"
-            }`}
-          >
-            Aceptadas
-          </button>
-        </div>
-
         {purchaseRequests.length === 0 ? (
           <div className="text-center py-8">
             <p className="text-accent">
-              No hay solicitudes{" "}
-              {activeTab === "pending" ? "pendientes" : "aceptadas"} en este
-              momento
+              No hay solicitudes pendientes en este momento
             </p>
           </div>
         ) : (
@@ -689,41 +660,31 @@ export const RaffleManager = () => {
                       </Button>
                     </div>
 
-                    {activeTab === "pending" && (
-                      <div className="flex justify-end space-x-2 pt-4 border-t border-accent/10">
-                        <Button
-                          variant="outline"
-                          onClick={() => handleRejectPurchase(requestId)}
-                          disabled={isProcessingRequest === requestId}
-                          className="border-red-200 text-red-600 hover:bg-red-50"
-                          size="sm"
-                        >
-                          <X className="w-4 h-4 mr-1" />
-                          {isProcessingRequest === requestId
-                            ? "Procesando..."
-                            : "Rechazar"}
-                        </Button>
-                        <Button
-                          onClick={() => handleApprovePurchase(requestId)}
-                          disabled={isProcessingRequest === requestId}
-                          className="bg-green-600 hover:bg-green-700 text-white"
-                          size="sm"
-                        >
-                          <Check className="w-4 h-4 mr-1" />
-                          {isProcessingRequest === requestId
-                            ? "Procesando..."
-                            : "Aceptar"}
-                        </Button>
-                      </div>
-                    )}
-
-                    {activeTab === "approved" && (
-                      <div className="pt-4 border-t border-accent/10">
-                        <p className="text-sm text-center text-accent">
-                          ✅ Solicitud aprobada - Tickets confirmados
-                        </p>
-                      </div>
-                    )}
+                    <div className="flex justify-end space-x-2 pt-4 border-t border-accent/10">
+                      <Button
+                        variant="outline"
+                        onClick={() => handleRejectPurchase(requestId)}
+                        disabled={isProcessingRequest === requestId}
+                        className="border-red-200 text-red-600 hover:bg-red-50"
+                        size="sm"
+                      >
+                        <X className="w-4 h-4 mr-1" />
+                        {isProcessingRequest === requestId
+                          ? "Procesando..."
+                          : "Rechazar"}
+                      </Button>
+                      <Button
+                        onClick={() => handleApprovePurchase(requestId)}
+                        disabled={isProcessingRequest === requestId}
+                        className="bg-green-600 hover:bg-green-700 text-white"
+                        size="sm"
+                      >
+                        <Check className="w-4 h-4 mr-1" />
+                        {isProcessingRequest === requestId
+                          ? "Procesando..."
+                          : "Aceptar"}
+                      </Button>
+                    </div>
                   </CardContent>
                 </Card>
               );

@@ -121,12 +121,48 @@ export function PurchaseSteps({ raffleData }: PurchaseStepsProps) {
       return;
     }
 
+    // Validaciones adicionales
+    if (!purchaseData.userData.name.trim()) {
+      toast.error("El nombre es requerido");
+      return;
+    }
+
+    if (!purchaseData.userData.phone.trim()) {
+      toast.error("El teléfono es requerido");
+      return;
+    }
+
+    if (!purchaseData.userData.email.trim()) {
+      toast.error("El email es requerido");
+      return;
+    }
+
+    if (!raffleData.id) {
+      toast.error("Error: ID de rifa no válido");
+      return;
+    }
+
+    if (purchaseData.tickets < 1) {
+      toast.error("Debe seleccionar al menos 1 boleto");
+      return;
+    }
+
     setLoading(true);
     try {
-      const response = await customerService.buyTickets({
+      console.log("🎫 Iniciando compra con datos:", {
         name: purchaseData.userData.name,
         phone: purchaseData.userData.phone,
         email: purchaseData.userData.email,
+        paymentMethod: purchaseData.paymentMethod,
+        raffleId: raffleData.id,
+        quantity: purchaseData.tickets,
+        hasPaymentProof: !!purchaseData.paymentProof
+      });
+
+      const response = await customerService.buyTickets({
+        name: purchaseData.userData.name.trim(),
+        phone: purchaseData.userData.phone.trim(),
+        email: purchaseData.userData.email.trim(),
         paymentMethod: purchaseData.paymentMethod,
         paymentProof: purchaseData.paymentProof,
         raffleId: raffleData.id,
@@ -142,10 +178,22 @@ export function PurchaseSteps({ raffleData }: PurchaseStepsProps) {
       setShowModal(true);
       toast.success("¡Compra procesada exitosamente!");
     } catch (error: unknown) {
-      const errorMessage =
-        error instanceof Error ? error.message : "Error al procesar la compra";
+      console.error("❌ Error completo en handleFinalConfirm:", error);
+      
+      let errorMessage = "Error al procesar la compra";
+      
+      if (error instanceof Error) {
+        errorMessage = error.message;
+      } else if (typeof error === 'object' && error !== null) {
+        const apiError = error as any;
+        if (apiError.response?.data?.error) {
+          errorMessage = apiError.response.data.error;
+        } else if (apiError.response?.data?.message) {
+          errorMessage = apiError.response.data.message;
+        }
+      }
+      
       toast.error(errorMessage);
-      console.error(error);
     } finally {
       setLoading(false);
     }

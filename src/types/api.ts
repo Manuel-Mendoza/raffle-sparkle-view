@@ -75,6 +75,7 @@ export interface CreateRaffleResponse {
 export interface BuyTicketRequest {
   name: string;
   phone: string;
+  email: string;
   paymentMethod: string;
   paymentProof: string;
   raffleId: string;

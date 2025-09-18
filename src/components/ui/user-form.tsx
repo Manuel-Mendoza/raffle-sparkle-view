@@ -60,17 +60,24 @@ export function UserForm({ onSubmit, onChange }: UserFormProps) {
       updated.phone.trim() &&
       updated.email.trim()
     ) {
-      // Validaciones básicas
-      const isValidEmail =
-        updated.email.includes("@") && updated.email.includes(".");
-      const isValidPhone = updated.phone.length >= 10;
-      const isValidName = updated.fullName.trim().length >= 2;
+      // Validaciones más robustas para móviles
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      const phoneRegex = /^[\d+\-\s()]{10,}$/;
+      const nameRegex = /^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]{2,}$/;
+
+      const isValidEmail = emailRegex.test(updated.email.trim());
+      const isValidPhone =
+        phoneRegex.test(updated.phone.trim()) &&
+        updated.phone.replace(/[^\d]/g, "").length >= 10;
+      const isValidName =
+        nameRegex.test(updated.fullName.trim()) &&
+        updated.fullName.trim().length >= 2;
 
       if (isValidName && isValidPhone && isValidEmail) {
         onChange({
           name: updated.fullName.trim(),
           phone: updated.phone.trim(),
-          email: updated.email.trim(),
+          email: updated.email.trim().toLowerCase(),
         });
       }
     }
@@ -106,16 +113,29 @@ export function UserForm({ onSubmit, onChange }: UserFormProps) {
               id="fullName"
               placeholder="Ingresa tu nombre completo"
               value={formData.fullName}
-              onChange={(e) => updateFormData({ fullName: e.target.value })}
+              onChange={(e) => {
+                // Limpiar caracteres especiales excepto letras, espacios y acentos
+                const value = e.target.value.replace(
+                  /[^a-zA-ZáéíóúÁÉÍÓÚñÑ\s]/g,
+                  ""
+                );
+                updateFormData({ fullName: value });
+              }}
               className="border-accent/30 focus:border-primary transition-all duration-200"
               minLength={2}
+              maxLength={50}
+              autoComplete="name"
               required
             />
-            {formData.fullName && formData.fullName.trim().length < 2 && (
-              <p className="text-sm text-red-500">
-                El nombre debe tener al menos 2 caracteres
-              </p>
-            )}
+            {formData.fullName &&
+              (formData.fullName.trim().length < 2 ||
+                !/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]{2,}$/.test(
+                  formData.fullName.trim()
+                )) && (
+                <p className="text-sm text-red-500">
+                  El nombre debe tener al menos 2 caracteres y solo letras
+                </p>
+              )}
           </div>
 
           <div className="space-y-2">
@@ -133,13 +153,18 @@ export function UserForm({ onSubmit, onChange }: UserFormProps) {
               }}
               className="border-accent/30 focus:border-primary transition-all duration-200"
               minLength={10}
+              maxLength={20}
+              autoComplete="tel"
+              inputMode="tel"
               required
             />
-            {formData.phone && formData.phone.length < 10 && (
-              <p className="text-sm text-red-500">
-                El teléfono debe tener al menos 10 dígitos
-              </p>
-            )}
+            {formData.phone &&
+              (formData.phone.replace(/[^\d]/g, "").length < 10 ||
+                !/^[\d+\-\s()]{10,}$/.test(formData.phone)) && (
+                <p className="text-sm text-red-500">
+                  El teléfono debe tener al menos 10 dígitos válidos
+                </p>
+              )}
           </div>
 
           <div className="space-y-2">
@@ -151,13 +176,17 @@ export function UserForm({ onSubmit, onChange }: UserFormProps) {
               type="email"
               placeholder="correo@ejemplo.com"
               value={formData.email}
-              onChange={(e) => updateFormData({ email: e.target.value })}
+              onChange={(e) => {
+                const value = e.target.value.toLowerCase().trim();
+                updateFormData({ email: value });
+              }}
               className="border-accent/30 focus:border-primary transition-all duration-200"
+              autoComplete="email"
+              inputMode="email"
               required
             />
             {formData.email &&
-              (!formData.email.includes("@") ||
-                !formData.email.includes(".")) && (
+              !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email.trim()) && (
                 <p className="text-sm text-red-500">Ingresa un email válido</p>
               )}
           </div>

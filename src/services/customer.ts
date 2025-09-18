@@ -20,17 +20,28 @@ export const customerService = {
   },
 
   async buyTickets(data: BuyTicketRequest): Promise<BuyTicketResponse> {
-    // Validaciones antes de enviar
-    if (!data.name || data.name.trim().length < 2) {
-      throw new Error("El nombre debe tener al menos 2 caracteres");
+    // Validaciones más robustas antes de enviar
+    const nameRegex = /^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]{2,50}$/;
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    const phoneRegex = /^[\d+\-\s()]{10,}$/;
+
+    if (!data.name || !nameRegex.test(data.name.trim())) {
+      throw new Error(
+        "El nombre debe tener entre 2-50 caracteres y solo letras"
+      );
     }
 
-    if (!data.phone || data.phone.trim().length < 10) {
-      throw new Error("El teléfono debe tener al menos 10 dígitos");
+    const cleanPhone = data.phone?.replace(/[^\d]/g, "") || "";
+    if (
+      !data.phone ||
+      !phoneRegex.test(data.phone.trim()) ||
+      cleanPhone.length < 10
+    ) {
+      throw new Error("El teléfono debe tener al menos 10 dígitos válidos");
     }
 
-    if (!data.email || !data.email.includes("@")) {
-      throw new Error("El email debe ser válido");
+    if (!data.email || !emailRegex.test(data.email.trim())) {
+      throw new Error("El email debe tener un formato válido");
     }
 
     if (!data.paymentProof || !data.paymentProof.startsWith("http")) {
@@ -41,19 +52,27 @@ export const customerService = {
       throw new Error("ID de rifa requerido");
     }
 
-    if (!data.quantity || data.quantity < 1) {
-      throw new Error("La cantidad debe ser mayor a 0");
+    if (!data.quantity || data.quantity < 1 || data.quantity > 100) {
+      throw new Error("La cantidad debe estar entre 1 y 100");
     }
 
-    console.log("✅ Validaciones pasadas. Enviando solicitud:", {
+    // Limpiar datos antes de enviar
+    const cleanData = {
       ...data,
-      paymentProof: data.paymentProof.substring(0, 50) + "...", // Solo mostrar parte de la URL
+      name: data.name.trim(),
+      phone: data.phone.trim(),
+      email: data.email.trim().toLowerCase(),
+    };
+
+    console.log("✅ Validaciones pasadas. Enviando solicitud:", {
+      ...cleanData,
+      paymentProof: cleanData.paymentProof.substring(0, 50) + "...",
     });
 
     try {
       const response = await api.post<BuyTicketResponse>(
         "/customers/buy-ticket",
-        data
+        cleanData
       );
       console.log("✅ Respuesta exitosa:", response.data);
       return response.data;
@@ -63,7 +82,7 @@ export const customerService = {
         statusText: error.response?.statusText,
         data: error.response?.data,
         message: error.message,
-        requestData: data,
+        requestData: cleanData,
       });
 
       // Mejorar mensajes de error específicos
@@ -73,6 +92,18 @@ export const customerService = {
           error.response?.data?.message ||
           "Datos inválidos";
         throw new Error(`Error de validación: ${errorMsg}`);
+      }
+
+      if (error.response?.status === 422) {
+        throw new Error(
+          "Los datos enviados no son válidos. Verifica la información."
+        );
+      }
+
+      if (error.response?.status >= 500) {
+        throw new Error(
+          "Error del servidor. Intenta nuevamente en unos momentos."
+        );
       }
 
       throw error;

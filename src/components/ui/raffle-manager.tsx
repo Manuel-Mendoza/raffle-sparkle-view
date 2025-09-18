@@ -94,6 +94,19 @@ export const RaffleManager = () => {
     image: "",
   });
 
+  const loadPurchaseRequests = useCallback(async () => {
+    try {
+      const customers =
+        activeTab === "pending"
+          ? await adminService.getPendingTickets()
+          : await adminService.getApprovedTickets();
+      setPurchaseRequests(customers);
+    } catch (error) {
+      console.error("Error loading purchase requests:", error);
+      setPurchaseRequests([]);
+    }
+  }, [activeTab]);
+
   useEffect(() => {
     loadRaffles();
     loadPurchaseRequests();
@@ -115,19 +128,6 @@ export const RaffleManager = () => {
       setIsLoading(false);
     }
   };
-
-  const loadPurchaseRequests = useCallback(async () => {
-    try {
-      const customers =
-        activeTab === "pending"
-          ? await adminService.getPendingTickets()
-          : await adminService.getApprovedTickets();
-      setPurchaseRequests(customers);
-    } catch (error) {
-      console.error("Error loading purchase requests:", error);
-      setPurchaseRequests([]);
-    }
-  }, [activeTab]);
 
   const resetForm = () => {
     setFormData({

@@ -267,7 +267,7 @@ export function PurchaseSteps({ raffleData }: PurchaseStepsProps) {
                   Selecciona tus boletos
                 </h4>
                 <TicketSelector
-                  minTickets={1}
+                  minTickets={2}
                   pricePerTicket={raffleData.ticketPrice}
                   onTicketChange={handleTicketChange}
                 />

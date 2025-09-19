@@ -2,7 +2,6 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { OptimizedImage } from "@/components/ui/optimized-image";
 import { ShoppingCart, Search } from "lucide-react";
-import heroImage from "@/assets/hero-motorcycle.jpg";
 import type { Raffle } from "@/services/raffle";
 import type { TopCustomerResponse } from "@/services/statistics";
 import { formatBsV } from "@/lib/currency";
@@ -37,8 +36,8 @@ export function HeroSection({
   if (!raffleData && lastWinner) {
     console.log("Showing last winner section with data:", lastWinner);
 
-    // Usar imagen de la rifa del ganador o imagen por defecto
-    const backgroundImage = lastWinner.raffleImage || heroImage;
+    // Usar imagen de la rifa del ganador o placeholder
+    const backgroundImage = lastWinner.raffleImage || "/placeholder.svg";
 
     return (
       <div className="relative min-h-[600px] p-4 flex items-center justify-center overflow-hidden rounded-xl">
@@ -153,7 +152,7 @@ export function HeroSection({
   const progressPercentage =
     (raffleData.soldTickets / raffleData.totalTickets) * 100;
 
-  const backgroundImage = raffleData.image || heroImage;
+  const backgroundImage = raffleData.image || "/placeholder.svg";
 
   return (
     <div className="relative min-h-[600px] flex items-center justify-center overflow-hidden rounded-xl">

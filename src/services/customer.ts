@@ -52,8 +52,8 @@ export const customerService = {
       throw new Error("ID de rifa requerido");
     }
 
-    if (!data.quantity || data.quantity < 1 || data.quantity > 100) {
-      throw new Error("La cantidad debe estar entre 1 y 100");
+    if (!data.quantity || data.quantity < 2 || data.quantity > 100) {
+      throw new Error("La cantidad debe estar entre 2 y 100");
     }
 
     // Limpiar datos antes de enviar

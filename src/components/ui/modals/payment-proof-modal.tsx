@@ -3,8 +3,8 @@ import {
   DialogContent,
   DialogHeader,
   DialogTitle,
-} from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
+} from "@/components/ui/base/dialog";
+import { Button } from "@/components/ui/base/button";
 
 interface PaymentProofModalProps {
   isOpen: boolean;

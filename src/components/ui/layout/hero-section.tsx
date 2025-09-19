@@ -1,6 +1,6 @@
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { OptimizedImage } from "@/components/ui/optimized-image";
+import { Badge } from "@/components/ui/base/badge";
+import { Button } from "@/components/ui/base/button";
+import { OptimizedImage } from "@/components/ui/base/optimized-image";
 import { ShoppingCart, Search } from "lucide-react";
 import type { Raffle } from "@/services/raffle";
 import type { TopCustomerResponse } from "@/services/statistics";

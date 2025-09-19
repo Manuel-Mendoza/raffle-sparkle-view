@@ -1,8 +1,8 @@
 import { useState } from "react";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/base/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/base/card";
+import { Badge } from "@/components/ui/base/badge";
+import { Input } from "@/components/ui/base/input";
 import { Minus, Plus, ShoppingCart, Edit3 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { formatBsVSimple } from "@/lib/currency";

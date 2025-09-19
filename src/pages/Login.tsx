@@ -1,15 +1,15 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+import { Button } from "@/components/ui/base/button";
+import { Input } from "@/components/ui/base/input";
+import { Label } from "@/components/ui/base/label";
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card";
+} from "@/components/ui/base/card";
 import { Eye, EyeOff, ArrowLeft } from "lucide-react";
 import { authService } from "@/services/auth";
 import { AxiosErrorResponse } from "@/types/api";

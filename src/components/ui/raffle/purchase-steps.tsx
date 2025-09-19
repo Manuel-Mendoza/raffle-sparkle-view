@@ -1,13 +1,13 @@
 import { useState } from "react";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { StepIndicator } from "@/components/ui/step-indicator";
-import { TicketSelector } from "@/components/ui/ticket-selector";
-import { UserForm } from "@/components/ui/user-form";
-import { TicketNumbersModal } from "@/components/ui/ticket-numbers-modal";
+import { Button } from "@/components/ui/base/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/base/card";
+import { StepIndicator } from "@/components/ui/forms/step-indicator";
+import { TicketSelector } from "@/components/ui/forms/ticket-selector";
+import { UserForm } from "@/components/ui/forms/user-form";
+import { TicketNumbersModal } from "@/components/ui/modals/ticket-numbers-modal";
 
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/base/input";
+import { Label } from "@/components/ui/base/label";
 import type { Raffle } from "@/services/raffle";
 import {
   CheckCircle,

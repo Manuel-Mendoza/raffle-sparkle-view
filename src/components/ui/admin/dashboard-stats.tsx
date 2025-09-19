@@ -5,8 +5,8 @@ import {
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
+} from "@/components/ui/base/card";
+import { Badge } from "@/components/ui/base/badge";
 import {
   Users,
   Trophy,

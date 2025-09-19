@@ -1,6 +1,6 @@
 import { cn } from "@/lib/utils";
-import { Card, CardContent, CardHeader } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
+import { Card, CardContent, CardHeader } from "@/components/ui/base/card";
+import { Badge } from "@/components/ui/base/badge";
 import { CalendarDays, Clock, Trophy, Users } from "lucide-react";
 
 interface RaffleCardProps {

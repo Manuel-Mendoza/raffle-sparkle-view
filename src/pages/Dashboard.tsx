@@ -1,15 +1,15 @@
 import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/components/ui/base/button";
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Badge } from "@/components/ui/badge";
+} from "@/components/ui/base/card";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/base/tabs";
+import { Badge } from "@/components/ui/base/badge";
 import {
   LogOut,
   Users,
@@ -22,8 +22,8 @@ import {
 } from "lucide-react";
 import { authService } from "@/services/auth";
 import { toast } from "sonner";
-import { DashboardStats } from "@/components/ui/dashboard-stats";
-import { RaffleManager } from "@/components/ui/raffle-manager";
+import { DashboardStats } from "@/components/ui/admin/dashboard-stats";
+import { RaffleManager } from "@/components/ui/admin/raffle-manager";
 
 const Dashboard = () => {
   const navigate = useNavigate();

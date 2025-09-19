@@ -1,16 +1,16 @@
 import { useEffect, useState, lazy, Suspense } from "react";
-import { HeroSection } from "@/components/ui/hero-section";
-import { RaffleCard } from "@/components/ui/raffle-card";
-import { LoadingSkeleton } from "@/components/ui/loading-skeleton";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
+import { HeroSection } from "@/components/ui/layout/hero-section";
+import { RaffleCard } from "@/components/ui/raffle/raffle-card";
+import { LoadingSkeleton } from "@/components/ui/base/loading-skeleton";
+import { Button } from "@/components/ui/base/button";
+import { Card, CardContent } from "@/components/ui/base/card";
 import { isRaffleActive } from "@/hooks/use-raffle-status";
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
-} from "@/components/ui/dialog";
+} from "@/components/ui/base/dialog";
 import { MessageCircle, Loader2, Instagram } from "lucide-react";
 import { Link } from "react-router-dom";
 import Logo from "@/assets/favico.png";
@@ -20,17 +20,17 @@ import {
   statisticsService,
   type TopCustomerResponse,
 } from "@/services/statistics";
-import type { LastWinner } from "@/components/ui/hero-section";
+import type { LastWinner } from "@/components/ui/layout/hero-section";
 import { toast } from "sonner";
 
 // Lazy load components that are not immediately visible
 const PurchaseSteps = lazy(() =>
-  import("@/components/ui/purchase-steps").then((m) => ({
+  import("@/components/ui/base/purchase-steps").then((m) => ({
     default: m.PurchaseSteps,
   }))
 );
 const TicketVerification = lazy(() =>
-  import("@/components/ui/ticket-verification").then((m) => ({
+  import("@/components/ui/base/ticket-verification").then((m) => ({
     default: m.TicketVerification,
   }))
 );

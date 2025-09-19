@@ -1,8 +1,8 @@
 import { Suspense } from "react";
-import { HeroSection } from "@/components/ui/hero-section";
-import { RaffleCard } from "@/components/ui/raffle-card";
-import { PurchaseSteps } from "@/components/ui/purchase-steps";
-import { LoadingSkeleton } from "@/components/ui/loading-skeleton";
+import { HeroSection } from "@/components/ui/layout/hero-section";
+import { RaffleCard } from "@/components/ui/raffle/raffle-card";
+import { PurchaseSteps } from "@/components/ui/raffle/purchase-steps";
+import { LoadingSkeleton } from "@/components/ui/base/loading-skeleton";
 import type { Raffle } from "@/services/raffle";
 import type { TopCustomerResponse } from "@/services/statistics";
 import type { Winner } from "@/services/admin";

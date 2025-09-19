@@ -3,9 +3,9 @@ import {
   DialogContent,
   DialogHeader,
   DialogTitle,
-} from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
+} from "@/components/ui/base/dialog";
+import { Button } from "@/components/ui/base/button";
+import { Badge } from "@/components/ui/base/badge";
 import { CheckCircle, Copy, MessageCircle } from "lucide-react";
 import { toast } from "sonner";
 import { formatBsVSimple } from "@/lib/currency";

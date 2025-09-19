@@ -1,15 +1,15 @@
 import { useState, useEffect, useCallback } from "react";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
+import { Button } from "@/components/ui/base/button";
+import { Input } from "@/components/ui/base/input";
+import { Label } from "@/components/ui/base/label";
+import { Textarea } from "@/components/ui/base/textarea";
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card";
+} from "@/components/ui/base/card";
 import {
   Dialog,
   DialogContent,
@@ -17,11 +17,11 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "@/components/ui/dialog";
-import { Badge } from "@/components/ui/badge";
-import { Switch } from "@/components/ui/switch";
-import { PaymentProofModal } from "@/components/ui/payment-proof-modal";
-import { WinnerModal } from "@/components/ui/winner-modal";
+} from "@/components/ui/base/dialog";
+import { Badge } from "@/components/ui/base/badge";
+import { Switch } from "@/components/ui/base/switch";
+import { PaymentProofModal } from "@/components/ui/modals/payment-proof-modal";
+import { WinnerModal } from "@/components/ui/modals/winner-modal";
 import {
   Trophy,
   Banknote,

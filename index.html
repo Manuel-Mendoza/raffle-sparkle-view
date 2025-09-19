@@ -47,6 +47,10 @@
     <meta name="twitter:site" content="@queMantequilla" />
     <meta name="twitter:image" content="/favico.png" />
 
+    <!-- PWA Manifest -->
+    <link rel="manifest" href="/manifest.json" />
+    <meta name="theme-color" content="#8B5CF6" />
+
     <!-- Preload critical resources -->
     <link
       rel="preload"
@@ -69,14 +73,41 @@
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
 
-    <!-- Service Worker Registration -->
+    <!-- Service Worker - Solo en producción -->
     <script>
-      if ("serviceWorker" in navigator) {
+      // Desregistrar SW en desarrollo
+      if (
+        "serviceWorker" in navigator &&
+        window.location.hostname === "localhost"
+      ) {
+        navigator.serviceWorker
+          .getRegistrations()
+          .then(function (registrations) {
+            for (let registration of registrations) {
+              registration.unregister();
+            }
+          });
+      }
+
+      // Solo registrar SW en producción (HTTPS y no localhost)
+      if (
+        "serviceWorker" in navigator &&
+        window.location.protocol === "https:" &&
+        window.location.hostname !== "localhost"
+      ) {
         window.addEventListener("load", () => {
           navigator.serviceWorker
             .register("/sw.js")
             .then((registration) => {
               console.log("SW registered: ", registration);
+
+              // Verificar actualizaciones cada 30 minutos
+              setInterval(
+                () => {
+                  registration.update();
+                },
+                30 * 60 * 1000
+              );
             })
             .catch((registrationError) => {
               console.log("SW registration failed: ", registrationError);

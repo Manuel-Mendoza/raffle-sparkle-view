@@ -19,6 +19,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
+import { Switch } from "@/components/ui/switch";
 import { PaymentProofModal } from "@/components/ui/payment-proof-modal";
 import { WinnerModal } from "@/components/ui/winner-modal";
 import {
@@ -40,6 +41,7 @@ import { uploadImageToImgBB } from "@/services/imgbb";
 import { adminService, CustomerTicket } from "@/services/admin";
 import { AxiosErrorResponse } from "@/types/api";
 import { formatBsV } from "@/lib/currency";
+import { toast } from "sonner";
 
 type PurchaseRequest = CustomerTicket;
 
@@ -112,11 +114,37 @@ export const RaffleManager = () => {
     loadPurchaseRequests();
   }, [loadPurchaseRequests]);
 
+  const handleToggleRaffleStatus = (raffleId: string, isActive: boolean) => {
+    // Guardar estado en localStorage
+    localStorage.setItem(`raffle_${raffleId}_active`, isActive.toString());
+    
+    // Actualizar el estado local
+    setRaffles(prev => prev.map(raffle => 
+      raffle.id === raffleId 
+        ? { ...raffle, isActive } 
+        : raffle
+    ));
+    
+    toast.success(`Rifa ${isActive ? 'activada' : 'desactivada'} correctamente`);
+  };
+
+  const getRaffleStatus = (raffleId: string): boolean => {
+    const stored = localStorage.getItem(`raffle_${raffleId}_active`);
+    return stored !== null ? stored === 'true' : true; // Por defecto activa
+  };
+
   const loadRaffles = async () => {
     try {
       setIsLoading(true);
       const currentRaffle = await raffleService.getCurrentRaffle();
-      setRaffles([currentRaffle]);
+      
+      // Agregar estado desde localStorage
+      const raffleWithStatus = {
+        ...currentRaffle,
+        isActive: getRaffleStatus(currentRaffle.id)
+      };
+      
+      setRaffles([raffleWithStatus]);
     } catch (error) {
       console.error("Error loading current raffle:", error);
       setRaffles([]);
@@ -481,6 +509,23 @@ export const RaffleManager = () => {
                     </CardTitle>
                     {getStatusBadge(raffle.status)}
                   </div>
+                  
+                  {/* Switch para activar/desactivar rifa */}
+                  <div className="flex items-center justify-between pt-2">
+                    <div className="flex items-center space-x-2">
+                      <Switch
+                        checked={raffle.isActive}
+                        onCheckedChange={(checked) => handleToggleRaffleStatus(raffle.id, checked)}
+                      />
+                      <span className="text-sm font-medium">
+                        {raffle.isActive ? 'Activa' : 'Inactiva'}
+                      </span>
+                    </div>
+                    <Badge variant={raffle.isActive ? 'default' : 'secondary'}>
+                      {raffle.isActive ? 'Disponible' : 'Pausada'}
+                    </Badge>
+                  </div>
+                  
                   <CardDescription className="text-sm">
                     {raffle.description || "Sin descripción disponible"}
                   </CardDescription>

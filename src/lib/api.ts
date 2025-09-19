@@ -1,13 +1,7 @@
 import axios from "axios";
 
-// Detectar automáticamente el entorno y usar variables de entorno
-const isDevelopment = import.meta.env.DEV || 
-                     window.location.hostname === 'localhost' || 
-                     window.location.hostname === '127.0.0.1';
-
-const API_BASE_URL = isDevelopment 
-  ? import.meta.env.VITE_API_URL_DEVELOPMENT 
-  : import.meta.env.VITE_API_URL_PRODUCTION;
+const API_BASE_URL = "http://localhost:3000/api";
+// const API_BASE_URL = "https://riffaquemantequilla.onrender.com/api";
 
 export const api = axios.create({
   baseURL: API_BASE_URL,

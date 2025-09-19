@@ -1,6 +1,11 @@
 import { useState, useRef } from "react";
 import { Button } from "@/components/ui/base/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/base/card";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/base/card";
 import { Search, User, Phone, Mail, Trophy, Ticket } from "lucide-react";
 import { toast } from "sonner";
 import { raffleService, TicketInfo } from "@/services/raffle";

@@ -8,7 +8,12 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/base/card";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/base/tabs";
+import {
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+} from "@/components/ui/base/tabs";
 import { Badge } from "@/components/ui/base/badge";
 import {
   LogOut,

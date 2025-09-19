@@ -1,6 +1,11 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/base/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/base/card";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/base/card";
 import { StepIndicator } from "@/components/ui/forms/step-indicator";
 import { TicketSelector } from "@/components/ui/forms/ticket-selector";
 import { UserForm } from "@/components/ui/forms/user-form";

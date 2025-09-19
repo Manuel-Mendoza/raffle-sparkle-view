@@ -1,6 +1,11 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/base/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/base/card";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/base/card";
 import { Badge } from "@/components/ui/base/badge";
 import { Input } from "@/components/ui/base/input";
 import { Minus, Plus, ShoppingCart, Edit3 } from "lucide-react";

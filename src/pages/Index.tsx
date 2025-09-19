@@ -14,7 +14,7 @@ import { MessageCircle, Loader2 } from "lucide-react";
 import { Link } from "react-router-dom";
 import Logo from "@/assets/favico.png";
 import { raffleService, type Raffle } from "@/services/raffle";
-import { adminService } from "@/services/admin";
+import { adminService, type Winner } from "@/services/admin";
 import {
   statisticsService,
   type TopCustomerResponse,
@@ -32,7 +32,7 @@ const Index = () => {
   const [topCustomer, setTopCustomer] = useState<TopCustomerResponse | null>(
     null
   );
-  const [lastWinner, setLastWinner] = useState<any>(null);
+  const [lastWinner, setLastWinner] = useState<Winner | null>(null);
   const [loading, setLoading] = useState(true);
   const [showVerificationModal, setShowVerificationModal] = useState(false);
 
@@ -40,7 +40,7 @@ const Index = () => {
     const fetchData = async () => {
       try {
         setLoading(true);
-        
+
         // Fetch raffle data
         try {
           const raffle = await raffleService.getCurrentRaffle();
@@ -144,7 +144,10 @@ const Index = () => {
       )}
 
       {/* Ticket Verification Modal */}
-      <Dialog open={showVerificationModal} onOpenChange={setShowVerificationModal}>
+      <Dialog
+        open={showVerificationModal}
+        onOpenChange={setShowVerificationModal}
+      >
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
             <DialogTitle>Verificar Ticket</DialogTitle>

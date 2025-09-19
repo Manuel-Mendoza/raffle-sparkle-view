@@ -108,7 +108,7 @@ export const RaffleManager = () => {
   useEffect(() => {
     loadRaffles();
     loadPurchaseRequests();
-  }, [loadPurchaseRequests]);
+  }, [loadPurchaseRequests, loadRaffles]);
 
   useEffect(() => {
     loadPurchaseRequests();
@@ -117,33 +117,35 @@ export const RaffleManager = () => {
   const handleToggleRaffleStatus = (raffleId: string, isActive: boolean) => {
     // Guardar estado en localStorage
     localStorage.setItem(`raffle_${raffleId}_active`, isActive.toString());
-    
+
     // Actualizar el estado local
-    setRaffles(prev => prev.map(raffle => 
-      raffle.id === raffleId 
-        ? { ...raffle, isActive } 
-        : raffle
-    ));
-    
-    toast.success(`Rifa ${isActive ? 'activada' : 'desactivada'} correctamente`);
+    setRaffles((prev) =>
+      prev.map((raffle) =>
+        raffle.id === raffleId ? { ...raffle, isActive } : raffle
+      )
+    );
+
+    toast.success(
+      `Rifa ${isActive ? "activada" : "desactivada"} correctamente`
+    );
   };
 
   const getRaffleStatus = (raffleId: string): boolean => {
     const stored = localStorage.getItem(`raffle_${raffleId}_active`);
-    return stored !== null ? stored === 'true' : true; // Por defecto activa
+    return stored !== null ? stored === "true" : true; // Por defecto activa
   };
 
-  const loadRaffles = async () => {
+  const loadRaffles = useCallback(async () => {
     try {
       setIsLoading(true);
       const currentRaffle = await raffleService.getCurrentRaffle();
-      
+
       // Agregar estado desde localStorage
       const raffleWithStatus = {
         ...currentRaffle,
-        isActive: getRaffleStatus(currentRaffle.id)
+        isActive: getRaffleStatus(currentRaffle.id),
       };
-      
+
       setRaffles([raffleWithStatus]);
     } catch (error) {
       console.error("Error loading current raffle:", error);
@@ -151,7 +153,7 @@ export const RaffleManager = () => {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, []);
 
   const resetForm = () => {
     setFormData({
@@ -509,23 +511,25 @@ export const RaffleManager = () => {
                     </CardTitle>
                     {getStatusBadge(raffle.status)}
                   </div>
-                  
+
                   {/* Switch para activar/desactivar rifa */}
                   <div className="flex items-center justify-between pt-2">
                     <div className="flex items-center space-x-2">
                       <Switch
                         checked={raffle.isActive}
-                        onCheckedChange={(checked) => handleToggleRaffleStatus(raffle.id, checked)}
+                        onCheckedChange={(checked) =>
+                          handleToggleRaffleStatus(raffle.id, checked)
+                        }
                       />
                       <span className="text-sm font-medium">
-                        {raffle.isActive ? 'Activa' : 'Inactiva'}
+                        {raffle.isActive ? "Activa" : "Inactiva"}
                       </span>
                     </div>
-                    <Badge variant={raffle.isActive ? 'default' : 'secondary'}>
-                      {raffle.isActive ? 'Disponible' : 'Pausada'}
+                    <Badge variant={raffle.isActive ? "default" : "secondary"}>
+                      {raffle.isActive ? "Disponible" : "Pausada"}
                     </Badge>
                   </div>
-                  
+
                   <CardDescription className="text-sm">
                     {raffle.description || "Sin descripción disponible"}
                   </CardDescription>

@@ -1,15 +1,15 @@
 import { useEffect, useState, lazy, Suspense } from "react";
-import { LoadingSkeleton } from "@/components/ui/loading-skeleton";
-import { Button } from "@/components/ui/button";
-import { ComingSoonMessage } from "@/components/ui/coming-soon-message";
-import { RaffleContent } from "@/components/ui/raffle-content";
+import { LoadingSkeleton } from "@/components/ui/base/loading-skeleton";
+import { Button } from "@/components/ui/base/button";
+import { ComingSoonMessage } from "@/components/ui/layout/coming-soon-message";
+import { RaffleContent } from "@/components/ui/raffle/raffle-content";
 import { isRaffleActive } from "@/hooks/use-raffle-status";
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
-} from "@/components/ui/dialog";
+} from "@/components/ui/base/dialog";
 import { MessageCircle, Loader2 } from "lucide-react";
 import { Link } from "react-router-dom";
 import Logo from "@/assets/favico.png";
@@ -22,7 +22,7 @@ import {
 
 // Lazy load components
 const TicketVerification = lazy(() =>
-  import("@/components/ui/ticket-verification").then((m) => ({
+  import("@/components/ui/raffle/ticket-verification").then((m) => ({
     default: m.TicketVerification,
   }))
 );

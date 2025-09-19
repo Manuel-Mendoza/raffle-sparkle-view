@@ -185,7 +185,7 @@ const Index = () => {
 
       {/* API Test Component - Solo en desarrollo */}
 
-      {/* Contenido condicional completo según estado de rifa */}
+      {/* Contenido condicional: mostrar solo si hay rifa Y está activa */}
       {currentRaffle && isRaffleActive(currentRaffle.id) ? (
         <>
           {/* Hero Section */}

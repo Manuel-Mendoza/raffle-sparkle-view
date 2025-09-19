@@ -4,7 +4,6 @@ const urlsToCache = [
   "/src/main.tsx",
   "/src/index.css",
   "/favico.png",
-  "/src/assets/hero-motorcycle.jpg",
 ];
 
 self.addEventListener("install", (event) => {

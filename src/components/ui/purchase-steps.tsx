@@ -5,7 +5,7 @@ import { StepIndicator } from "@/components/ui/step-indicator";
 import { TicketSelector } from "@/components/ui/ticket-selector";
 import { UserForm } from "@/components/ui/user-form";
 import { TicketNumbersModal } from "@/components/ui/ticket-numbers-modal";
-import { DebugPanel } from "@/components/ui/debug-panel";
+
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import type { Raffle } from "@/services/raffle";
@@ -237,25 +237,6 @@ export function PurchaseSteps({ raffleData }: PurchaseStepsProps) {
 
   return (
     <>
-      {/* Debug Panel - Solo en desarrollo */}
-      <DebugPanel
-        title="Purchase Data Debug"
-        data={{
-          currentStep,
-          hasUserData: !!purchaseData.userData,
-          userName: purchaseData.userData?.name,
-          userPhone: purchaseData.userData?.phone,
-          userEmail: purchaseData.userData?.email,
-          tickets: purchaseData.tickets,
-          total: purchaseData.total,
-          paymentMethod: purchaseData.paymentMethod,
-          hasPaymentProof: !!purchaseData.paymentProof,
-          raffleId: raffleData.id,
-          raffleTitle: raffleData.title,
-          loading,
-        }}
-      />
-
       <Card className="w-full max-w-4xl mx-auto bg-gradient-to-br from-card to-accent/5 border-accent/20 shadow-card">
         <CardHeader>
           <CardTitle className="text-center text-2xl text-secondary">

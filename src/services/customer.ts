@@ -64,17 +64,11 @@ export const customerService = {
       email: data.email.trim().toLowerCase(),
     };
 
-    console.log("✅ Validaciones pasadas. Enviando solicitud:", {
-      ...cleanData,
-      paymentProof: cleanData.paymentProof.substring(0, 50) + "...",
-    });
-
     try {
       const response = await api.post<BuyTicketResponse>(
         "/customers/buy-ticket",
         cleanData
       );
-      console.log("✅ Respuesta exitosa:", response.data);
       return response.data;
     } catch (error: AxiosError) {
       console.error("❌ Error en buyTickets:", {
@@ -108,10 +102,5 @@ export const customerService = {
 
       throw error;
     }
-  },
-
-  async testConnection(): Promise<{ message: string }> {
-    const response = await api.get<{ message: string }>("/customers/test");
-    return response.data;
   },
 };

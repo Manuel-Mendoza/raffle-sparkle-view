@@ -1,7 +1,13 @@
 import axios from "axios";
 
-const API_BASE_URL = "https://riffaquemantequilla.onrender.com/api";
-// const API_BASE_URL = "http://localhost:3000/api";
+// Detectar automáticamente el entorno y usar variables de entorno
+const isDevelopment = import.meta.env.DEV || 
+                     window.location.hostname === 'localhost' || 
+                     window.location.hostname === '127.0.0.1';
+
+const API_BASE_URL = isDevelopment 
+  ? import.meta.env.VITE_API_URL_DEVELOPMENT 
+  : import.meta.env.VITE_API_URL_PRODUCTION;
 
 export const api = axios.create({
   baseURL: API_BASE_URL,
@@ -20,16 +26,6 @@ api.interceptors.request.use((config) => {
   // Si es FormData, remover Content-Type para que axios lo configure automáticamente
   if (config.data instanceof FormData) {
     delete config.headers["Content-Type"];
-  }
-
-  // Log para debugging
-  if (config.url?.includes("buy-ticket")) {
-    console.log("🚀 Sending buy-ticket request:", {
-      url: config.url,
-      method: config.method,
-      data: config.data,
-      headers: config.headers,
-    });
   }
 
   return config;

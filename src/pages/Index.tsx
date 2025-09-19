@@ -32,9 +32,7 @@ const TicketVerification = lazy(() =>
     default: m.TicketVerification,
   }))
 );
-const ApiTest = lazy(() =>
-  import("@/components/ui/api-test").then((m) => ({ default: m.ApiTest }))
-);
+
 
 const Index = () => {
   const [currentRaffle, setCurrentRaffle] = useState<Raffle | null>(null);
@@ -185,11 +183,7 @@ const Index = () => {
       </header>
 
       {/* API Test Component - Solo en desarrollo */}
-      <div className="container mx-auto px-4 pt-4">
-        <Suspense fallback={<LoadingSkeleton className="w-full h-20" />}>
-          <ApiTest />
-        </Suspense>
-      </div>
+
 
       {/* Hero Section */}
       <section className="container mx-auto px-4 py-8">

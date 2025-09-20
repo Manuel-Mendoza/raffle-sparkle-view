@@ -6,12 +6,13 @@ import { LoadingSkeleton } from "@/components/ui/base/loading-skeleton";
 import { PrizeModal } from "@/components/ui/modals/prize-modal";
 import type { Raffle } from "@/services/raffle";
 import type { TopCustomerResponse } from "@/services/statistics";
-import type { Winner } from "@/services/admin";
+import type { Winner, WinnerResponse } from "@/services/admin";
 
 interface RaffleContentProps {
   currentRaffle: Raffle;
   topCustomer: TopCustomerResponse | null;
   lastWinner: Winner | null;
+  winners: WinnerResponse[];
   onScrollToPurchase: () => void;
   onVerifyTickets: () => void;
 }
@@ -20,6 +21,7 @@ export function RaffleContent({
   currentRaffle,
   topCustomer,
   lastWinner,
+  winners,
   onScrollToPurchase,
   onVerifyTickets,
 }: RaffleContentProps) {
@@ -37,6 +39,7 @@ export function RaffleContent({
           raffleData={currentRaffle}
           topCustomer={topCustomer}
           lastWinner={lastWinner}
+          winners={winners}
           onBuyTicket={onScrollToPurchase}
           onVerifyTickets={onVerifyTickets}
           onViewPrize={handleViewPrize}

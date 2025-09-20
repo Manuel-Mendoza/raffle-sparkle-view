@@ -665,7 +665,7 @@ export const RaffleManager = () => {
                         variant="destructive"
                         size="sm"
                       >
-                        🗑️ Eliminar
+                        Eliminar
                       </Button>
                     </div>
                   </div>

@@ -14,7 +14,11 @@ import { MessageCircle, Loader2 } from "lucide-react";
 import { Link } from "react-router-dom";
 import Logo from "@/assets/favico.png";
 import { raffleService, type Raffle } from "@/services/raffle";
-import { adminService, type Winner } from "@/services/admin";
+import {
+  adminService,
+  type Winner,
+  type WinnerResponse,
+} from "@/services/admin";
 import {
   statisticsService,
   type TopCustomerResponse,
@@ -29,6 +33,7 @@ const TicketVerification = lazy(() =>
 
 const Index = () => {
   const [currentRaffle, setCurrentRaffle] = useState<Raffle | null>(null);
+  const [winners, setWinners] = useState<WinnerResponse[]>([]);
   const [topCustomer, setTopCustomer] = useState<TopCustomerResponse | null>(
     null
   );
@@ -46,6 +51,19 @@ const Index = () => {
           const allRaffles = await raffleService.getAllRaffles();
           const activeRaffle = allRaffles.find((raffle) => raffle.isActive);
           setCurrentRaffle(activeRaffle || null);
+
+          // If there's an active raffle, fetch its winners
+          if (activeRaffle) {
+            try {
+              const raffleWinners = await adminService.getWinners(
+                activeRaffle.id
+              );
+              setWinners(raffleWinners);
+            } catch (error) {
+              console.log("No winners declared yet");
+              setWinners([]);
+            }
+          }
         } catch (error) {
           console.log("No raffles available");
           setCurrentRaffle(null);
@@ -128,6 +146,7 @@ const Index = () => {
           currentRaffle={currentRaffle}
           topCustomer={topCustomer}
           lastWinner={lastWinner}
+          winners={winners}
           onScrollToPurchase={scrollToPurchase}
           onVerifyTickets={handleVerifyTickets}
         />

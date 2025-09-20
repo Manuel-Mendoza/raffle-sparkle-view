@@ -28,12 +28,17 @@ export interface PendingTicket {
   status: "pending" | "approved" | "rejected";
 }
 
-export interface Winner {
-  id: string;
+export interface WinnerResponse {
+  position: number;
   ticketNumber: string;
   customerName: string;
-  customerPhone: string;
+  customerEmail: string;
   drawnAt: string;
+}
+
+export interface GetWinnersResponse {
+  raffleId: string;
+  winners: WinnerResponse[];
 }
 
 export interface DrawWinnerResponse {
@@ -42,6 +47,13 @@ export interface DrawWinnerResponse {
 }
 
 export const adminService = {
+  async getWinners(raffleId: string): Promise<WinnerResponse[]> {
+    const response = await api.get<GetWinnersResponse>(
+      `/admin/winners/${raffleId}`
+    );
+    return response.data.winners;
+  },
+
   async getPendingTickets(): Promise<CustomerTicket[]> {
     try {
       console.log("Making API call to /admin/tickets/pending");
@@ -86,9 +98,35 @@ export const adminService = {
     await api.put(`/admin/customers/${customerId}/reject`);
   },
 
-  async drawWinner(raffleId: string): Promise<DrawWinnerResponse> {
-    const response = await api.post<DrawWinnerResponse>("/admin/draw-winner", {
+  async setFirstWinner(
+    raffleId: string,
+    ticketNumber: string
+  ): Promise<Winner> {
+    const response = await api.post<Winner>("/admin/set-winner", {
       raffleId,
+      ticketNumber,
+    });
+    return response.data;
+  },
+
+  async setSecondWinner(
+    raffleId: string,
+    ticketNumber: string
+  ): Promise<Winner> {
+    const response = await api.post<Winner>("/admin/set-second-winner", {
+      raffleId,
+      ticketNumber,
+    });
+    return response.data;
+  },
+
+  async setThirdWinner(
+    raffleId: string,
+    ticketNumber: string
+  ): Promise<Winner> {
+    const response = await api.post<Winner>("/admin/set-third-winner", {
+      raffleId,
+      ticketNumber,
     });
     return response.data;
   },

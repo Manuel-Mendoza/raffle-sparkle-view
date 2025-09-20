@@ -21,6 +21,7 @@ interface HeroSectionProps {
   lastWinner?: LastWinner | null;
   onVerifyTickets?: () => void;
   onBuyTicket?: () => void;
+  onViewPrize?: () => void;
 }
 
 export function HeroSection({
@@ -29,6 +30,7 @@ export function HeroSection({
   lastWinner,
   onVerifyTickets,
   onBuyTicket,
+  onViewPrize,
 }: HeroSectionProps) {
   console.log("HeroSection props:", { raffleData, lastWinner, topCustomer });
 
@@ -169,14 +171,40 @@ export function HeroSection({
           {raffleData.status === "active" ? "¡RIFA ACTIVA!" : "¡RIFA ESPECIAL!"}
         </Badge>
 
-        <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-primary-foreground mb-4 leading-tight">
-          {raffleData.title}
+        <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-primary-foreground mb-6 leading-tight">
+          🎉 {raffleData.title} 🎉
         </h1>
 
-        <div className="inline-block bg-gradient-to-r from-primary to-primary/80 px-4 sm:px-6 py-2 sm:py-3 rounded-lg shadow-glow mb-6">
-          <h2 className="text-xl sm:text-2xl md:text-3xl font-bold text-primary-foreground">
-            🏆 {raffleData.prize}
-          </h2>
+        <div className="space-y-3 mb-6">
+          {/* Separar premios y mostrar con emojis de medallas */}
+          {raffleData.prize.split(',').map((prize, index) => {
+            const trimmedPrize = prize.trim();
+            let emoji = '';
+            let bgColor = '';
+            let textColor = 'text-primary-foreground';
+            
+            if (index === 0) {
+              emoji = '🥇';
+              bgColor = 'from-yellow-500 to-yellow-600';
+            } else if (index === 1) {
+              emoji = '🥈';
+              bgColor = 'from-gray-400 to-gray-500';
+            } else if (index === 2) {
+              emoji = '🥉';
+              bgColor = 'from-amber-600 to-amber-700';
+            } else {
+              emoji = '🏆';
+              bgColor = 'from-primary to-primary/80';
+            }
+
+            return (
+              <div key={index} className={`inline-block bg-gradient-to-r ${bgColor} px-4 sm:px-6 py-2 sm:py-3 rounded-lg shadow-glow mx-1 mb-2`}>
+                <h2 className={`text-lg sm:text-xl md:text-2xl font-bold ${textColor}`}>
+                  {emoji} {index + 1}° Lugar: {trimmedPrize}
+                </h2>
+              </div>
+            );
+          })}
         </div>
 
         <div className="bg-black/30 backdrop-blur-sm rounded-lg p-3 sm:p-4 mb-6">
@@ -237,6 +265,15 @@ export function HeroSection({
           >
             <ShoppingCart className="w-5 h-5 mr-2" />
             Comprar Ticket
+          </Button>
+
+          <Button
+            onClick={onViewPrize}
+            variant="outline"
+            size="lg"
+            className="border-2 border-accent/50 text-accent hover:bg-accent/10 backdrop-blur-sm transition-all duration-300 text-base sm:text-lg py-3 sm:py-4 px-6 sm:px-8"
+          >
+            🏆 Ver Premio
           </Button>
 
           <Button

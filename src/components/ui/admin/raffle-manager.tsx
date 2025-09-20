@@ -99,17 +99,10 @@ export const RaffleManager = () => {
   const loadRaffles = useCallback(async () => {
     try {
       setIsLoading(true);
-      const currentRaffle = await raffleService.getCurrentRaffle();
-
-      // Agregar estado desde localStorage
-      const raffleWithStatus = {
-        ...currentRaffle,
-        isActive: getRaffleStatus(currentRaffle.id),
-      };
-
-      setRaffles([raffleWithStatus]);
+      const allRaffles = await raffleService.getAllRaffles();
+      setRaffles(allRaffles);
     } catch (error) {
-      console.error("Error loading current raffle:", error);
+      console.error("Error loading raffles:", error);
       setRaffles([]);
     } finally {
       setIsLoading(false);
@@ -130,27 +123,6 @@ export const RaffleManager = () => {
     loadRaffles();
     loadPurchaseRequests();
   }, [loadRaffles, loadPurchaseRequests]);
-
-  const handleToggleRaffleStatus = (raffleId: string, isActive: boolean) => {
-    // Guardar estado en localStorage
-    localStorage.setItem(`raffle_${raffleId}_active`, isActive.toString());
-
-    // Actualizar el estado local
-    setRaffles((prev) =>
-      prev.map((raffle) =>
-        raffle.id === raffleId ? { ...raffle, isActive } : raffle
-      )
-    );
-
-    toast.success(
-      `Rifa ${isActive ? "activada" : "desactivada"} correctamente`
-    );
-  };
-
-  const getRaffleStatus = (raffleId: string): boolean => {
-    const stored = localStorage.getItem(`raffle_${raffleId}_active`);
-    return stored !== null ? stored === "true" : true; // Por defecto activa
-  };
 
   const resetForm = () => {
     setFormData({
@@ -226,6 +198,49 @@ export const RaffleManager = () => {
     setRaffleToFinish(raffle);
     setPlaceToDeclare(place);
     setFinishModalOpen(true);
+  };
+
+  const handleDeleteRaffle = async (raffle: Raffle) => {
+    if (!confirm(`¿Estás seguro de eliminar la rifa "${raffle.title}"? Esta acción no se puede deshacer.`)) {
+      return;
+    }
+
+    try {
+      await raffleService.deleteRaffle(raffle.id);
+      toast.success("Rifa eliminada exitosamente");
+      loadRaffles();
+    } catch (error) {
+      console.error("Error deleting raffle:", error);
+      toast.error("Error al eliminar la rifa");
+    }
+  };
+
+  const handlePauseRaffle = async (raffle: Raffle) => {
+    try {
+      await raffleService.pauseRaffle(raffle.id);
+      toast.success("Rifa pausada exitosamente");
+      loadRaffles();
+    } catch (error) {
+      console.error("Error pausing raffle:", error);
+      toast.error("Error al pausar la rifa");
+    }
+  };
+
+  const handleToggleRaffleStatus = async (raffleId: string, isActive: boolean) => {
+    try {
+      if (isActive) {
+        // Si se está activando, no hay endpoint específico, solo recargar
+        toast.success("Rifa activada exitosamente");
+      } else {
+        // Si se está pausando, usar el endpoint de pause
+        await raffleService.pauseRaffle(raffleId);
+        toast.success("Rifa pausada exitosamente");
+      }
+      loadRaffles();
+    } catch (error) {
+      console.error("Error toggling raffle status:", error);
+      toast.error("Error al cambiar el estado de la rifa");
+    }
   };
 
   const handlePinChange = (index: number, value: string) => {
@@ -607,34 +622,46 @@ export const RaffleManager = () => {
                     </p>
                   </div>
 
-                  <div className="flex justify-end space-x-2 pt-4 border-t border-accent/10 mt-4">
-                    <Button
-                      onClick={() => handleFinishRaffle(raffle, 1)}
-                      disabled={isFinishing || raffle.status !== "active"}
-                      className="bg-yellow-500 hover:bg-yellow-600 text-white"
-                      size="sm"
-                    >
-                      <TrophyIcon className="w-4 h-4 mr-1" />
-                      1° Lugar
-                    </Button>
-                    <Button
-                      onClick={() => handleFinishRaffle(raffle, 2)}
-                      disabled={isFinishing || raffle.status !== "active"}
-                      className="bg-gray-400 hover:bg-gray-500 text-white"
-                      size="sm"
-                    >
-                      <TrophyIcon className="w-4 h-4 mr-1" />
-                      2° Lugar
-                    </Button>
-                    <Button
-                      onClick={() => handleFinishRaffle(raffle, 3)}
-                      disabled={isFinishing || raffle.status !== "active"}
-                      className="bg-amber-600 hover:bg-amber-700 text-white"
-                      size="sm"
-                    >
-                      <TrophyIcon className="w-4 h-4 mr-1" />
-                      3° Lugar
-                    </Button>
+                  <div className="space-y-2">
+                    <div className="flex justify-end space-x-2 pt-4 border-t border-accent/10 mt-4">
+                      <Button
+                        onClick={() => handleFinishRaffle(raffle, 1)}
+                        disabled={isFinishing || raffle.status !== "active"}
+                        className="bg-yellow-500 hover:bg-yellow-600 text-white"
+                        size="sm"
+                      >
+                        <TrophyIcon className="w-4 h-4 mr-1" />
+                        1° Lugar
+                      </Button>
+                      <Button
+                        onClick={() => handleFinishRaffle(raffle, 2)}
+                        disabled={isFinishing || raffle.status !== "active"}
+                        className="bg-gray-400 hover:bg-gray-500 text-white"
+                        size="sm"
+                      >
+                        <TrophyIcon className="w-4 h-4 mr-1" />
+                        2° Lugar
+                      </Button>
+                      <Button
+                        onClick={() => handleFinishRaffle(raffle, 3)}
+                        disabled={isFinishing || raffle.status !== "active"}
+                        className="bg-amber-600 hover:bg-amber-700 text-white"
+                        size="sm"
+                      >
+                        <TrophyIcon className="w-4 h-4 mr-1" />
+                        3° Lugar
+                      </Button>
+                    </div>
+                    
+                    <div className="flex justify-end space-x-2">
+                      <Button
+                        onClick={() => handleDeleteRaffle(raffle)}
+                        variant="destructive"
+                        size="sm"
+                      >
+                        🗑️ Eliminar
+                      </Button>
+                    </div>
                   </div>
                 </CardContent>
               </Card>

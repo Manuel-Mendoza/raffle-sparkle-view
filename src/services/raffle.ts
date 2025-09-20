@@ -19,6 +19,7 @@ export interface Raffle {
   totalTickets: number;
   soldTickets: number;
   status: "active" | "finished" | "draft";
+  isActive: boolean;
   startDate: string;
   endDate: string;
   image: string;
@@ -35,6 +36,7 @@ export const convertApiRaffleToLocal = (apiRaffle: ApiRaffle): Raffle => {
     totalTickets: apiRaffle.totalTickets,
     soldTickets: apiRaffle.soldTickets,
     status: apiRaffle.isActive ? "active" : "finished",
+    isActive: apiRaffle.isActive,
     startDate: apiRaffle.createdAt,
     endDate: apiRaffle.endDate,
     image: apiRaffle.image || "", // Use image from API or empty string as fallback
@@ -103,6 +105,7 @@ export const raffleService = {
             totalTickets: 0,
             soldTickets: 0,
             status: "draft" as const,
+            isActive: false,
             startDate: new Date().toISOString(),
             endDate: new Date().toISOString(),
             image: "",
@@ -137,8 +140,12 @@ export const raffleService = {
     return convertApiRaffleToLocal(response.data.raffle);
   },
 
-  async finishRaffle(): Promise<void> {
-    await api.put("/raffle/finish");
+  async deleteRaffle(id: string): Promise<void> {
+    await api.delete(`/raffle/${id}`);
+  },
+
+  async pauseRaffle(id: string): Promise<void> {
+    await api.put(`/raffle/pause/${id}`);
   },
 
   async verifyTicket(ticketNumber: string): Promise<TicketInfo> {

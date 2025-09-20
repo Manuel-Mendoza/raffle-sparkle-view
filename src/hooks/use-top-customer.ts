@@ -18,7 +18,7 @@ export const useTopCustomer = () => {
         const url =
           window.location.hostname === "localhost"
             ? "https://riffaquemantequilla.onrender.com/api/raffle/top-customer"
-            : "/api/raffle/top-customer";
+            : "https://riffaquemantequilla.onrender.com/api/raffle/top-customer";
 
         const response = await fetch(url);
 

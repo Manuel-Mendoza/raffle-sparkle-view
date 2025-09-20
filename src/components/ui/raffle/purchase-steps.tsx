@@ -63,7 +63,7 @@ export function PurchaseSteps({ raffleData }: PurchaseStepsProps) {
     total: raffleData.ticketPrice,
     userData: null as { name: string; phone: string; email: string } | null,
     paymentProof: null as string | null,
-    paymentMethod: "Transferencia Bancaria",
+    paymentMethod: "Pago Movil",
   });
 
   const handleTicketChange = (tickets: number, total: number) => {
@@ -224,7 +224,7 @@ export function PurchaseSteps({ raffleData }: PurchaseStepsProps) {
       total: raffleData.ticketPrice,
       userData: null,
       paymentProof: null,
-      paymentMethod: "Transferencia Bancaria",
+      paymentMethod: "Pago Movil",
     });
     setPurchaseResult(null);
   };
@@ -293,18 +293,18 @@ export function PurchaseSteps({ raffleData }: PurchaseStepsProps) {
 
               <Card className="bg-gradient-to-r from-primary/10 to-accent/10 border-primary/20">
                 <CardContent className="p-6">
-                  <h4 className="font-semibold text-secondary mb-4">
+                  <h4 className="font-semibold text-accent mb-4">
                     Selecciona tu método de pago
                   </h4>
 
                   <div className="space-y-3 mb-6">
                     {[
+                      { id: "Pago Movil", name: "Pago Móvil", icon: "📱" },
                       {
                         id: "Transferencia Bancaria",
                         name: "Transferencia Bancaria",
                         icon: "🏦",
                       },
-                      { id: "Pago Movil", name: "Pago Móvil", icon: "📱" },
                     ].map((method) => (
                       <div
                         key={method.id}
@@ -315,11 +315,11 @@ export function PurchaseSteps({ raffleData }: PurchaseStepsProps) {
                           }))
                         }
                         className={`flex items-center justify-between p-3 border rounded-lg cursor-pointer transition-colors ${purchaseData.paymentMethod === method.id
-                            ? "border-primary bg-primary/10"
-                            : "border-accent/20 hover:border-primary/30"
+                          ? "border-primary bg-primary/10"
+                          : "border-accent/20 hover:border-primary/30"
                           }`}
                       >
-                        <span className="text-accent">{method.name}</span>
+                        <span className="text-primary">{method.name}</span>
                         <div className="w-8 h-8 bg-primary/10 rounded flex items-center justify-center">
                           {method.icon}
                         </div>
@@ -329,7 +329,7 @@ export function PurchaseSteps({ raffleData }: PurchaseStepsProps) {
 
                   <div className="bg-accent/5 p-4 rounded-lg border border-accent/20 mb-4">
                     <div className="flex justify-between items-center mb-3">
-                      <h5 className="font-medium text-secondary">
+                      <h5 className="font-medium text-accent">
                         Datos para el pago:
                       </h5>
                     </div>
@@ -341,8 +341,8 @@ export function PurchaseSteps({ raffleData }: PurchaseStepsProps) {
                               key={key}
                               className="flex justify-between items-center"
                             >
-                              <span>
-                                <strong>{key}:</strong> {value}
+                              <span className="text-secondary">
+                                <strong className="text-primary">{key}:</strong> {value}
                               </span>
                               <Button
                                 onClick={() => handleCopy(value, key)}
@@ -360,8 +360,8 @@ export function PurchaseSteps({ raffleData }: PurchaseStepsProps) {
                               key={key}
                               className="flex justify-between items-center"
                             >
-                              <span>
-                                <strong>{key}:</strong> {value}
+                              <span className="text-secondary">
+                                <strong className="text-primary">{key}:</strong> {value}
                               </span>
                               <Button
                                 onClick={() => handleCopy(value, key)}
@@ -374,8 +374,8 @@ export function PurchaseSteps({ raffleData }: PurchaseStepsProps) {
                           )
                         )}
                       <div className="flex justify-between items-center">
-                        <span>
-                          <strong>Monto:</strong>{" "}
+                        <span className="text-secondary">
+                          <strong className="text-primary">Monto:</strong>{" "}
                           {formatBsVSimple(purchaseData.total)}
                         </span>
                         <Button
@@ -394,7 +394,7 @@ export function PurchaseSteps({ raffleData }: PurchaseStepsProps) {
                   <div className="space-y-4">
                     <Label
                       htmlFor="payment-proof"
-                      className="text-accent font-medium"
+                      className="text-primary font-medium"
                     >
                       Subir comprobante *
                     </Label>

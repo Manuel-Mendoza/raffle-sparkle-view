@@ -72,7 +72,6 @@ export const customerService = {
       return response.data;
     } catch (error: AxiosError) {
       console.error("Error en buyTickets:", error.message);
-      });
 
       // Mejorar mensajes de error específicos
       if (error.response?.status === 400) {

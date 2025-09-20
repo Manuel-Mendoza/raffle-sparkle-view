@@ -15,12 +15,13 @@ export const useTopCustomer = () => {
   useEffect(() => {
     const fetchTopCustomer = async () => {
       try {
-        const url = window.location.hostname === 'localhost' 
-          ? 'https://riffaquemantequilla.onrender.com/api/raffle/top-customer'
-          : '/api/raffle/top-customer';
-          
+        const url =
+          window.location.hostname === "localhost"
+            ? "https://riffaquemantequilla.onrender.com/api/raffle/top-customer"
+            : "/api/raffle/top-customer";
+
         const response = await fetch(url);
-        
+
         if (!response.ok) {
           return;
         }

@@ -279,16 +279,16 @@ export const RaffleManager = () => {
 
     try {
       setIsFinishing(true);
-      const result = await adminService.setWinnerNumber(
+      const winner = await adminService.setFirstWinner(
         raffleToFinish.id,
-        fullNumber
+        fullNumber.toString()
       );
       await loadRaffles();
 
       setWinnerModal({
         isOpen: true,
-        winner: result.winner,
-        totalParticipants: result.totalParticipants,
+        winner: winner,
+        totalParticipants: 0, // No disponible en la nueva API
         raffleName: raffleToFinish.title,
       });
 

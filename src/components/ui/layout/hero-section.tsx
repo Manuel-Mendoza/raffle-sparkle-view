@@ -278,7 +278,7 @@ export function HeroSection({
                     <h2
                       className={`text-lg sm:text-xl md:text-2xl font-bold ${textColor}`}
                     >
-                      {emoji} {index + 1}° Lugar: {trimmedPrize}
+                      {emoji} {trimmedPrize}
                     </h2>
                   </div>
                 );

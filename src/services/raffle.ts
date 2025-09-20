@@ -44,7 +44,7 @@ export const convertApiRaffleToLocal = (apiRaffle: ApiRaffle): Raffle => {
 };
 
 export const convertLocalRaffleToCreateRequest = (
-  raffle: Omit<Raffle, "id" | "soldTickets" | "status">
+  raffle: Omit<Raffle, "id" | "soldTickets" | "status" | "isActive">
 ): CreateRaffleRequest => {
   return {
     title: raffle.title,
@@ -130,7 +130,7 @@ export const raffleService = {
   },
 
   async createRaffle(
-    data: Omit<Raffle, "id" | "soldTickets" | "status">
+    data: Omit<Raffle, "id" | "soldTickets" | "status" | "isActive">
   ): Promise<Raffle> {
     const createRequest = convertLocalRaffleToCreateRequest(data);
     const response = await api.post<CreateRaffleResponse>(

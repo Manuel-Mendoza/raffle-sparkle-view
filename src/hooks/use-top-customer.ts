@@ -1,11 +1,10 @@
 import { useState, useEffect } from "react";
 
 interface TopCustomer {
-  customer: {
-    name: string;
-    phone: string;
-    email: string;
-  };
+  id: string;
+  name: string;
+  phone: string;
+  email: string;
   totalTickets: number;
 }
 
@@ -17,6 +16,12 @@ export const useTopCustomer = () => {
     const fetchTopCustomer = async () => {
       try {
         const response = await fetch("/api/raffle/top-customer");
+        
+        if (!response.ok) {
+          console.error(`HTTP Error: ${response.status} ${response.statusText}`);
+          return;
+        }
+
         const data = await response.json();
         setTopCustomer(data);
       } catch (error) {

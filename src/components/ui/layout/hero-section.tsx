@@ -308,7 +308,7 @@ export function HeroSection({
                       🏅 Mayor comprador
                     </p>
                     <p className="text-base sm:text-lg font-bold text-accent">
-                      {liveTopCustomer.customer.name}
+                      {liveTopCustomer.name}
                     </p>
                     <p className="text-xs sm:text-sm text-primary-foreground/80">
                       {liveTopCustomer.totalTickets} tickets

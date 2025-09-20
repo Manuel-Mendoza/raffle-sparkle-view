@@ -131,7 +131,7 @@ export const DashboardStats = () => {
             {liveTopCustomer ? (
               <>
                 <div className="text-lg font-bold text-secondary">
-                  {liveTopCustomer.customer.name}
+                  {liveTopCustomer.name}
                 </div>
                 <p className="text-xs text-accent">
                   {liveTopCustomer.totalTickets} tickets comprados

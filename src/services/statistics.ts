@@ -73,7 +73,7 @@ export const statisticsService = {
       }
 
       // Get top customer data
-      let topCustomer: TopCustomerResponse | null = null;
+      const topCustomer: TopCustomerResponse | null = null;
       // Top customer data is now handled by useTopCustomer hook
 
       const totalSales = currentRaffle.soldTickets * currentRaffle.ticketPrice;

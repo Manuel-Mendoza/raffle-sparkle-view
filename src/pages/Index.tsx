@@ -68,14 +68,6 @@ const Index = () => {
           setCurrentRaffle(null);
         }
 
-        // Fetch statistics
-        try {
-          const topCustomerData = await statisticsService.getTopCustomer();
-          setTopCustomer(topCustomerData);
-        } catch (error) {
-          setTopCustomer(null);
-        }
-
         // Fetch last winner
         try {
           const winner = await adminService.getLastWinner();

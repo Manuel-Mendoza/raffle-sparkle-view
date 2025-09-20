@@ -15,15 +15,27 @@ export const useTopCustomer = () => {
   useEffect(() => {
     const fetchTopCustomer = async () => {
       try {
-        const response = await fetch("/api/raffle/top-customer");
-        
+        // Use full URL in development, relative in production
+        const url =
+          window.location.hostname === "localhost"
+            ? "https://riffaquemantequilla.onrender.com/api/raffle/top-customer"
+            : "/api/raffle/top-customer";
+
+        console.log("Fetching top customer from:", url);
+        const response = await fetch(url);
+
+        console.log("Response status:", response.status);
+
         if (!response.ok) {
-          console.error(`HTTP Error: ${response.status} ${response.statusText}`);
+          console.error(
+            `HTTP Error: ${response.status} ${response.statusText}`
+          );
           return;
         }
 
         const data = await response.json();
-        setTopCustomer(data);
+        console.log("Parsed data:", data);
+        setTopCustomer(data.topCustomer);
       } catch (error) {
         console.error("Error fetching top customer:", error);
       } finally {

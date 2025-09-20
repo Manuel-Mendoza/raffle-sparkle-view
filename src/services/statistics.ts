@@ -6,6 +6,7 @@ export interface TopCustomer {
   id: string;
   name: string;
   phone: string;
+  email: string;
   createdAt: string;
 }
 
@@ -53,6 +54,18 @@ export interface DashboardStatistics {
 }
 
 export const statisticsService = {
+  async getTopCustomer(): Promise<TopCustomerResponse> {
+    try {
+      const response = await api.get<TopCustomerResponse>(
+        "/raffle/top-customer"
+      );
+      return response.data;
+    } catch (error) {
+      console.error("Error fetching top customer:", error);
+      throw error;
+    }
+  },
+
   async getDashboardStats(): Promise<DashboardStatistics> {
     try {
       // Get current raffle data
@@ -71,17 +84,13 @@ export const statisticsService = {
         };
       }
 
-      // Get top customer data - usando mock data ya que no existe el endpoint
-      const topCustomer: TopCustomerResponse | null = null;
-      // Comentado hasta que se implemente el endpoint
-      // try {
-      //   const topCustomerResponse = await api.get<TopCustomerResponse>(
-      //     "/customers/top-customer"
-      //   );
-      //   topCustomer = topCustomerResponse.data;
-      // } catch (error) {
-      //   console.warn("No top customer data available:", error);
-      // }
+      // Get top customer data
+      let topCustomer: TopCustomerResponse | null = null;
+      try {
+        topCustomer = await this.getTopCustomer();
+      } catch (error) {
+        console.warn("No top customer data available:", error);
+      }
 
       const totalSales = currentRaffle.soldTickets * currentRaffle.ticketPrice;
       const remainingTickets =

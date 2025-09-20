@@ -22,10 +22,12 @@ import {
 } from "@/services/statistics";
 import { toast } from "sonner";
 import { formatBsV } from "@/lib/currency";
+import { useTopCustomer } from "@/hooks/use-top-customer";
 
 export const DashboardStats = () => {
   const [stats, setStats] = useState<DashboardStatistics | null>(null);
   const [loading, setLoading] = useState(true);
+  const { topCustomer: liveTopCustomer } = useTopCustomer();
 
   useEffect(() => {
     const fetchStats = async () => {
@@ -126,13 +128,13 @@ export const DashboardStats = () => {
             <Users className="h-4 w-4 text-primary" />
           </CardHeader>
           <CardContent>
-            {stats.topCustomer ? (
+            {liveTopCustomer ? (
               <>
                 <div className="text-lg font-bold text-secondary">
-                  {stats.topCustomer.customer.name}
+                  {liveTopCustomer.customer.name}
                 </div>
                 <p className="text-xs text-accent">
-                  {stats.topCustomer.totalTickets} tickets comprados
+                  {liveTopCustomer.totalTickets} tickets comprados
                 </p>
               </>
             ) : (

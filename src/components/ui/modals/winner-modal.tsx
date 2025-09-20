@@ -6,7 +6,7 @@ import {
 } from "@/components/ui/base/dialog";
 import { Button } from "@/components/ui/base/button";
 import { Trophy, User, Phone, Ticket, Users } from "lucide-react";
-import type { Winner } from "@/services/admin";
+import type { Winner } from "@/services/statistics";
 
 interface WinnerModalProps {
   isOpen: boolean;

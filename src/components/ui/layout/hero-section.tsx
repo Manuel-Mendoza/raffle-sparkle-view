@@ -6,6 +6,7 @@ import type { Raffle } from "@/services/raffle";
 import type { TopCustomerResponse } from "@/services/statistics";
 import type { WinnerResponse } from "@/services/admin";
 import { formatBsV } from "@/lib/currency";
+import { useTopCustomer } from "@/hooks/use-top-customer";
 
 interface LastWinner {
   raffleImage?: string;
@@ -35,6 +36,7 @@ export function HeroSection({
   onBuyTicket,
   onViewPrize,
 }: HeroSectionProps) {
+  const { topCustomer: liveTopCustomer } = useTopCustomer();
   // Si no hay rifa activa pero hay último ganador, mostrar ganador
   if (!raffleData && lastWinner) {
     // Usar imagen de la rifa del ganador o placeholder
@@ -299,17 +301,17 @@ export function HeroSection({
                 </div>
               </div>
 
-              {topCustomer && (
+              {liveTopCustomer && (
                 <div className="border-t border-white/20 pt-3 sm:pt-4 mb-3 sm:mb-4">
                   <div className="text-center">
                     <p className="text-xs sm:text-sm opacity-80 text-primary-foreground">
                       🏅 Mayor comprador
                     </p>
                     <p className="text-base sm:text-lg font-bold text-accent">
-                      {topCustomer.customer.name}
+                      {liveTopCustomer.customer.name}
                     </p>
                     <p className="text-xs sm:text-sm text-primary-foreground/80">
-                      {topCustomer.totalTickets} tickets
+                      {liveTopCustomer.totalTickets} tickets
                     </p>
                   </div>
                 </div>

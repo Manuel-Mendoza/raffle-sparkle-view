@@ -6,7 +6,8 @@ import { LoadingSkeleton } from "@/components/ui/base/loading-skeleton";
 import { PrizeModal } from "@/components/ui/modals/prize-modal";
 import type { Raffle } from "@/services/raffle";
 import type { TopCustomerResponse } from "@/services/statistics";
-import type { Winner, WinnerResponse } from "@/services/admin";
+import type { Winner } from "@/services/statistics";
+import type { WinnerResponse } from "@/services/admin";
 
 interface RaffleContentProps {
   currentRaffle: Raffle;

@@ -1,6 +1,16 @@
 import { api } from "@/lib/api";
 import { AxiosError } from "axios";
 
+export interface Winner {
+  id: string;
+  raffleTitle: string;
+  prize: string;
+  ticketNumber: string;
+  customerName: string;
+  customerPhone: string;
+  drawnAt: string;
+}
+
 export interface CustomerTicket {
   customerId: string;
   customerName: string;

@@ -40,7 +40,7 @@ const bankTransferData = {
 };
 
 const mobilePaymentData = {
-  Banco: "0102",
+  Banco: "0105",
   Celular: "04124796280",
   Cedula: "25520168",
 };
@@ -314,11 +314,10 @@ export function PurchaseSteps({ raffleData }: PurchaseStepsProps) {
                             paymentMethod: method.id,
                           }))
                         }
-                        className={`flex items-center justify-between p-3 border rounded-lg cursor-pointer transition-colors ${
-                          purchaseData.paymentMethod === method.id
+                        className={`flex items-center justify-between p-3 border rounded-lg cursor-pointer transition-colors ${purchaseData.paymentMethod === method.id
                             ? "border-primary bg-primary/10"
                             : "border-accent/20 hover:border-primary/30"
-                        }`}
+                          }`}
                       >
                         <span className="text-accent">{method.name}</span>
                         <div className="w-8 h-8 bg-primary/10 rounded flex items-center justify-center">
@@ -337,43 +336,43 @@ export function PurchaseSteps({ raffleData }: PurchaseStepsProps) {
                     <div className="text-sm text-accent space-y-2">
                       {purchaseData.paymentMethod === "Transferencia Bancaria"
                         ? Object.entries(bankTransferData).map(
-                            ([key, value]) => (
-                              <div
-                                key={key}
-                                className="flex justify-between items-center"
+                          ([key, value]) => (
+                            <div
+                              key={key}
+                              className="flex justify-between items-center"
+                            >
+                              <span>
+                                <strong>{key}:</strong> {value}
+                              </span>
+                              <Button
+                                onClick={() => handleCopy(value, key)}
+                                variant="ghost"
+                                size="sm"
                               >
-                                <span>
-                                  <strong>{key}:</strong> {value}
-                                </span>
-                                <Button
-                                  onClick={() => handleCopy(value, key)}
-                                  variant="ghost"
-                                  size="sm"
-                                >
-                                  <Copy className="w-3 h-3" />
-                                </Button>
-                              </div>
-                            )
+                                <Copy className="w-3 h-3" />
+                              </Button>
+                            </div>
                           )
+                        )
                         : Object.entries(mobilePaymentData).map(
-                            ([key, value]) => (
-                              <div
-                                key={key}
-                                className="flex justify-between items-center"
+                          ([key, value]) => (
+                            <div
+                              key={key}
+                              className="flex justify-between items-center"
+                            >
+                              <span>
+                                <strong>{key}:</strong> {value}
+                              </span>
+                              <Button
+                                onClick={() => handleCopy(value, key)}
+                                variant="ghost"
+                                size="sm"
                               >
-                                <span>
-                                  <strong>{key}:</strong> {value}
-                                </span>
-                                <Button
-                                  onClick={() => handleCopy(value, key)}
-                                  variant="ghost"
-                                  size="sm"
-                                >
-                                  <Copy className="w-3 h-3" />
-                                </Button>
-                              </div>
-                            )
-                          )}
+                                <Copy className="w-3 h-3" />
+                              </Button>
+                            </div>
+                          )
+                        )}
                       <div className="flex justify-between items-center">
                         <span>
                           <strong>Monto:</strong>{" "}

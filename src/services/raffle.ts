@@ -119,8 +119,8 @@ export const raffleService = {
 
   async getAllRaffles(): Promise<Raffle[]> {
     try {
-      const response = await api.get<ApiRaffle[]>("/raffle/all");
-      return response.data.map(convertApiRaffleToLocal);
+      const response = await api.get<{ raffles: ApiRaffle[] }>("/raffle/all");
+      return response.data.raffles.map(convertApiRaffleToLocal);
     } catch (error: unknown) {
       if (error instanceof AxiosError && error.response?.status === 404) {
         return [];
@@ -145,7 +145,11 @@ export const raffleService = {
   },
 
   async pauseRaffle(id: string): Promise<void> {
-    await api.put(`/raffle/pause/${id}`);
+    await api.put(`/raffle/${id}/pause`);
+  },
+
+  async playRaffle(id: string): Promise<void> {
+    await api.put(`/raffle/${id}/play`);
   },
 
   async verifyTicket(ticketNumber: string): Promise<TicketInfo> {

@@ -201,7 +201,11 @@ export const RaffleManager = () => {
   };
 
   const handleDeleteRaffle = async (raffle: Raffle) => {
-    if (!confirm(`¿Estás seguro de eliminar la rifa "${raffle.title}"? Esta acción no se puede deshacer.`)) {
+    if (
+      !confirm(
+        `¿Estás seguro de eliminar la rifa "${raffle.title}"? Esta acción no se puede deshacer.`
+      )
+    ) {
       return;
     }
 
@@ -226,13 +230,15 @@ export const RaffleManager = () => {
     }
   };
 
-  const handleToggleRaffleStatus = async (raffleId: string, isActive: boolean) => {
+  const handleToggleRaffleStatus = async (
+    raffleId: string,
+    isActive: boolean
+  ) => {
     try {
       if (isActive) {
-        // Si se está activando, no hay endpoint específico, solo recargar
+        await raffleService.playRaffle(raffleId);
         toast.success("Rifa activada exitosamente");
       } else {
-        // Si se está pausando, usar el endpoint de pause
         await raffleService.pauseRaffle(raffleId);
         toast.success("Rifa pausada exitosamente");
       }
@@ -652,7 +658,7 @@ export const RaffleManager = () => {
                         3° Lugar
                       </Button>
                     </div>
-                    
+
                     <div className="flex justify-end space-x-2">
                       <Button
                         onClick={() => handleDeleteRaffle(raffle)}

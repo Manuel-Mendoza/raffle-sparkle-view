@@ -43,10 +43,11 @@ const Index = () => {
 
         // Fetch raffle data
         try {
-          const raffle = await raffleService.getCurrentRaffle();
-          setCurrentRaffle(raffle);
+          const allRaffles = await raffleService.getAllRaffles();
+          const activeRaffle = allRaffles.find((raffle) => raffle.isActive);
+          setCurrentRaffle(activeRaffle || null);
         } catch (error) {
-          console.log("No current raffle available");
+          console.log("No raffles available");
           setCurrentRaffle(null);
         }
 

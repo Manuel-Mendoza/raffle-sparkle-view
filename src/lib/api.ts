@@ -40,7 +40,10 @@ api.interceptors.response.use(
     });
     if (error.response?.status === 401) {
       localStorage.removeItem("token");
-      window.location.href = "/login";
+      // Solo redirigir si estamos en rutas protegidas (dashboard)
+      if (window.location.pathname.includes('/dashboard')) {
+        window.location.href = "/login";
+      }
     }
     return Promise.reject(error);
   }

@@ -41,7 +41,7 @@ api.interceptors.response.use(
     if (error.response?.status === 401) {
       localStorage.removeItem("token");
       // Solo redirigir si estamos en rutas protegidas (dashboard)
-      if (window.location.pathname.includes('/dashboard')) {
+      if (window.location.pathname.includes("/dashboard")) {
         window.location.href = "/login";
       }
     }

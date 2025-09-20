@@ -59,8 +59,8 @@ export function PurchaseSteps({ raffleData }: PurchaseStepsProps) {
     total: number;
   } | null>(null);
   const [purchaseData, setPurchaseData] = useState({
-    tickets: 1,
-    total: raffleData.ticketPrice,
+    tickets: 2,
+    total: raffleData.ticketPrice * 2,
     userData: null as { name: string; phone: string; email: string } | null,
     paymentProof: null as string | null,
     paymentMethod: "Pago Movil",
@@ -220,8 +220,8 @@ export function PurchaseSteps({ raffleData }: PurchaseStepsProps) {
     setShowModal(false);
     setCurrentStep(1);
     setPurchaseData({
-      tickets: 1,
-      total: raffleData.ticketPrice,
+      tickets: 2,
+      total: raffleData.ticketPrice * 2,
       userData: null,
       paymentProof: null,
       paymentMethod: "Pago Movil",
@@ -314,10 +314,11 @@ export function PurchaseSteps({ raffleData }: PurchaseStepsProps) {
                             paymentMethod: method.id,
                           }))
                         }
-                        className={`flex items-center justify-between p-3 border rounded-lg cursor-pointer transition-colors ${purchaseData.paymentMethod === method.id
-                          ? "border-primary bg-primary/10"
-                          : "border-accent/20 hover:border-primary/30"
-                          }`}
+                        className={`flex items-center justify-between p-3 border rounded-lg cursor-pointer transition-colors ${
+                          purchaseData.paymentMethod === method.id
+                            ? "border-primary bg-primary/10"
+                            : "border-accent/20 hover:border-primary/30"
+                        }`}
                       >
                         <span className="text-primary">{method.name}</span>
                         <div className="w-8 h-8 bg-primary/10 rounded flex items-center justify-center">
@@ -336,43 +337,49 @@ export function PurchaseSteps({ raffleData }: PurchaseStepsProps) {
                     <div className="text-sm text-accent space-y-2">
                       {purchaseData.paymentMethod === "Transferencia Bancaria"
                         ? Object.entries(bankTransferData).map(
-                          ([key, value]) => (
-                            <div
-                              key={key}
-                              className="flex justify-between items-center"
-                            >
-                              <span className="text-secondary">
-                                <strong className="text-primary">{key}:</strong> {value}
-                              </span>
-                              <Button
-                                onClick={() => handleCopy(value, key)}
-                                variant="ghost"
-                                size="sm"
+                            ([key, value]) => (
+                              <div
+                                key={key}
+                                className="flex justify-between items-center"
                               >
-                                <Copy className="w-3 h-3" />
-                              </Button>
-                            </div>
+                                <span className="text-secondary">
+                                  <strong className="text-primary">
+                                    {key}:
+                                  </strong>{" "}
+                                  {value}
+                                </span>
+                                <Button
+                                  onClick={() => handleCopy(value, key)}
+                                  variant="ghost"
+                                  size="sm"
+                                >
+                                  <Copy className="w-3 h-3" />
+                                </Button>
+                              </div>
+                            )
                           )
-                        )
                         : Object.entries(mobilePaymentData).map(
-                          ([key, value]) => (
-                            <div
-                              key={key}
-                              className="flex justify-between items-center"
-                            >
-                              <span className="text-secondary">
-                                <strong className="text-primary">{key}:</strong> {value}
-                              </span>
-                              <Button
-                                onClick={() => handleCopy(value, key)}
-                                variant="ghost"
-                                size="sm"
+                            ([key, value]) => (
+                              <div
+                                key={key}
+                                className="flex justify-between items-center"
                               >
-                                <Copy className="w-3 h-3" />
-                              </Button>
-                            </div>
-                          )
-                        )}
+                                <span className="text-secondary">
+                                  <strong className="text-primary">
+                                    {key}:
+                                  </strong>{" "}
+                                  {value}
+                                </span>
+                                <Button
+                                  onClick={() => handleCopy(value, key)}
+                                  variant="ghost"
+                                  size="sm"
+                                >
+                                  <Copy className="w-3 h-3" />
+                                </Button>
+                              </div>
+                            )
+                          )}
                       <div className="flex justify-between items-center">
                         <span className="text-secondary">
                           <strong className="text-primary">Monto:</strong>{" "}

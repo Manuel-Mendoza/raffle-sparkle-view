@@ -54,18 +54,6 @@ export interface DashboardStatistics {
 }
 
 export const statisticsService = {
-  async getTopCustomer(): Promise<TopCustomerResponse> {
-    try {
-      const response = await api.get<TopCustomerResponse>(
-        "/raffle/top-customer"
-      );
-      return response.data;
-    } catch (error) {
-      console.error("Error fetching top customer:", error);
-      throw error;
-    }
-  },
-
   async getDashboardStats(): Promise<DashboardStatistics> {
     try {
       // Get current raffle data
@@ -86,11 +74,7 @@ export const statisticsService = {
 
       // Get top customer data
       let topCustomer: TopCustomerResponse | null = null;
-      try {
-        topCustomer = await this.getTopCustomer();
-      } catch (error) {
-        console.warn("No top customer data available:", error);
-      }
+      // Top customer data is now handled by useTopCustomer hook
 
       const totalSales = currentRaffle.soldTickets * currentRaffle.ticketPrice;
       const remainingTickets =

@@ -1,44 +1,39 @@
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react-swc";
 import path from "path";
-import { componentTagger } from "lovable-tagger";
 
-// https://vitejs.dev/config/
-export default defineConfig(({ mode }) => ({
-  server: {
-    host: "::",
-    port: 8080,
-  },
-  plugins: [react(), mode === "development" && componentTagger()].filter(
-    Boolean
-  ),
+export default defineConfig({
+  plugins: [react()],
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./src"),
-      "@/public": path.resolve(__dirname, "./public"),
     },
   },
   build: {
-    target: "esnext",
-    minify: "esbuild",
     rollupOptions: {
       output: {
+        assetFileNames: "assets/[name]-[hash][extname]",
+        chunkFileNames: "assets/[name]-[hash].js",
+        entryFileNames: "assets/[name]-[hash].js",
         manualChunks: {
           vendor: ["react", "react-dom"],
           ui: [
+            "lucide-react",
             "@radix-ui/react-dialog",
             "@radix-ui/react-toast",
-            "@radix-ui/react-tooltip",
           ],
-          router: ["react-router-dom"],
-          query: ["@tanstack/react-query"],
         },
       },
     },
-    chunkSizeWarningLimit: 1000,
-    sourcemap: false,
+    cssCodeSplit: false,
+    minify: true,
   },
-  esbuild: {
-    drop: mode === "production" ? ["console", "debugger"] : [],
+  css: {
+    devSourcemap: true,
   },
-}));
+  server: {
+    headers: {
+      "Cache-Control": "public, max-age=31536000",
+    },
+  },
+});

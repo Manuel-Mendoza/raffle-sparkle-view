@@ -2,12 +2,14 @@ import { Toaster } from "@/components/ui/base/toaster";
 import { Toaster as Sonner } from "@/components/ui/base/sonner";
 import { TooltipProvider } from "@/components/ui/base/tooltip";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import { Suspense } from "react";
+import { Suspense, lazy } from "react";
 import { LoadingSkeleton } from "@/components/ui/base/loading-skeleton";
 import Index from "./pages/Index";
-import Login from "./pages/Login";
-import Dashboard from "./pages/Dashboard";
-import NotFound from "./pages/NotFound";
+
+// Lazy load non-critical pages
+const Login = lazy(() => import("./pages/Login"));
+const Dashboard = lazy(() => import("./pages/Dashboard"));
+const NotFound = lazy(() => import("./pages/NotFound"));
 
 const PageLoader = () => (
   <div className="min-h-screen bg-background flex items-center justify-center">

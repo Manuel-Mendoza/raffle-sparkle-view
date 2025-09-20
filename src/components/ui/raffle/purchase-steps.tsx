@@ -94,7 +94,6 @@ export function PurchaseSteps({ raffleData }: PurchaseStepsProps) {
 
     setLoading(true);
     try {
-      console.log("Subiendo archivo:", file.name, file.type, file.size);
       const url = await customerService.uploadPaymentProof(file);
       setPurchaseData((prev) => ({ ...prev, paymentProof: url }));
       toast.success("Comprobante subido exitosamente");
@@ -155,16 +154,6 @@ export function PurchaseSteps({ raffleData }: PurchaseStepsProps) {
 
     setLoading(true);
     try {
-      console.log("🎫 Iniciando compra con datos:", {
-        name: purchaseData.userData.name,
-        phone: purchaseData.userData.phone,
-        email: purchaseData.userData.email,
-        paymentMethod: purchaseData.paymentMethod,
-        raffleId: raffleData.id,
-        quantity: purchaseData.tickets,
-        hasPaymentProof: !!purchaseData.paymentProof,
-      });
-
       const response = await customerService.buyTickets({
         name: purchaseData.userData.name.trim(),
         phone: purchaseData.userData.phone.trim(),

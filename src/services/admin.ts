@@ -56,11 +56,9 @@ export const adminService = {
 
   async getPendingTickets(): Promise<CustomerTicket[]> {
     try {
-      console.log("Making API call to /admin/tickets/pending");
       const response = await api.get<{ customers: CustomerTicket[] }>(
         "/admin/tickets/pending"
       );
-      console.log("API response:", response.data);
       return response.data.customers || [];
     } catch (error: unknown) {
       if (error instanceof AxiosError) {

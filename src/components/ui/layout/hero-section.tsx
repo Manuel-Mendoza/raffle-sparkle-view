@@ -35,12 +35,8 @@ export function HeroSection({
   onBuyTicket,
   onViewPrize,
 }: HeroSectionProps) {
-  console.log("HeroSection props:", { raffleData, lastWinner, topCustomer });
-
   // Si no hay rifa activa pero hay último ganador, mostrar ganador
   if (!raffleData && lastWinner) {
-    console.log("Showing last winner section with data:", lastWinner);
-
     // Usar imagen de la rifa del ganador o placeholder
     const backgroundImage = lastWinner.raffleImage || "/placeholder.svg";
 

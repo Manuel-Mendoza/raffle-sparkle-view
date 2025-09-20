@@ -1,11 +1,11 @@
-import { useEffect } from 'react';
+import { useEffect } from "react";
 
 interface SEOProps {
   title?: string;
   description?: string;
   image?: string;
   url?: string;
-  type?: 'website' | 'article';
+  type?: "website" | "article";
   structuredData?: object;
 }
 
@@ -15,35 +15,36 @@ export function SEOHead({
   image = "https://rifaquemantequilla.com/og-image.jpg",
   url = "https://rifaquemantequilla.com",
   type = "website",
-  structuredData
+  structuredData,
 }: SEOProps) {
   useEffect(() => {
     // Update title
     document.title = title;
-    
+
     // Update meta tags
     const updateMeta = (name: string, content: string) => {
-      let meta = document.querySelector(`meta[name="${name}"]`) || 
-                 document.querySelector(`meta[property="${name}"]`);
+      const meta =
+        document.querySelector(`meta[name="${name}"]`) ||
+        document.querySelector(`meta[property="${name}"]`);
       if (meta) {
-        meta.setAttribute('content', content);
+        meta.setAttribute("content", content);
       }
     };
 
-    updateMeta('description', description);
-    updateMeta('og:title', title);
-    updateMeta('og:description', description);
-    updateMeta('og:image', image);
-    updateMeta('og:url', url);
-    updateMeta('og:type', type);
-    updateMeta('twitter:title', title);
-    updateMeta('twitter:description', description);
-    updateMeta('twitter:image', image);
+    updateMeta("description", description);
+    updateMeta("og:title", title);
+    updateMeta("og:description", description);
+    updateMeta("og:image", image);
+    updateMeta("og:url", url);
+    updateMeta("og:type", type);
+    updateMeta("twitter:title", title);
+    updateMeta("twitter:description", description);
+    updateMeta("twitter:image", image);
 
     // Add structured data if provided
     if (structuredData) {
-      const script = document.createElement('script');
-      script.type = 'application/ld+json';
+      const script = document.createElement("script");
+      script.type = "application/ld+json";
       script.textContent = JSON.stringify(structuredData);
       document.head.appendChild(script);
 

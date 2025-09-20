@@ -61,12 +61,10 @@ const Index = () => {
               );
               setWinners(raffleWinners);
             } catch (error) {
-              console.log("No winners declared yet");
               setWinners([]);
             }
           }
         } catch (error) {
-          console.log("No raffles available");
           setCurrentRaffle(null);
         }
 
@@ -75,7 +73,7 @@ const Index = () => {
           const topCustomerData = await statisticsService.getTopCustomer();
           setTopCustomer(topCustomerData);
         } catch (error) {
-          console.log("No top customer data available");
+          setTopCustomer(null);
         }
 
         // Fetch last winner
@@ -83,7 +81,7 @@ const Index = () => {
           const winner = await adminService.getLastWinner();
           setLastWinner(winner);
         } catch (error) {
-          console.log("No winner data available");
+          setLastWinner(null);
         }
       } catch (error) {
         console.error("Error fetching data:", error);
@@ -120,36 +118,51 @@ const Index = () => {
   return (
     <div className="min-h-screen bg-background">
       <SEOHead
-        title={currentRaffle ? `${currentRaffle.title} - Rifas.queMantequilla` : "Rifas.queMantequilla - Gana Increíbles Premios"}
-        description={currentRaffle ? `${currentRaffle.description} Precio: ${currentRaffle.ticketPrice} Bs. ¡Participa ahora!` : "Participa en rifas exclusivas y gana premios increíbles como motos deportivas, dinero en efectivo y más."}
-        image={currentRaffle?.image || "https://rifaquemantequilla.com/og-image.jpg"}
-        structuredData={currentRaffle ? {
-          "@context": "https://schema.org",
-          "@type": "Event",
-          "name": currentRaffle.title,
-          "description": currentRaffle.description,
-          "image": currentRaffle.image,
-          "startDate": currentRaffle.startDate,
-          "endDate": currentRaffle.endDate,
-          "eventStatus": "https://schema.org/EventScheduled",
-          "eventAttendanceMode": "https://schema.org/OnlineEventAttendanceMode",
-          "location": {
-            "@type": "VirtualLocation",
-            "url": "https://rifaquemantequilla.com"
-          },
-          "offers": {
-            "@type": "Offer",
-            "price": currentRaffle.ticketPrice,
-            "priceCurrency": "VES",
-            "availability": "https://schema.org/InStock",
-            "url": "https://rifaquemantequilla.com"
-          },
-          "organizer": {
-            "@type": "Organization",
-            "name": "Rifas.queMantequilla",
-            "url": "https://rifaquemantequilla.com"
-          }
-        } : undefined}
+        title={
+          currentRaffle
+            ? `${currentRaffle.title} - Rifas.queMantequilla`
+            : "Rifas.queMantequilla - Gana Increíbles Premios"
+        }
+        description={
+          currentRaffle
+            ? `${currentRaffle.description} Precio: ${currentRaffle.ticketPrice} Bs. ¡Participa ahora!`
+            : "Participa en rifas exclusivas y gana premios increíbles como motos deportivas, dinero en efectivo y más."
+        }
+        image={
+          currentRaffle?.image || "https://rifaquemantequilla.com/og-image.jpg"
+        }
+        structuredData={
+          currentRaffle
+            ? {
+                "@context": "https://schema.org",
+                "@type": "Event",
+                name: currentRaffle.title,
+                description: currentRaffle.description,
+                image: currentRaffle.image,
+                startDate: currentRaffle.startDate,
+                endDate: currentRaffle.endDate,
+                eventStatus: "https://schema.org/EventScheduled",
+                eventAttendanceMode:
+                  "https://schema.org/OnlineEventAttendanceMode",
+                location: {
+                  "@type": "VirtualLocation",
+                  url: "https://rifaquemantequilla.com",
+                },
+                offers: {
+                  "@type": "Offer",
+                  price: currentRaffle.ticketPrice,
+                  priceCurrency: "VES",
+                  availability: "https://schema.org/InStock",
+                  url: "https://rifaquemantequilla.com",
+                },
+                organizer: {
+                  "@type": "Organization",
+                  name: "Rifas.queMantequilla",
+                  url: "https://rifaquemantequilla.com",
+                },
+              }
+            : undefined
+        }
       />
       {/* Header */}
       <header className="bg-card/80 backdrop-blur-sm border-b border-primary/20 sticky top-0 z-50">

@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/base/button";
 import { ComingSoonMessage } from "@/components/ui/layout/coming-soon-message";
 import { RaffleContent } from "@/components/ui/raffle/raffle-content";
 import { isRaffleActive } from "@/hooks/use-raffle-status";
+import { SEOHead } from "@/components/seo/seo-head";
 import {
   Dialog,
   DialogContent,
@@ -118,6 +119,38 @@ const Index = () => {
 
   return (
     <div className="min-h-screen bg-background">
+      <SEOHead
+        title={currentRaffle ? `${currentRaffle.title} - Rifas.queMantequilla` : "Rifas.queMantequilla - Gana Increíbles Premios"}
+        description={currentRaffle ? `${currentRaffle.description} Precio: ${currentRaffle.ticketPrice} Bs. ¡Participa ahora!` : "Participa en rifas exclusivas y gana premios increíbles como motos deportivas, dinero en efectivo y más."}
+        image={currentRaffle?.image || "https://rifaquemantequilla.com/og-image.jpg"}
+        structuredData={currentRaffle ? {
+          "@context": "https://schema.org",
+          "@type": "Event",
+          "name": currentRaffle.title,
+          "description": currentRaffle.description,
+          "image": currentRaffle.image,
+          "startDate": currentRaffle.startDate,
+          "endDate": currentRaffle.endDate,
+          "eventStatus": "https://schema.org/EventScheduled",
+          "eventAttendanceMode": "https://schema.org/OnlineEventAttendanceMode",
+          "location": {
+            "@type": "VirtualLocation",
+            "url": "https://rifaquemantequilla.com"
+          },
+          "offers": {
+            "@type": "Offer",
+            "price": currentRaffle.ticketPrice,
+            "priceCurrency": "VES",
+            "availability": "https://schema.org/InStock",
+            "url": "https://rifaquemantequilla.com"
+          },
+          "organizer": {
+            "@type": "Organization",
+            "name": "Rifas.queMantequilla",
+            "url": "https://rifaquemantequilla.com"
+          }
+        } : undefined}
+      />
       {/* Header */}
       <header className="bg-card/80 backdrop-blur-sm border-b border-primary/20 sticky top-0 z-50">
         <div className="container mx-auto px-4 py-4">

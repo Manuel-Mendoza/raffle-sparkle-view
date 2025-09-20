@@ -98,7 +98,7 @@ export function PurchaseSteps({ raffleData }: PurchaseStepsProps) {
       setPurchaseData((prev) => ({ ...prev, paymentProof: url }));
       toast.success("Comprobante subido exitosamente");
     } catch (error: unknown) {
-      console.error("Error completo:", error);
+      console.error("Error uploading image:", error);
       const errorMessage =
         error instanceof Error
           ? error.message
@@ -173,7 +173,7 @@ export function PurchaseSteps({ raffleData }: PurchaseStepsProps) {
       setShowModal(true);
       toast.success("¡Compra procesada exitosamente!");
     } catch (error: unknown) {
-      console.error("❌ Error completo en handleFinalConfirm:", error);
+      console.error("Error processing purchase:", error);
 
       let errorMessage = "Error al procesar la compra";
 

@@ -29,15 +29,7 @@ api.interceptors.request.use((config) => {
 api.interceptors.response.use(
   (response) => response,
   (error) => {
-    console.error("API Error Details:", {
-      url: error.config?.url,
-      method: error.config?.method,
-      data: error.config?.data,
-      status: error.response?.status,
-      statusText: error.response?.statusText,
-      responseData: error.response?.data,
-      message: error.message,
-    });
+    console.error("API Error:", error.message);
     if (error.response?.status === 401) {
       localStorage.removeItem("token");
       // Solo redirigir si estamos en rutas protegidas (dashboard)

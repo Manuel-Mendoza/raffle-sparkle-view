@@ -113,7 +113,7 @@ const Index = () => {
               </div>
             </div>
             <div className="flex items-center space-x-4">
-              {currentRaffle && isRaffleActive(currentRaffle.id) && (
+              {currentRaffle && currentRaffle.status === "active" && isRaffleActive(currentRaffle.id) && (
                 <Button
                   variant="ghost"
                   size="sm"
@@ -133,7 +133,7 @@ const Index = () => {
       </header>
 
       {/* Main Content */}
-      {currentRaffle && isRaffleActive(currentRaffle.id) ? (
+      {currentRaffle && currentRaffle.status === "active" && isRaffleActive(currentRaffle.id) ? (
         <RaffleContent
           currentRaffle={currentRaffle}
           topCustomer={topCustomer}

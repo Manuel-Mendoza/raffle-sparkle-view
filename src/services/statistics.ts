@@ -1,4 +1,5 @@
 import { api } from "@/lib/api";
+import { AxiosError } from "axios";
 import { raffleService } from "./raffle";
 
 export interface TopCustomer {
@@ -57,16 +58,30 @@ export const statisticsService = {
       // Get current raffle data
       const currentRaffle = await raffleService.getCurrentRaffle();
 
-      // Get top customer data
-      let topCustomer: TopCustomerResponse | null = null;
-      try {
-        const topCustomerResponse = await api.get<TopCustomerResponse>(
-          "/customers/top-customer"
-        );
-        topCustomer = topCustomerResponse.data;
-      } catch (error) {
-        console.warn("No top customer data available:", error);
+      // Si es una rifa mock, devolver estadísticas vacías
+      if (currentRaffle.id === "mock-raffle") {
+        return {
+          totalSales: 0,
+          ticketsSold: 0,
+          totalTickets: 0,
+          remainingTickets: 0,
+          soldPercentage: 0,
+          topCustomer: null,
+          currentRaffle: null,
+        };
       }
+
+      // Get top customer data - usando mock data ya que no existe el endpoint
+      const topCustomer: TopCustomerResponse | null = null;
+      // Comentado hasta que se implemente el endpoint
+      // try {
+      //   const topCustomerResponse = await api.get<TopCustomerResponse>(
+      //     "/customers/top-customer"
+      //   );
+      //   topCustomer = topCustomerResponse.data;
+      // } catch (error) {
+      //   console.warn("No top customer data available:", error);
+      // }
 
       const totalSales = currentRaffle.soldTickets * currentRaffle.ticketPrice;
       const remainingTickets =
@@ -91,7 +106,16 @@ export const statisticsService = {
       };
     } catch (error) {
       console.error("Error fetching dashboard statistics:", error);
-      throw error;
+      // Devolver estadísticas por defecto en caso de error
+      return {
+        totalSales: 0,
+        ticketsSold: 0,
+        totalTickets: 0,
+        remainingTickets: 0,
+        soldPercentage: 0,
+        topCustomer: null,
+        currentRaffle: null,
+      };
     }
   },
 

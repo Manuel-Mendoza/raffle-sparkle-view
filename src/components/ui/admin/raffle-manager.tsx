@@ -53,6 +53,7 @@ export const RaffleManager = () => {
   const [isFinishing, setIsFinishing] = useState(false);
   const [finishModalOpen, setFinishModalOpen] = useState(false);
   const [raffleToFinish, setRaffleToFinish] = useState<Raffle | null>(null);
+  const [placeToDeclare, setPlaceToDeclare] = useState(1);
   const [pinDigits, setPinDigits] = useState<string[]>(["", "", "", ""]);
   interface Winner {
     customerName: string;
@@ -89,11 +90,31 @@ export const RaffleManager = () => {
   const [formData, setFormData] = useState({
     title: "",
     description: "",
-    prize: "",
+    prizes: ["", "", ""],
     ticketPrice: 0,
     endDate: "",
     image: "",
   });
+
+  const loadRaffles = useCallback(async () => {
+    try {
+      setIsLoading(true);
+      const currentRaffle = await raffleService.getCurrentRaffle();
+
+      // Agregar estado desde localStorage
+      const raffleWithStatus = {
+        ...currentRaffle,
+        isActive: getRaffleStatus(currentRaffle.id),
+      };
+
+      setRaffles([raffleWithStatus]);
+    } catch (error) {
+      console.error("Error loading current raffle:", error);
+      setRaffles([]);
+    } finally {
+      setIsLoading(false);
+    }
+  }, []);
 
   const loadPurchaseRequests = useCallback(async () => {
     try {
@@ -102,17 +123,13 @@ export const RaffleManager = () => {
     } catch (error) {
       console.error("Error loading purchase requests:", error);
       setPurchaseRequests([]);
-    }
+    } 
   }, []);
 
   useEffect(() => {
     loadRaffles();
     loadPurchaseRequests();
-  }, [loadPurchaseRequests, loadRaffles]);
-
-  useEffect(() => {
-    loadPurchaseRequests();
-  }, [loadPurchaseRequests]);
+  }, [loadRaffles, loadPurchaseRequests]);
 
   const handleToggleRaffleStatus = (raffleId: string, isActive: boolean) => {
     // Guardar estado en localStorage
@@ -135,31 +152,12 @@ export const RaffleManager = () => {
     return stored !== null ? stored === "true" : true; // Por defecto activa
   };
 
-  const loadRaffles = useCallback(async () => {
-    try {
-      setIsLoading(true);
-      const currentRaffle = await raffleService.getCurrentRaffle();
-
-      // Agregar estado desde localStorage
-      const raffleWithStatus = {
-        ...currentRaffle,
-        isActive: getRaffleStatus(currentRaffle.id),
-      };
-
-      setRaffles([raffleWithStatus]);
-    } catch (error) {
-      console.error("Error loading current raffle:", error);
-      setRaffles([]);
-    } finally {
-      setIsLoading(false);
-    }
-  }, []);
 
   const resetForm = () => {
     setFormData({
       title: "",
       description: "",
-      prize: "",
+      prizes: ["", "", ""],
       ticketPrice: 0,
       endDate: "",
       image: "",
@@ -176,11 +174,17 @@ export const RaffleManager = () => {
     }));
   };
 
+  const handlePrizeChange = (index: number, value: string) => {
+    const newPrizes = [...formData.prizes];
+    newPrizes[index] = value;
+    setFormData((prev) => ({ ...prev, prizes: newPrizes }));
+  };
+
   const handleCreateRaffle = async () => {
     if (
       !formData.title.trim() ||
       !formData.description.trim() ||
-      !formData.prize.trim() ||
+      formData.prizes.some((p) => !p.trim()) ||
       !formData.ticketPrice ||
       formData.ticketPrice <= 0 ||
       !formData.endDate ||
@@ -192,8 +196,11 @@ export const RaffleManager = () => {
 
     try {
       setIsCreating(true);
+      const prizeString = `1er Lugar: ${formData.prizes[0]}, 2do Lugar: ${formData.prizes[1]}, 3er Lugar: ${formData.prizes[2]}`;
+      const { prizes, ...restOfFormData } = formData;
       const raffleData = {
-        ...formData,
+        ...restOfFormData,
+        prize: prizeString,
         totalTickets: 10000,
         startDate: new Date().toISOString(),
       };
@@ -216,8 +223,9 @@ export const RaffleManager = () => {
     }
   };
 
-  const handleFinishRaffle = async (raffle: Raffle) => {
+  const handleFinishRaffle = async (raffle: Raffle, place: number) => {
     setRaffleToFinish(raffle);
+    setPlaceToDeclare(place);
     setFinishModalOpen(true);
   };
 
@@ -266,6 +274,7 @@ export const RaffleManager = () => {
 
       setFinishModalOpen(false);
       setRaffleToFinish(null);
+      setPlaceToDeclare(1);
       setPinDigits(["", "", "", ""]);
     } catch (error) {
       console.error("Error setting winner number:", error);
@@ -390,15 +399,37 @@ export const RaffleManager = () => {
                   placeholder="Título de la rifa"
                 />
               </div>
-              <div className="space-y-2">
-                <Label htmlFor="prize">Premio *</Label>
-                <Input
-                  id="prize"
-                  name="prize"
-                  value={formData.prize}
-                  onChange={handleInputChange}
-                  placeholder="Premio a sortear"
-                />
+              <div className="col-span-1 md:col-span-2 grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="prize-0">1er Premio *</Label>
+                  <Input
+                    id="prize-0"
+                    name="prize-0"
+                    value={formData.prizes[0]}
+                    onChange={(e) => handlePrizeChange(0, e.target.value)}
+                    placeholder="Descripción del 1er premio"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="prize-1">2do Premio *</Label>
+                  <Input
+                    id="prize-1"
+                    name="prize-1"
+                    value={formData.prizes[1]}
+                    onChange={(e) => handlePrizeChange(1, e.target.value)}
+                    placeholder="Descripción del 2do premio"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="prize-2">3er Premio *</Label>
+                  <Input
+                    id="prize-2"
+                    name="prize-2"
+                    value={formData.prizes[2]}
+                    onChange={(e) => handlePrizeChange(2, e.target.value)}
+                    placeholder="Descripción del 3er premio"
+                  />
+                </div>
               </div>
               <div className="space-y-2">
                 <Label htmlFor="ticketPrice">Precio del Ticket *</Label>
@@ -579,13 +610,31 @@ export const RaffleManager = () => {
 
                   <div className="flex justify-end space-x-2 pt-4 border-t border-accent/10 mt-4">
                     <Button
-                      onClick={() => handleFinishRaffle(raffle)}
+                      onClick={() => handleFinishRaffle(raffle, 1)}
                       disabled={isFinishing || raffle.status !== "active"}
-                      className="bg-primary hover:bg-primary/90 text-white"
+                      className="bg-yellow-500 hover:bg-yellow-600 text-white"
                       size="sm"
                     >
                       <TrophyIcon className="w-4 h-4 mr-1" />
-                      {isFinishing ? "Procesando..." : "Establecer Ganador"}
+                      1° Lugar
+                    </Button>
+                    <Button
+                      onClick={() => handleFinishRaffle(raffle, 2)}
+                      disabled={isFinishing || raffle.status !== "active"}
+                      className="bg-gray-400 hover:bg-gray-500 text-white"
+                      size="sm"
+                    >
+                      <TrophyIcon className="w-4 h-4 mr-1" />
+                      2° Lugar
+                    </Button>
+                    <Button
+                      onClick={() => handleFinishRaffle(raffle, 3)}
+                      disabled={isFinishing || raffle.status !== "active"}
+                      className="bg-amber-600 hover:bg-amber-700 text-white"
+                      size="sm"
+                    >
+                      <TrophyIcon className="w-4 h-4 mr-1" />
+                      3° Lugar
                     </Button>
                   </div>
                 </CardContent>
@@ -746,9 +795,11 @@ export const RaffleManager = () => {
       <Dialog open={finishModalOpen} onOpenChange={setFinishModalOpen}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Establecer Número Ganador</DialogTitle>
+            <DialogTitle>
+              Establecer Ganador del {placeToDeclare === 1 ? "Primer" : placeToDeclare === 2 ? "Segundo" : "Tercer"} Lugar
+            </DialogTitle>
             <DialogDescription>
-              Ingresa el número ganador para la rifa "{raffleToFinish?.title}"
+              Ingresa el número ganador para el {placeToDeclare}° lugar de la rifa "{raffleToFinish?.title}"
             </DialogDescription>
           </DialogHeader>
           <div className="space-y-4 py-4">
@@ -780,6 +831,7 @@ export const RaffleManager = () => {
               onClick={() => {
                 setFinishModalOpen(false);
                 setRaffleToFinish(null);
+                setPlaceToDeclare(1);
                 setPinDigits(["", "", "", ""]);
               }}
               disabled={isFinishing}

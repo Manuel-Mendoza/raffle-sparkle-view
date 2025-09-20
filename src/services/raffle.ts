@@ -1,4 +1,5 @@
 import { api } from "@/lib/api";
+import { AxiosError } from "axios";
 import {
   ApiRaffle,
   CreateRaffleRequest,
@@ -86,13 +87,43 @@ export interface TicketInfo {
 
 export const raffleService = {
   async getCurrentRaffle(): Promise<Raffle> {
-    const response = await api.get<ApiRaffle>("/raffle/current");
-    return convertApiRaffleToLocal(response.data);
+    try {
+      const response = await api.get<ApiRaffle>("/raffle/current");
+      return convertApiRaffleToLocal(response.data);
+    } catch (error: unknown) {
+      if (error instanceof AxiosError) {
+        if (error.response?.status === 404) {
+          // Crear una rifa mock para evitar errores en el frontend
+          return {
+            id: "mock-raffle",
+            title: "No hay rifa activa",
+            description: "Crea una nueva rifa para comenzar",
+            prize: "Sin premio",
+            ticketPrice: 0,
+            totalTickets: 0,
+            soldTickets: 0,
+            status: "draft" as const,
+            startDate: new Date().toISOString(),
+            endDate: new Date().toISOString(),
+            image: "",
+          };
+        }
+      }
+      // Re-throw other errors
+      throw error;
+    }
   },
 
   async getAllRaffles(): Promise<Raffle[]> {
-    const response = await api.get<{ raffles: ApiRaffle[] }>("/raffle/all");
-    return response.data.raffles.map(convertApiRaffleToLocal);
+    try {
+      const response = await api.get<ApiRaffle[]>("/raffle/all");
+      return response.data.map(convertApiRaffleToLocal);
+    } catch (error: unknown) {
+      if (error instanceof AxiosError && error.response?.status === 404) {
+        return [];
+      }
+      throw error;
+    }
   },
 
   async createRaffle(

@@ -1,12 +1,15 @@
 # API Endpoints Documentation
 
 ## Base URL
+
 ```
 http://localhost:3000
 ```
 
 ## Authentication
+
 Algunas rutas requieren autenticación mediante JWT token en el header:
+
 ```
 Authorization: Bearer <token>
 ```
@@ -16,9 +19,11 @@ Authorization: Bearer <token>
 ## 🎟️ Raffles Endpoints
 
 ### GET `/api/raffle/current`
+
 Obtiene la rifa actual activa.
 
 **Response:**
+
 ```json
 {
   "id": "uuid",
@@ -34,9 +39,11 @@ Obtiene la rifa actual activa.
 ```
 
 ### GET `/api/raffle/all`
+
 Obtiene todas las rifas.
 
 **Response:**
+
 ```json
 [
   {
@@ -54,9 +61,11 @@ Obtiene todas las rifas.
 ```
 
 ### POST `/api/raffle/create` 🔒
+
 Crea una nueva rifa. **Requiere autenticación.**
 
 **Request Body:**
+
 ```json
 {
   "title": "string (min 3 chars)",
@@ -70,12 +79,15 @@ Crea una nueva rifa. **Requiere autenticación.**
 ```
 
 ### PUT `/api/raffle/finish` 🔒
+
 Finaliza la rifa actual. **Requiere autenticación.**
 
 ### POST `/api/raffle/verify`
+
 Verifica si un número de ticket existe.
 
 **Request Body:**
+
 ```json
 {
   "ticketNumber": "string (4 digits)"
@@ -87,9 +99,11 @@ Verifica si un número de ticket existe.
 ## 👥 Customers Endpoints
 
 ### GET `/api/customers/test`
+
 Endpoint de prueba para verificar que las rutas funcionan.
 
 **Response:**
+
 ```json
 {
   "message": "Customer routes working!"
@@ -97,9 +111,11 @@ Endpoint de prueba para verificar que las rutas funcionan.
 ```
 
 ### POST `/api/customers/test-email`
+
 Envía un email de prueba.
 
 **Request Body:**
+
 ```json
 {
   "email": "string (valid email)"
@@ -107,9 +123,11 @@ Envía un email de prueba.
 ```
 
 ### GET `/api/customers/top-customer`
+
 Obtiene el cliente con más tickets comprados.
 
 **Response:**
+
 ```json
 {
   "name": "string",
@@ -118,9 +136,11 @@ Obtiene el cliente con más tickets comprados.
 ```
 
 ### POST `/api/customers/upload-proof`
+
 Sube comprobante de pago.
 
 **Request Body:**
+
 ```json
 {
   "paymentProof": "string (URL)"
@@ -128,9 +148,11 @@ Sube comprobante de pago.
 ```
 
 ### POST `/api/customers/buy-ticket`
+
 Compra tickets para una rifa.
 
 **Request Body:**
+
 ```json
 {
   "name": "string (min 2 chars)",
@@ -148,9 +170,11 @@ Compra tickets para una rifa.
 ## 🔐 Admin Endpoints
 
 ### POST `/api/admin/login`
+
 Inicia sesión como administrador.
 
 **Request Body:**
+
 ```json
 {
   "username": "string (min 3 chars)",
@@ -159,6 +183,7 @@ Inicia sesión como administrador.
 ```
 
 **Response:**
+
 ```json
 {
   "token": "jwt_token",
@@ -170,9 +195,11 @@ Inicia sesión como administrador.
 ```
 
 ### POST `/api/admin/register`
+
 Registra un nuevo administrador.
 
 **Request Body:**
+
 ```json
 {
   "username": "string (min 3 chars)",
@@ -182,30 +209,39 @@ Registra un nuevo administrador.
 ```
 
 ### GET `/api/admin/tickets/pending` 🔒
+
 Obtiene tickets pendientes de aprobación. **Requiere autenticación.**
 
 ### GET `/api/admin/tickets/approved` 🔒
+
 Obtiene tickets aprobados. **Requiere autenticación.**
 
 ### PUT `/api/admin/customers/:customerId/approve` 🔒
+
 Aprueba todos los tickets de un cliente. **Requiere autenticación.**
 
 ### PUT `/api/admin/customers/:customerId/reject` 🔒
+
 Rechaza todos los tickets de un cliente. **Requiere autenticación.**
 
 ### PUT `/api/admin/tickets/:id/approve` 🔒
+
 Aprueba un ticket individual. **Requiere autenticación.**
 
 ### PUT `/api/admin/tickets/:id/reject` 🔒
+
 Rechaza un ticket individual. **Requiere autenticación.**
 
 ### POST `/api/admin/draw-winner` 🔒
+
 Sortea un ganador automáticamente. **Requiere autenticación.**
 
 ### POST `/api/admin/set-winner` 🔒
+
 Establece manualmente el primer lugar. **Requiere autenticación.**
 
 **Request Body:**
+
 ```json
 {
   "raffleId": "string (valid UUID)",
@@ -214,9 +250,11 @@ Establece manualmente el primer lugar. **Requiere autenticación.**
 ```
 
 ### POST `/api/admin/set-second-winner` 🔒
+
 Establece manualmente el segundo lugar. **Requiere autenticación.**
 
 **Request Body:**
+
 ```json
 {
   "raffleId": "string (valid UUID)",
@@ -225,9 +263,11 @@ Establece manualmente el segundo lugar. **Requiere autenticación.**
 ```
 
 ### POST `/api/admin/set-third-winner` 🔒
+
 Establece manualmente el tercer lugar. **Requiere autenticación.**
 
 **Request Body:**
+
 ```json
 {
   "raffleId": "string (valid UUID)",
@@ -236,9 +276,11 @@ Establece manualmente el tercer lugar. **Requiere autenticación.**
 ```
 
 ### GET `/api/admin/winners/history`
+
 Obtiene el historial de ganadores.
 
 **Response:**
+
 ```json
 [
   {
@@ -257,9 +299,11 @@ Obtiene el historial de ganadores.
 ## 🧪 Test Endpoints
 
 ### POST `/api/test/email`
+
 Envía un email de prueba.
 
 **Request Body:**
+
 ```json
 {
   "to": "string (email)",
@@ -275,6 +319,7 @@ Envía un email de prueba.
 Todos los endpoints pueden devolver estos errores comunes:
 
 ### 400 Bad Request
+
 ```json
 {
   "error": "Validation error message"
@@ -282,6 +327,7 @@ Todos los endpoints pueden devolver estos errores comunes:
 ```
 
 ### 401 Unauthorized
+
 ```json
 {
   "error": "Token inválido o expirado"
@@ -289,6 +335,7 @@ Todos los endpoints pueden devolver estos errores comunes:
 ```
 
 ### 404 Not Found
+
 ```json
 {
   "error": "Resource not found"
@@ -296,6 +343,7 @@ Todos los endpoints pueden devolver estos errores comunes:
 ```
 
 ### 500 Internal Server Error
+
 ```json
 {
   "error": "Internal server error message"

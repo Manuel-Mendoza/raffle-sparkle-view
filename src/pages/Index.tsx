@@ -113,17 +113,19 @@ const Index = () => {
               </div>
             </div>
             <div className="flex items-center space-x-4">
-              {currentRaffle && currentRaffle.status === "active" && isRaffleActive(currentRaffle.id) && (
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={handleVerifyTickets}
-                  className="text-accent hover:text-secondary"
-                >
-                  <MessageCircle className="w-4 h-4 mr-2" />
-                  Verificar Ticket
-                </Button>
-              )}
+              {currentRaffle &&
+                currentRaffle.status === "active" &&
+                isRaffleActive(currentRaffle.id) && (
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={handleVerifyTickets}
+                    className="text-accent hover:text-secondary"
+                  >
+                    <MessageCircle className="w-4 h-4 mr-2" />
+                    Verificar Ticket
+                  </Button>
+                )}
               <Button variant="outline" size="sm" asChild>
                 <Link to="/login">Admin</Link>
               </Button>
@@ -133,7 +135,9 @@ const Index = () => {
       </header>
 
       {/* Main Content */}
-      {currentRaffle && currentRaffle.status === "active" && isRaffleActive(currentRaffle.id) ? (
+      {currentRaffle &&
+      currentRaffle.status === "active" &&
+      isRaffleActive(currentRaffle.id) ? (
         <RaffleContent
           currentRaffle={currentRaffle}
           topCustomer={topCustomer}

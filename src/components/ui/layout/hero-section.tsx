@@ -177,29 +177,34 @@ export function HeroSection({
 
         <div className="space-y-3 mb-6">
           {/* Separar premios y mostrar con emojis de medallas */}
-          {raffleData.prize.split(',').map((prize, index) => {
+          {raffleData.prize.split(",").map((prize, index) => {
             const trimmedPrize = prize.trim();
-            let emoji = '';
-            let bgColor = '';
-            let textColor = 'text-primary-foreground';
-            
+            let emoji = "";
+            let bgColor = "";
+            const textColor = "text-primary-foreground";
+
             if (index === 0) {
-              emoji = '🥇';
-              bgColor = 'from-yellow-500 to-yellow-600';
+              emoji = "🥇";
+              bgColor = "from-yellow-500 to-yellow-600";
             } else if (index === 1) {
-              emoji = '🥈';
-              bgColor = 'from-gray-400 to-gray-500';
+              emoji = "🥈";
+              bgColor = "from-gray-400 to-gray-500";
             } else if (index === 2) {
-              emoji = '🥉';
-              bgColor = 'from-amber-600 to-amber-700';
+              emoji = "🥉";
+              bgColor = "from-amber-600 to-amber-700";
             } else {
-              emoji = '🏆';
-              bgColor = 'from-primary to-primary/80';
+              emoji = "🏆";
+              bgColor = "from-primary to-primary/80";
             }
 
             return (
-              <div key={index} className={`inline-block bg-gradient-to-r ${bgColor} px-4 sm:px-6 py-2 sm:py-3 rounded-lg shadow-glow mx-1 mb-2`}>
-                <h2 className={`text-lg sm:text-xl md:text-2xl font-bold ${textColor}`}>
+              <div
+                key={index}
+                className={`inline-block bg-gradient-to-r ${bgColor} px-4 sm:px-6 py-2 sm:py-3 rounded-lg shadow-glow mx-1 mb-2`}
+              >
+                <h2
+                  className={`text-lg sm:text-xl md:text-2xl font-bold ${textColor}`}
+                >
                   {emoji} {index + 1}° Lugar: {trimmedPrize}
                 </h2>
               </div>

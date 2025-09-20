@@ -108,10 +108,13 @@ export const adminService = {
     raffleId: string,
     ticketNumber: number
   ): Promise<DrawWinnerResponse> {
-    const response = await api.post<DrawWinnerResponse>("/admin/set-second-winner", {
-      raffleId,
-      ticketNumber: ticketNumber.toString(),
-    });
+    const response = await api.post<DrawWinnerResponse>(
+      "/admin/set-second-winner",
+      {
+        raffleId,
+        ticketNumber: ticketNumber.toString(),
+      }
+    );
     return response.data;
   },
 
@@ -119,10 +122,13 @@ export const adminService = {
     raffleId: string,
     ticketNumber: number
   ): Promise<DrawWinnerResponse> {
-    const response = await api.post<DrawWinnerResponse>("/admin/set-third-winner", {
-      raffleId,
-      ticketNumber: ticketNumber.toString(),
-    });
+    const response = await api.post<DrawWinnerResponse>(
+      "/admin/set-third-winner",
+      {
+        raffleId,
+        ticketNumber: ticketNumber.toString(),
+      }
+    );
     return response.data;
   },
 

@@ -123,7 +123,7 @@ export const RaffleManager = () => {
     } catch (error) {
       console.error("Error loading purchase requests:", error);
       setPurchaseRequests([]);
-    } 
+    }
   }, []);
 
   useEffect(() => {
@@ -151,7 +151,6 @@ export const RaffleManager = () => {
     const stored = localStorage.getItem(`raffle_${raffleId}_active`);
     return stored !== null ? stored === "true" : true; // Por defecto activa
   };
-
 
   const resetForm = () => {
     setFormData({
@@ -796,10 +795,17 @@ export const RaffleManager = () => {
         <DialogContent>
           <DialogHeader>
             <DialogTitle>
-              Establecer Ganador del {placeToDeclare === 1 ? "Primer" : placeToDeclare === 2 ? "Segundo" : "Tercer"} Lugar
+              Establecer Ganador del{" "}
+              {placeToDeclare === 1
+                ? "Primer"
+                : placeToDeclare === 2
+                  ? "Segundo"
+                  : "Tercer"}{" "}
+              Lugar
             </DialogTitle>
             <DialogDescription>
-              Ingresa el número ganador para el {placeToDeclare}° lugar de la rifa "{raffleToFinish?.title}"
+              Ingresa el número ganador para el {placeToDeclare}° lugar de la
+              rifa "{raffleToFinish?.title}"
             </DialogDescription>
           </DialogHeader>
           <div className="space-y-4 py-4">

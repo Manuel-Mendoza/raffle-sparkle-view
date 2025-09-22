@@ -24,6 +24,7 @@ import {
   statisticsService,
   type TopCustomerResponse,
 } from "@/services/statistics";
+import { useIndividualWinners } from "@/hooks/use-individual-winners";
 
 // Lazy load components
 const TicketVerification = lazy(() =>
@@ -42,6 +43,13 @@ const Index = () => {
   const [loading, setLoading] = useState(true);
   const [showVerificationModal, setShowVerificationModal] = useState(false);
 
+  // Use the new individual winners hook
+  const { 
+    winners: individualWinners, 
+    loading: winnersLoading, 
+    refetch: refetchWinners 
+  } = useIndividualWinners(currentRaffle?.id || null);
+
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -53,7 +61,7 @@ const Index = () => {
           const activeRaffle = allRaffles.find((raffle) => raffle.isActive);
           setCurrentRaffle(activeRaffle || null);
 
-          // If there's an active raffle, fetch its winners
+          // If there's an active raffle, fetch its winners (legacy support)
           if (activeRaffle) {
             try {
               const raffleWinners = await adminService.getWinners(
@@ -185,8 +193,11 @@ const Index = () => {
           topCustomer={topCustomer}
           lastWinner={lastWinner}
           winners={winners}
+          individualWinners={individualWinners}
+          winnersLoading={winnersLoading}
           onScrollToPurchase={scrollToPurchase}
           onVerifyTickets={handleVerifyTickets}
+          onRefetchWinners={refetchWinners}
         />
       ) : (
         <ComingSoonMessage />

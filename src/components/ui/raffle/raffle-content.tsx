@@ -9,13 +9,22 @@ import type { TopCustomerResponse } from "@/services/statistics";
 import type { Winner } from "@/services/statistics";
 import type { WinnerResponse } from "@/services/admin";
 
+interface IndividualWinners {
+  first: WinnerResponse | null;
+  second: WinnerResponse | null;
+  third: WinnerResponse | null;
+}
+
 interface RaffleContentProps {
   currentRaffle: Raffle;
   topCustomer: TopCustomerResponse | null;
   lastWinner: Winner | null;
   winners: WinnerResponse[];
+  individualWinners?: IndividualWinners;
+  winnersLoading?: boolean;
   onScrollToPurchase: () => void;
   onVerifyTickets: () => void;
+  onRefetchWinners?: () => void;
 }
 
 export function RaffleContent({
@@ -23,8 +32,11 @@ export function RaffleContent({
   topCustomer,
   lastWinner,
   winners,
+  individualWinners,
+  winnersLoading,
   onScrollToPurchase,
   onVerifyTickets,
+  onRefetchWinners,
 }: RaffleContentProps) {
   const [isPrizeModalOpen, setIsPrizeModalOpen] = useState(false);
 
@@ -41,9 +53,12 @@ export function RaffleContent({
           topCustomer={topCustomer}
           lastWinner={lastWinner}
           winners={winners}
+          individualWinners={individualWinners}
+          winnersLoading={winnersLoading}
           onBuyTicket={onScrollToPurchase}
           onVerifyTickets={onVerifyTickets}
           onViewPrize={handleViewPrize}
+          onRefetchWinners={onRefetchWinners}
         />
       </section>
 

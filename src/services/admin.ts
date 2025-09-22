@@ -187,4 +187,34 @@ export const adminService = {
       return null;
     }
   },
+
+  async getFirstPlaceWinner(raffleId: string): Promise<WinnerResponse | null> {
+    try {
+      const response = await api.get<WinnerResponse>(`/admin/winners/${raffleId}/first`);
+      return response.data;
+    } catch (error) {
+      console.error("Error fetching first place winner:", error);
+      return null;
+    }
+  },
+
+  async getSecondPlaceWinner(raffleId: string): Promise<WinnerResponse | null> {
+    try {
+      const response = await api.get<WinnerResponse>(`/admin/winners/${raffleId}/second`);
+      return response.data;
+    } catch (error) {
+      console.error("Error fetching second place winner:", error);
+      return null;
+    }
+  },
+
+  async getThirdPlaceWinner(raffleId: string): Promise<WinnerResponse | null> {
+    try {
+      const response = await api.get<WinnerResponse>(`/admin/winners/${raffleId}/third`);
+      return response.data;
+    } catch (error) {
+      console.error("Error fetching third place winner:", error);
+      return null;
+    }
+  },
 };

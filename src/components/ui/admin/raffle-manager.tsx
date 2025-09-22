@@ -42,12 +42,15 @@ import { adminService, CustomerTicket } from "@/services/admin";
 import { AxiosErrorResponse } from "@/types/api";
 import { formatBsV } from "@/lib/currency";
 import { toast } from "sonner";
+import { statisticsService, type DashboardStatistics } from "@/services/statistics";
+import { useTopCustomer } from "@/hooks/use-top-customer";
 
 type PurchaseRequest = CustomerTicket;
 
 export const RaffleManager = () => {
   const [raffles, setRaffles] = useState<Raffle[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [stats, setStats] = useState<DashboardStatistics | null>(null);
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [isCreating, setIsCreating] = useState(false);
   const [isFinishing, setIsFinishing] = useState(false);
@@ -119,10 +122,20 @@ export const RaffleManager = () => {
     }
   }, []);
 
+  const loadStats = useCallback(async () => {
+    try {
+      const data = await statisticsService.getDashboardStats();
+      setStats(data);
+    } catch (error) {
+      console.error("Error loading statistics:", error);
+    }
+  }, []);
+
   useEffect(() => {
     loadRaffles();
     loadPurchaseRequests();
-  }, [loadRaffles, loadPurchaseRequests]);
+    loadStats();
+  }, [loadRaffles, loadPurchaseRequests, loadStats]);
 
   const resetForm = () => {
     setFormData({
@@ -185,9 +198,9 @@ export const RaffleManager = () => {
       const axiosError = error as AxiosErrorResponse;
       alert(
         "Error al crear la rifa: " +
-          (axiosError.response?.data?.error ||
-            axiosError.message ||
-            "Error desconocido")
+        (axiosError.response?.data?.error ||
+          axiosError.message ||
+          "Error desconocido")
       );
     } finally {
       setIsCreating(false);
@@ -545,10 +558,8 @@ export const RaffleManager = () => {
       ) : (
         <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
           {raffles.map((raffle) => {
-            const soldPercentage = Math.round(
-              (raffle.soldTickets / raffle.totalTickets) * 100
-            );
-            const totalRevenue = raffle.soldTickets * raffle.ticketPrice;
+            const soldPercentage = stats?.soldPercentage || 0;
+            const totalRevenue = stats?.totalSales || 0;
 
             return (
               <Card
@@ -604,7 +615,7 @@ export const RaffleManager = () => {
                     <div className="text-center p-2 bg-accent/5 rounded">
                       <Users className="w-4 h-4 mx-auto text-accent mb-1" />
                       <p className="text-sm font-medium text-secondary">
-                        {raffle.soldTickets}/{raffle.totalTickets}
+                        {stats?.ticketsSold || 0}/{stats?.totalTickets || 0}
                       </p>
                       <p className="text-xs text-accent">vendidos</p>
                     </div>

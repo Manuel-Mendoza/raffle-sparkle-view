@@ -44,10 +44,10 @@ const Index = () => {
   const [showVerificationModal, setShowVerificationModal] = useState(false);
 
   // Use the new individual winners hook
-  const { 
-    winners: individualWinners, 
-    loading: winnersLoading, 
-    refetch: refetchWinners 
+  const {
+    winners: individualWinners,
+    loading: winnersLoading,
+    refetch: refetchWinners,
   } = useIndividualWinners(currentRaffle?.id || null);
 
   useEffect(() => {

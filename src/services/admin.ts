@@ -190,7 +190,9 @@ export const adminService = {
 
   async getFirstPlaceWinner(raffleId: string): Promise<WinnerResponse | null> {
     try {
-      const response = await api.get<WinnerResponse>(`/admin/winners/${raffleId}/first`);
+      const response = await api.get<WinnerResponse>(
+        `/admin/winners/${raffleId}/first`
+      );
       return response.data;
     } catch (error) {
       console.error("Error fetching first place winner:", error);
@@ -200,7 +202,9 @@ export const adminService = {
 
   async getSecondPlaceWinner(raffleId: string): Promise<WinnerResponse | null> {
     try {
-      const response = await api.get<WinnerResponse>(`/admin/winners/${raffleId}/second`);
+      const response = await api.get<WinnerResponse>(
+        `/admin/winners/${raffleId}/second`
+      );
       return response.data;
     } catch (error) {
       console.error("Error fetching second place winner:", error);
@@ -210,7 +214,9 @@ export const adminService = {
 
   async getThirdPlaceWinner(raffleId: string): Promise<WinnerResponse | null> {
     try {
-      const response = await api.get<WinnerResponse>(`/admin/winners/${raffleId}/third`);
+      const response = await api.get<WinnerResponse>(
+        `/admin/winners/${raffleId}/third`
+      );
       return response.data;
     } catch (error) {
       console.error("Error fetching third place winner:", error);

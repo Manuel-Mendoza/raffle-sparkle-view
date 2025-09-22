@@ -42,7 +42,10 @@ import { adminService, CustomerTicket } from "@/services/admin";
 import { AxiosErrorResponse } from "@/types/api";
 import { formatBsV } from "@/lib/currency";
 import { toast } from "sonner";
-import { statisticsService, type DashboardStatistics } from "@/services/statistics";
+import {
+  statisticsService,
+  type DashboardStatistics,
+} from "@/services/statistics";
 import { useTopCustomer } from "@/hooks/use-top-customer";
 
 type PurchaseRequest = CustomerTicket;
@@ -198,9 +201,9 @@ export const RaffleManager = () => {
       const axiosError = error as AxiosErrorResponse;
       alert(
         "Error al crear la rifa: " +
-        (axiosError.response?.data?.error ||
-          axiosError.message ||
-          "Error desconocido")
+          (axiosError.response?.data?.error ||
+            axiosError.message ||
+            "Error desconocido")
       );
     } finally {
       setIsCreating(false);

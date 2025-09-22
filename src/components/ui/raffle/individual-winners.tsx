@@ -1,6 +1,11 @@
 import { Badge } from "@/components/ui/base/badge";
 import { Button } from "@/components/ui/base/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/base/card";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/base/card";
 import { RefreshCw, Trophy, Medal, Award } from "lucide-react";
 import type { WinnerResponse } from "@/services/admin";
 
@@ -80,7 +85,9 @@ export function IndividualWinners({
             disabled={loading}
             className="mb-4"
           >
-            <RefreshCw className={`w-4 h-4 mr-2 ${loading ? 'animate-spin' : ''}`} />
+            <RefreshCw
+              className={`w-4 h-4 mr-2 ${loading ? "animate-spin" : ""}`}
+            />
             Actualizar
           </Button>
         )}
@@ -90,12 +97,12 @@ export function IndividualWinners({
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         {places.map((place) => {
           const Icon = place.icon;
-          
+
           return (
             <Card
               key={place.position}
               className={`${place.colors.bg} ${place.colors.border} border-2 transition-all duration-300 hover:shadow-lg ${
-                loading ? 'opacity-50' : ''
+                loading ? "opacity-50" : ""
               }`}
             >
               <CardHeader className="text-center pb-3">
@@ -107,14 +114,16 @@ export function IndividualWinners({
                   {place.title}
                 </CardTitle>
               </CardHeader>
-              
+
               <CardContent className="text-center">
                 {place.winner ? (
                   <div className="space-y-3">
-                    <Badge className={`${place.colors.badge} font-semibold px-3 py-1`}>
+                    <Badge
+                      className={`${place.colors.badge} font-semibold px-3 py-1`}
+                    >
                       Ticket {place.winner.ticketNumber.padStart(4, "0")}
                     </Badge>
-                    
+
                     <div>
                       <p className="font-bold text-foreground text-lg">
                         {place.winner.customerName}
@@ -125,22 +134,29 @@ export function IndividualWinners({
                         </p>
                       )}
                     </div>
-                    
+
                     {place.winner.drawnAt && (
                       <p className="text-xs text-muted-foreground">
-                        Sorteado: {new Date(place.winner.drawnAt).toLocaleDateString("es-ES", {
-                          day: "numeric",
-                          month: "short",
-                          year: "numeric",
-                          hour: "2-digit",
-                          minute: "2-digit",
-                        })}
+                        Sorteado:{" "}
+                        {new Date(place.winner.drawnAt).toLocaleDateString(
+                          "es-ES",
+                          {
+                            day: "numeric",
+                            month: "short",
+                            year: "numeric",
+                            hour: "2-digit",
+                            minute: "2-digit",
+                          }
+                        )}
                       </p>
                     )}
                   </div>
                 ) : (
                   <div className="space-y-3">
-                    <Badge variant="secondary" className="font-semibold px-3 py-1">
+                    <Badge
+                      variant="secondary"
+                      className="font-semibold px-3 py-1"
+                    >
                       Por anunciar
                     </Badge>
                     <p className="text-muted-foreground">
@@ -157,9 +173,12 @@ export function IndividualWinners({
       {/* Summary */}
       <div className="text-center text-sm text-muted-foreground">
         <p>
-          Ganadores declarados: {
-            [winners.first, winners.second, winners.third].filter(Boolean).length
-          } de 3
+          Ganadores declarados:{" "}
+          {
+            [winners.first, winners.second, winners.third].filter(Boolean)
+              .length
+          }{" "}
+          de 3
         </p>
       </div>
     </div>

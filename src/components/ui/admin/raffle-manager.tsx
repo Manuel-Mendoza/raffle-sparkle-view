@@ -22,6 +22,7 @@ import { Badge } from "@/components/ui/base/badge";
 import { Switch } from "@/components/ui/base/switch";
 import { PaymentProofModal } from "@/components/ui/modals/payment-proof-modal";
 import { WinnerModal } from "@/components/ui/modals/winner-modal";
+import { EmailPreferenceSwitch } from "@/components/ui/admin/email-preference-switch";
 import {
   Trophy,
   Banknote,
@@ -410,13 +411,15 @@ export const RaffleManager = () => {
             Administra y controla las rifas del sistema
           </p>
         </div>
-        <Dialog open={isCreateModalOpen} onOpenChange={setIsCreateModalOpen}>
-          <DialogTrigger asChild>
-            <Button className="bg-primary hover:bg-primary/90 text-white">
-              <Plus className="w-4 h-4 mr-2" />
-              Nueva Rifa
-            </Button>
-          </DialogTrigger>
+        <div className="flex items-center space-x-4">
+          <EmailPreferenceSwitch />
+          <Dialog open={isCreateModalOpen} onOpenChange={setIsCreateModalOpen}>
+            <DialogTrigger asChild>
+              <Button className="bg-primary hover:bg-primary/90 text-white">
+                <Plus className="w-4 h-4 mr-2" />
+                Nueva Rifa
+              </Button>
+            </DialogTrigger>
           <DialogContent className="max-w-2xl">
             <DialogHeader>
               <DialogTitle>Crear Nueva Rifa</DialogTitle>
@@ -547,6 +550,7 @@ export const RaffleManager = () => {
             </div>
           </DialogContent>
         </Dialog>
+        </div>
       </div>
 
       {/* Raffles Grid */}

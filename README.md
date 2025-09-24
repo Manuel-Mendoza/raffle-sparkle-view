@@ -1,73 +1,169 @@
-# Welcome to your Lovable project
+# Raffle Sparkle View
 
-## Project info
+## Descripción General
 
-**URL**: https://lovable.dev/projects/1ddefc04-d308-4e7f-9fb4-1cf3c5ad6dd1
+Raffle Sparkle View es una plataforma web moderna y completa diseñada para la gestión y participación en rifas de manera transparente y eficiente. La aplicación conecta organizadores y participantes en un ecosistema digital que facilita la compra de boletos, el seguimiento de rifas activas y la visualización de resultados.
 
-## How can I edit this code?
+## ¿Cómo usar la web?
 
-There are several ways of editing your application.
+### Para Participantes
 
-**Use Lovable**
+#### 🎯 **Página Principal (Landing)**
+- **Explorar Rifas Activas**: Al acceder al sitio, verás inmediatamente la rifa que está activa en ese momento
+- **Información Detallada**: Cada rifa muestra:
+  - Descripción del premio
+  - Precio por boleto
+  - Cantidad total de boletos disponibles
+  - Boletos vendidos hasta el momento
+  - Fecha de finalización
+  - Imagen del premio
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/1ddefc04-d308-4e7f-9fb4-1cf3c5ad6dd1) and start prompting.
+#### 🎫 **Proceso de Compra de Boletos**
+1. **Selección de Boletos**: Elige la cantidad de boletos que deseas comprar
+2. **Datos Personales**: Completa tu información (nombre, teléfono, email)
+3. **Método de Pago**: Selecciona entre:
+   - **Pago Móvil**: Usando el número 04124796280 (Banco 0105, CI: 25520168)
+   - **Transferencia Bancaria**: A la cuenta corriente 01050059111059513730 (Mercantil)
+4. **Comprobante de Pago**: Sube una foto del comprobante de pago
+5. **Confirmación**: Recibe tus números de boletos únicos
 
-Changes made via Lovable will be committed automatically to this repo.
+#### ✅ **Verificación de Boletos**
+- **Verificar Participación**: Ingresa tu número de boleto para confirmar tu participación
+- **Consulta de Estado**: Verifica si tu boleto está aprobado y activo
+- **Información del Cliente**: Consulta los datos asociados a tu boleto
 
-**Use your preferred IDE**
+#### 🏆 **Consulta de Ganadores**
+- **Resultados en Vivo**: Visualiza los ganadores una vez finalizada la rifa
+- **Historial de Ganadores**: Consulta ganadores de rifas anteriores
+- **Múltiples Posiciones**: Ver ganadores de 1er, 2do y 3er lugar (cuando aplique)
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+### Para Administradores
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+#### 🔐 **Acceso al Panel Administrativo**
+- **Login Seguro**: Accede a través de `/login` con credenciales administrativas
+- **Dashboard Completo**: Panel de control centralizado con todas las funciones
 
-Follow these steps:
+#### 📊 **Gestión de Rifas**
+- **Crear Rifas**: Define nuevas rifas con:
+  - Título y descripción
+  - Premio y precio por boleto
+  - Cantidad total de boletos
+  - Fecha de finalización
+  - Imagen del premio
+- **Estado de Rifas**: Pausar, reactivar o finalizar rifas
+- **Eliminar Rifas**: Borrar rifas cuando sea necesario
 
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
+#### 👥 **Administración de Participantes**
+- **Boletos Pendientes**: Revisar y aprobar compras pendientes de verificación
+- **Boletos Aprobados**: Ver todos los boletos confirmados y activos
+- **Gestión de Clientes**: Aprobar o rechazar participaciones según el comprobante de pago
 
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
+#### 🎲 **Sistema de Sorteos**
+- **Selección Manual de Ganadores**: Establecer ganadores específicos por posición
+- **Sorteo Automático**: Seleccionar ganadores de forma aleatoria
+- **Múltiples Posiciones**: Definir primer, segundo y tercer lugar
+- **Publicación de Resultados**: Los ganadores se muestran automáticamente en la página principal
 
-# Step 3: Install the necessary dependencies.
-npm i
+#### 📈 **Estadísticas y Reportes**
+- **Métricas en Tiempo Real**:
+  - Total de boletos vendidos
+  - Ingresos generados
+  - Participantes únicos
+  - Tasa de conversión
+- **Cliente Top**: Identificar al participante con más boletos comprados
+- **Historial de Ventas**: Seguimiento detallado de todas las transacciones
 
-# Step 4: Start the development server with auto-reloading and an instant preview.
-npm run dev
-```
+## Características Técnicas Destacadas
 
-**Edit a file directly in GitHub**
+### 🎨 **Interfaz de Usuario**
+- **Diseño Responsive**: Optimizado para dispositivos móviles y desktop
+- **Interfaz Moderna**: Construida con componentes shadcn/ui y Tailwind CSS
+- **Experiencia Fluida**: Navegación intuitiva y carga rápida
+- **Modo Oscuro/Claro**: Soporte para preferencias de tema del usuario
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+### ⚡ **Rendimiento**
+- **Lazy Loading**: Carga diferida de componentes para mejor rendimiento
+- **Optimización de Imágenes**: Componentes optimizados para carga eficiente
+- **Code Splitting**: División del código para cargas más rápidas
+- **PWA Ready**: Configurado como Progressive Web App
 
-**Use GitHub Codespaces**
+### 🔒 **Seguridad**
+- **Autenticación Segura**: Sistema de login para administradores
+- **Validación de Datos**: Validaciones tanto en frontend como backend
+- **Subida Segura de Archivos**: Validación de tipos y tamaños de comprobantes
+- **Manejo de Errores**: Sistema robusto de manejo de errores
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+### 📱 **Funcionalidades Avanzadas**
+- **Notificaciones Toast**: Feedback inmediato para todas las acciones
+- **Modales Interactivos**: Visualización de información detallada
+- **Verificación en Tiempo Real**: Consulta instantánea del estado de boletos
+- **Copiar al Portapapeles**: Facilita el copiado de datos bancarios
+- **SEO Optimizado**: Metadatos y structured data para mejor indexación
 
-## What technologies are used for this project?
+## Tecnologías Utilizadas
 
-This project is built with:
+### 🚀 **Frontend Framework & Build Tools**
+- **React 18.3.1** - Biblioteca principal para la interfaz de usuario
+- **TypeScript 5.8.3** - Tipado estático para mejor desarrollo
+- **Vite 5.4.19** - Build tool y dev server ultrarrápido
+- **React Router DOM 6.30.1** - Enrutamiento del lado del cliente
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+### 🎨 **UI/UX & Styling**
+- **Tailwind CSS 3.4.17** - Framework de CSS utility-first
+- **Tailwindcss Animate 1.0.7** - Animaciones predefinidas
+- **shadcn/ui** - Biblioteca de componentes moderna
+- **Radix UI** - Componentes primitivos accesibles:
+  - Dialog, Toast, Select, Tabs, Progress, etc.
+- **Lucide React 0.462.0** - Iconos SVG optimizados
+- **next-themes 0.3.0** - Soporte para temas claro/oscuro
 
-## How can I deploy this project?
+### 🔧 **State Management & Data Fetching**
+- **React Query (@tanstack/react-query 5.83.0)** - Gestión de estado del servidor
+- **React Hook Form 7.61.1** - Manejo eficiente de formularios
+- **@hookform/resolvers 3.10.0** - Resolvers para validación
+- **Zod 3.25.76** - Validación de esquemas TypeScript-first
 
-Simply open [Lovable](https://lovable.dev/projects/1ddefc04-d308-4e7f-9fb4-1cf3c5ad6dd1) and click on Share -> Publish.
+### 🌐 **HTTP & API Integration**
+- **Axios 1.11.0** - Cliente HTTP para comunicación con la API
+- **API REST** - Integración con backend para todas las operaciones
 
-## Can I connect a custom domain to my Lovable project?
+### 📊 **Charts & Visualization**
+- **Recharts 2.15.4** - Biblioteca de gráficos para React
+- **QRCode React 4.2.0** - Generación de códigos QR
 
-Yes, you can!
+### 🔧 **Utilities & Helpers**
+- **class-variance-authority 0.7.1** - Gestión de variantes de CSS
+- **clsx 2.1.1** - Utilidad para construcción de clases CSS
+- **tailwind-merge 2.6.0** - Fusión inteligente de clases Tailwind
+- **date-fns 3.6.0** - Utilidades modernas para manejo de fechas
+- **input-otp 1.4.2** - Componente para códigos OTP
 
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
+### 🎪 **Enhanced Components**
+- **embla-carousel-react 8.6.0** - Carrusel responsive y accesible
+- **react-resizable-panels 2.1.9** - Paneles redimensionables
+- **vaul 0.9.9** - Drawer/modal component
+- **sonner 1.7.4** - Notificaciones toast elegantes
 
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/tips-tricks/custom-domain#step-by-step-guide)
+### 🔍 **Development & Quality Tools**
+- **ESLint 9.32.0** - Linter para identificar problemas en el código
+- **Prettier 3.6.2** - Formateador de código
+- **TypeScript ESLint 8.38.0** - Rules de ESLint para TypeScript
+- **@vitejs/plugin-react-swc 3.11.0** - Plugin de Vite con SWC para React
+
+### 📱 **PWA & Performance**
+- **Service Worker** - Caching y funcionalidad offline
+- **Web Manifest** - Configuración de PWA
+- **Optimized Images** - Componentes de imagen optimizados
+- **Code Splitting** - División automática del bundle
+
+### 🔐 **Security & Validation**
+- **Zod Validation** - Validación robusta de datos
+- **File Upload Validation** - Validación de tipos y tamaños de archivo
+- **CORS Handling** - Configuración adecuada de CORS
+- **Error Boundaries** - Manejo elegante de errores
+
+---
+
+**Raffle Sparkle View** representa una solución completa y moderna para la gestión de rifas digitales, combinando una interfaz elegante con funcionalidad robusta y tecnologías de vanguardia.
+
+

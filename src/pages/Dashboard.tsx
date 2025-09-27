@@ -7,13 +7,7 @@ import {
   TabsList,
   TabsTrigger,
 } from "@/components/ui/base/tabs";
-import {
-  LogOut,
-  Trophy,
-  DollarSign,
-  Users,
-
-} from "lucide-react";
+import { LogOut, Trophy, DollarSign, Users } from "lucide-react";
 import { authService } from "@/services/auth";
 import { toast } from "sonner";
 import { DashboardStats } from "@/components/ui/admin/dashboard-stats";

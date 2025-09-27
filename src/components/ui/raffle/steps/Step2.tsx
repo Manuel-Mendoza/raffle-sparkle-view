@@ -33,7 +33,6 @@ const zellePaymentData = {
   Email: paymentData.zelle.email,
 };
 
-
 interface Step2Props {
   onNextStep: () => void;
   onPrevStep: () => void;
@@ -95,10 +94,11 @@ export function Step2({
                     paymentMethod: method.id,
                   }))
                 }
-                className={`flex items-center justify-between p-3 border rounded-lg cursor-pointer transition-colors ${purchaseData.paymentMethod === method.id
+                className={`flex items-center justify-between p-3 border rounded-lg cursor-pointer transition-colors ${
+                  purchaseData.paymentMethod === method.id
                     ? "border-primary bg-primary/10"
                     : "border-accent/20 hover:border-primary/30"
-                  }`}
+                }`}
               >
                 <span className="text-primary">{method.name}</span>
                 <div className="w-8 h-8 bg-primary/10 rounded flex items-center justify-center">
@@ -115,31 +115,12 @@ export function Step2({
             <div className="text-sm text-accent space-y-2">
               {purchaseData.paymentMethod === "Transferencia Bancaria"
                 ? Object.entries(bankTransferData).map(([key, value]) => (
-                  <div
-                    key={key}
-                    className="flex justify-between items-center"
-                  >
-                    <span className="text-secondary">
-                      <strong className="text-primary">{key}:</strong> {value}
-                    </span>
-                    <Button
-                      onClick={() => handleCopy(value, key)}
-                      variant="ghost"
-                      size="sm"
-                    >
-                      <Copy className="w-3 h-3" />
-                    </Button>
-                  </div>
-                ))
-                : purchaseData.paymentMethod === "Zelle"
-                  ? Object.entries(zellePaymentData).map(([key, value]) => (
                     <div
                       key={key}
                       className="flex justify-between items-center"
                     >
                       <span className="text-secondary">
-                        <strong className="text-primary">{key}:</strong>{" "}
-                        {value}
+                        <strong className="text-primary">{key}:</strong> {value}
                       </span>
                       <Button
                         onClick={() => handleCopy(value, key)}
@@ -150,24 +131,43 @@ export function Step2({
                       </Button>
                     </div>
                   ))
-                  : Object.entries(mobilePaymentData).map(([key, value]) => (
-                    <div
-                      key={key}
-                      className="flex justify-between items-center"
-                    >
-                      <span className="text-secondary">
-                        <strong className="text-primary">{key}:</strong>{" "}
-                        {value}
-                      </span>
-                      <Button
-                        onClick={() => handleCopy(value, key)}
-                        variant="ghost"
-                        size="sm"
+                : purchaseData.paymentMethod === "Zelle"
+                  ? Object.entries(zellePaymentData).map(([key, value]) => (
+                      <div
+                        key={key}
+                        className="flex justify-between items-center"
                       >
-                        <Copy className="w-3 h-3" />
-                      </Button>
-                    </div>
-                  ))}
+                        <span className="text-secondary">
+                          <strong className="text-primary">{key}:</strong>{" "}
+                          {value}
+                        </span>
+                        <Button
+                          onClick={() => handleCopy(value, key)}
+                          variant="ghost"
+                          size="sm"
+                        >
+                          <Copy className="w-3 h-3" />
+                        </Button>
+                      </div>
+                    ))
+                  : Object.entries(mobilePaymentData).map(([key, value]) => (
+                      <div
+                        key={key}
+                        className="flex justify-between items-center"
+                      >
+                        <span className="text-secondary">
+                          <strong className="text-primary">{key}:</strong>{" "}
+                          {value}
+                        </span>
+                        <Button
+                          onClick={() => handleCopy(value, key)}
+                          variant="ghost"
+                          size="sm"
+                        >
+                          <Copy className="w-3 h-3" />
+                        </Button>
+                      </div>
+                    ))}
               <div className="flex justify-between items-center">
                 <span className="text-secondary">
                   <strong className="text-primary">Monto:</strong>{" "}

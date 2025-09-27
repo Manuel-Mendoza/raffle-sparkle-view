@@ -132,7 +132,9 @@ export function TicketNumbersModal({
               <div className="flex justify-between">
                 <span className="text-accent">Total:</span>
                 <span className="text-primary font-bold">
-                  {paymentMethod === "Zelle" ? formatUSD(tickets.length * ZELLE_TICKET_PRICE) : formatBsVSimple(total)}
+                  {paymentMethod === "Zelle"
+                    ? formatUSD(tickets.length * ZELLE_TICKET_PRICE)
+                    : formatBsVSimple(total)}
                 </span>
               </div>
               <div className="flex justify-between">

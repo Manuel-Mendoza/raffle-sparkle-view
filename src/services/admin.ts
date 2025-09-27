@@ -235,7 +235,9 @@ export const adminService = {
 
   async getCustomersSummary(): Promise<CustomerSummary[]> {
     try {
-      const response = await api.get<CustomerSummary[]>("/admin/customers/summary");
+      const response = await api.get<CustomerSummary[]>(
+        "/admin/customers/summary"
+      );
       return response.data;
     } catch (error) {
       console.error("Error fetching customers summary:", error);

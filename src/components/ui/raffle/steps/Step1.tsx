@@ -47,7 +47,7 @@ export function Step1({
         />
       </div>
 
-      <div className="flex justify-end pt-4 space-x-4">
+      <div className="flex sm:flex-row flex-col justify-end pt-4 sm:space-x-4 max-sm:space-y-4">
         <Button variant="outline" onClick={onZellePayment}>
           Pagar con Zelle (USD) 📲
         </Button>

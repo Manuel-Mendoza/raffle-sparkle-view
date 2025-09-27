@@ -1,34 +1,23 @@
 import { useState, useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/base/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/base/card";
 import {
   Tabs,
   TabsContent,
   TabsList,
   TabsTrigger,
 } from "@/components/ui/base/tabs";
-import { Badge } from "@/components/ui/base/badge";
 import {
   LogOut,
-  Users,
   Trophy,
   DollarSign,
-  Edit,
-  Trash2,
-  Plus,
-  Eye,
+
 } from "lucide-react";
 import { authService } from "@/services/auth";
 import { toast } from "sonner";
 import { DashboardStats } from "@/components/ui/admin/dashboard-stats";
 import { RaffleManager } from "@/components/ui/admin/raffle-manager";
+import { CustomerManager } from "@/components/ui/admin/CustomerManager";
 
 const Dashboard = () => {
   const navigate = useNavigate();
@@ -80,7 +69,7 @@ const Dashboard = () => {
         </div>
 
         <Tabs defaultValue="stats" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-2 max-w-lg bg-white/50 border border-primary/20">
+          <TabsList className="grid w-full grid-cols-3 max-w-lg bg-white/50 border border-primary/20">
             <TabsTrigger
               value="stats"
               className="data-[state=active]:bg-primary data-[state=active]:text-white"
@@ -95,6 +84,13 @@ const Dashboard = () => {
               <Trophy className="w-4 h-4 mr-2" />
               Gestionar Rifas
             </TabsTrigger>
+            <TabsTrigger
+              value="customers"
+              className="data-[state=active]:bg-primary data-[state=active]:text-white"
+            >
+              <Trophy className="w-4 h-4 mr-2" />
+              Ver Clientes
+            </TabsTrigger>
           </TabsList>
 
           <TabsContent value="stats" className="space-y-6">
@@ -103,6 +99,10 @@ const Dashboard = () => {
 
           <TabsContent value="raffles" className="space-y-6">
             <RaffleManager />
+          </TabsContent>
+
+          <TabsContent value="customers" className="space-y-6">
+            <CustomerManager />
           </TabsContent>
         </Tabs>
       </main>

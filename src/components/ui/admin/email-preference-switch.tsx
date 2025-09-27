@@ -32,8 +32,8 @@ export const EmailPreferenceSwitch = () => {
       await emailPreferenceService.updateEmailPreference(checked);
       setIsEnabled(checked);
       toast.success(
-        checked 
-          ? "Notificaciones por email activadas" 
+        checked
+          ? "Notificaciones por email activadas"
           : "Notificaciones por email desactivadas"
       );
     } catch (error) {

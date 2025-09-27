@@ -39,7 +39,7 @@ import {
 } from "lucide-react";
 import { raffleService, Raffle } from "@/services/raffle";
 import { uploadImageToImgBB } from "@/services/imgbb";
-import { adminService, CustomerTicket } from "@/services/admin";
+import { adminService, CustomerTicket, Winner } from "@/services/admin";
 import { AxiosErrorResponse } from "@/types/api";
 import { formatBsV } from "@/lib/currency";
 import { toast } from "sonner";
@@ -62,10 +62,6 @@ export const RaffleManager = () => {
   const [raffleToFinish, setRaffleToFinish] = useState<Raffle | null>(null);
   const [placeToDeclare, setPlaceToDeclare] = useState(1);
   const [pinDigits, setPinDigits] = useState<string[]>(["", "", "", ""]);
-  interface Winner {
-    customerName: string;
-    ticketNumber: number;
-  }
 
   const [winnerModal, setWinnerModal] = useState<{
     isOpen: boolean;
@@ -202,9 +198,9 @@ export const RaffleManager = () => {
       const axiosError = error as AxiosErrorResponse;
       alert(
         "Error al crear la rifa: " +
-          (axiosError.response?.data?.error ||
-            axiosError.message ||
-            "Error desconocido")
+        (axiosError.response?.data?.error ||
+          axiosError.message ||
+          "Error desconocido")
       );
     } finally {
       setIsCreating(false);
@@ -420,136 +416,136 @@ export const RaffleManager = () => {
                 Nueva Rifa
               </Button>
             </DialogTrigger>
-          <DialogContent className="max-w-2xl">
-            <DialogHeader>
-              <DialogTitle>Crear Nueva Rifa</DialogTitle>
-              <DialogDescription>
-                Completa la información para crear una nueva rifa
-              </DialogDescription>
-            </DialogHeader>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 py-4">
-              <div className="space-y-2">
-                <Label htmlFor="title">Título *</Label>
-                <Input
-                  id="title"
-                  name="title"
-                  value={formData.title}
-                  onChange={handleInputChange}
-                  placeholder="Título de la rifa"
-                />
-              </div>
-              <div className="col-span-1 md:col-span-2 grid grid-cols-1 md:grid-cols-3 gap-4">
+            <DialogContent className="max-w-2xl">
+              <DialogHeader>
+                <DialogTitle>Crear Nueva Rifa</DialogTitle>
+                <DialogDescription>
+                  Completa la información para crear una nueva rifa
+                </DialogDescription>
+              </DialogHeader>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 py-4">
                 <div className="space-y-2">
-                  <Label htmlFor="prize-0">1er Premio *</Label>
+                  <Label htmlFor="title">Título *</Label>
                   <Input
-                    id="prize-0"
-                    name="prize-0"
-                    value={formData.prizes[0]}
-                    onChange={(e) => handlePrizeChange(0, e.target.value)}
-                    placeholder="Descripción del 1er premio"
+                    id="title"
+                    name="title"
+                    value={formData.title}
+                    onChange={handleInputChange}
+                    placeholder="Título de la rifa"
                   />
                 </div>
-                <div className="space-y-2">
-                  <Label htmlFor="prize-1">2do Premio *</Label>
-                  <Input
-                    id="prize-1"
-                    name="prize-1"
-                    value={formData.prizes[1]}
-                    onChange={(e) => handlePrizeChange(1, e.target.value)}
-                    placeholder="Descripción del 2do premio"
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="prize-2">3er Premio *</Label>
-                  <Input
-                    id="prize-2"
-                    name="prize-2"
-                    value={formData.prizes[2]}
-                    onChange={(e) => handlePrizeChange(2, e.target.value)}
-                    placeholder="Descripción del 3er premio"
-                  />
-                </div>
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="ticketPrice">Precio del Ticket *</Label>
-                <Input
-                  id="ticketPrice"
-                  name="ticketPrice"
-                  type="number"
-                  value={formData.ticketPrice}
-                  onChange={handleInputChange}
-                  placeholder="Precio en pesos"
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="endDate">Fecha de Fin *</Label>
-                <Input
-                  id="endDate"
-                  name="endDate"
-                  type="date"
-                  value={formData.endDate}
-                  onChange={handleInputChange}
-                />
-              </div>
-              <div className="col-span-1 md:col-span-2 space-y-2">
-                <Label htmlFor="description">Descripción</Label>
-                <Textarea
-                  id="description"
-                  name="description"
-                  value={formData.description}
-                  onChange={handleInputChange}
-                  placeholder="Describe el premio y la rifa..."
-                  rows={3}
-                  className="resize-none"
-                />
-              </div>
-              <div className="col-span-1 md:col-span-2 space-y-2">
-                <Label htmlFor="image">Imagen de la Rifa</Label>
-                <div className="flex items-center space-x-2">
-                  <Input
-                    id="image"
-                    name="image"
-                    type="file"
-                    accept="image/*"
-                    onChange={handleImageChange}
-                    disabled={isUploadingImage}
-                    className="flex-1"
-                  />
-                  {isUploadingImage ? (
-                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-primary"></div>
-                  ) : (
-                    <Upload className="w-4 h-4 text-accent" />
-                  )}
-                </div>
-                {formData.image && (
-                  <div className="mt-2">
-                    <img
-                      src={formData.image}
-                      alt="Preview"
-                      className="w-20 h-20 object-cover rounded border"
+                <div className="col-span-1 md:col-span-2 grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="prize-0">1er Premio *</Label>
+                    <Input
+                      id="prize-0"
+                      name="prize-0"
+                      value={formData.prizes[0]}
+                      onChange={(e) => handlePrizeChange(0, e.target.value)}
+                      placeholder="Descripción del 1er premio"
                     />
                   </div>
-                )}
+                  <div className="space-y-2">
+                    <Label htmlFor="prize-1">2do Premio *</Label>
+                    <Input
+                      id="prize-1"
+                      name="prize-1"
+                      value={formData.prizes[1]}
+                      onChange={(e) => handlePrizeChange(1, e.target.value)}
+                      placeholder="Descripción del 2do premio"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="prize-2">3er Premio *</Label>
+                    <Input
+                      id="prize-2"
+                      name="prize-2"
+                      value={formData.prizes[2]}
+                      onChange={(e) => handlePrizeChange(2, e.target.value)}
+                      placeholder="Descripción del 3er premio"
+                    />
+                  </div>
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="ticketPrice">Precio del Ticket *</Label>
+                  <Input
+                    id="ticketPrice"
+                    name="ticketPrice"
+                    type="number"
+                    value={formData.ticketPrice}
+                    onChange={handleInputChange}
+                    placeholder="Precio en pesos"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="endDate">Fecha de Fin *</Label>
+                  <Input
+                    id="endDate"
+                    name="endDate"
+                    type="date"
+                    value={formData.endDate}
+                    onChange={handleInputChange}
+                  />
+                </div>
+                <div className="col-span-1 md:col-span-2 space-y-2">
+                  <Label htmlFor="description">Descripción</Label>
+                  <Textarea
+                    id="description"
+                    name="description"
+                    value={formData.description}
+                    onChange={handleInputChange}
+                    placeholder="Describe el premio y la rifa..."
+                    rows={3}
+                    className="resize-none"
+                  />
+                </div>
+                <div className="col-span-1 md:col-span-2 space-y-2">
+                  <Label htmlFor="image">Imagen de la Rifa</Label>
+                  <div className="flex items-center space-x-2">
+                    <Input
+                      id="image"
+                      name="image"
+                      type="file"
+                      accept="image/*"
+                      onChange={handleImageChange}
+                      disabled={isUploadingImage}
+                      className="flex-1"
+                    />
+                    {isUploadingImage ? (
+                      <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-primary"></div>
+                    ) : (
+                      <Upload className="w-4 h-4 text-accent" />
+                    )}
+                  </div>
+                  {formData.image && (
+                    <div className="mt-2">
+                      <img
+                        src={formData.image}
+                        alt="Preview"
+                        className="w-20 h-20 object-cover rounded border"
+                      />
+                    </div>
+                  )}
+                </div>
               </div>
-            </div>
-            <div className="flex justify-end space-x-2">
-              <Button
-                variant="outline"
-                onClick={() => setIsCreateModalOpen(false)}
-                disabled={isCreating}
-              >
-                Cancelar
-              </Button>
-              <Button
-                onClick={handleCreateRaffle}
-                disabled={isCreating}
-                className="bg-primary hover:bg-primary/90"
-              >
-                {isCreating ? "Creando..." : "Crear Rifa"}
-              </Button>
-            </div>
-          </DialogContent>
-        </Dialog>
+              <div className="flex justify-end space-x-2">
+                <Button
+                  variant="outline"
+                  onClick={() => setIsCreateModalOpen(false)}
+                  disabled={isCreating}
+                >
+                  Cancelar
+                </Button>
+                <Button
+                  onClick={handleCreateRaffle}
+                  disabled={isCreating}
+                  className="bg-primary hover:bg-primary/90"
+                >
+                  {isCreating ? "Creando..." : "Crear Rifa"}
+                </Button>
+              </div>
+            </DialogContent>
+          </Dialog>
         </div>
       </div>
 
@@ -718,7 +714,6 @@ export const RaffleManager = () => {
             {purchaseRequests.map((request) => {
               const requestId = getRequestId(request);
               const ticketCount = getTicketCount(request);
-              const total = ticketCount * 50;
 
               return (
                 <Card
@@ -780,7 +775,7 @@ export const RaffleManager = () => {
                             Total
                           </p>
                           <p className="text-xs text-accent">
-                            {ticketCount} ticket(s) - ${total}
+                            {ticketCount} ticket(s)
                           </p>
                         </div>
                       </div>

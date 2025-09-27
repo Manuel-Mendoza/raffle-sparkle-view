@@ -8,7 +8,8 @@ import { Button } from "@/components/ui/base/button";
 import { Badge } from "@/components/ui/base/badge";
 import { CheckCircle, Copy, MessageCircle } from "lucide-react";
 import { toast } from "sonner";
-import { formatBsVSimple } from "@/lib/currency";
+import { formatBsVSimple, formatUSD } from "@/lib/currency";
+import { ZELLE_TICKET_PRICE } from "@/lib/constants";
 
 interface Ticket {
   id: string;
@@ -23,6 +24,7 @@ interface TicketNumbersModalProps {
   customerName: string;
   raffleName: string;
   total: number;
+  paymentMethod?: string;
 }
 
 export function TicketNumbersModal({
@@ -32,6 +34,7 @@ export function TicketNumbersModal({
   customerName,
   raffleName,
   total,
+  paymentMethod,
 }: TicketNumbersModalProps) {
   const ticketNumbers = tickets.map((t) => t.ticketNumber).join(", ");
 
@@ -41,7 +44,7 @@ export function TicketNumbersModal({
   };
 
   const handleWhatsAppShare = () => {
-    const message = `¡Compra exitosa! 🎉\n\nRifa: ${raffleName}\nParticipante: ${customerName}\nNúmeros: ${ticketNumbers}\nTotal: ${formatBsVSimple(total)}\n\n¡Buena suerte! 🍀`;
+    const message = `¡Compra exitosa! 🎉\n\nRifa: ${raffleName}\nParticipante: ${customerName}\nNúmeros: ${ticketNumbers}\nTotal: ${paymentMethod === "Zelle" ? formatUSD(tickets.length * ZELLE_TICKET_PRICE) : formatBsVSimple(total)}\n\n¡Buena suerte! 🍀`;
     const encodedMessage = encodeURIComponent(message);
     window.open(`https://wa.me/?text=${encodedMessage}`, "_blank");
   };
@@ -129,7 +132,7 @@ export function TicketNumbersModal({
               <div className="flex justify-between">
                 <span className="text-accent">Total:</span>
                 <span className="text-primary font-bold">
-                  {formatBsVSimple(total)}
+                  {paymentMethod === "Zelle" ? formatUSD(tickets.length * ZELLE_TICKET_PRICE) : formatBsVSimple(total)}
                 </span>
               </div>
               <div className="flex justify-between">

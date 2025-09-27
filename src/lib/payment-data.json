@@ -1,0 +1,17 @@
+{
+  "pagoMovil": {
+    "banco": "0105",
+    "celular": "04124796280",
+    "cedula": "25520168"
+  },
+  "transferenciaBancaria": {
+    "nombre": "Renny Colmenarez",
+    "tipoDeCuenta": "Cuenta Corriente",
+    "numeroDeCuenta": "01050059111059513730",
+    "documentoDeIdentidad": "25520168"
+  },
+  "zelle": {
+    "nombre": "Daifran pacheco",
+    "email": "Pacheco.8892@gmail.com"
+  }
+}

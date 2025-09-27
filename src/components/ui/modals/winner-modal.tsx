@@ -6,12 +6,12 @@ import {
 } from "@/components/ui/base/dialog";
 import { Button } from "@/components/ui/base/button";
 import { Trophy, User, Phone, Ticket, Users } from "lucide-react";
-import type { Winner } from "@/services/statistics";
+import type { Winner } from "@/services/admin";
 
 interface WinnerModalProps {
   isOpen: boolean;
   onClose: () => void;
-  winner: Winner;
+  winner: Winner | null;
   totalParticipants: number;
   raffleName: string;
 }

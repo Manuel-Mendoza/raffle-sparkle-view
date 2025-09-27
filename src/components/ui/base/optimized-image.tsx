@@ -74,7 +74,7 @@ export function OptimizedImage({
           alt={alt}
           loading={priority ? "eager" : "lazy"}
           decoding="async"
-          fetchPriority={priority ? "high" : "auto"}
+          fetchpriority={priority ? "high" : "auto"}
           sizes={sizes}
           className={cn(
             "w-full h-full object-cover transition-opacity duration-300",

@@ -56,6 +56,15 @@ export interface DrawWinnerResponse {
   totalParticipants: number;
 }
 
+export interface CustomerSummary {
+  id: string;
+  name: string;
+  phone: string;
+  email: string;
+  createdAt: string;
+  ticketCount: number;
+}
+
 export const adminService = {
   async getWinners(raffleId: string): Promise<WinnerResponse[]> {
     const response = await api.get<GetWinnersResponse>(
@@ -221,6 +230,16 @@ export const adminService = {
     } catch (error) {
       console.error("Error fetching third place winner:", error);
       return null;
+    }
+  },
+
+  async getCustomersSummary(): Promise<CustomerSummary[]> {
+    try {
+      const response = await api.get<CustomerSummary[]>("/admin/customers/summary");
+      return response.data;
+    } catch (error) {
+      console.error("Error fetching customers summary:", error);
+      return [];
     }
   },
 };

@@ -11,6 +11,7 @@ import {
   LogOut,
   Trophy,
   DollarSign,
+  Users,
 
 } from "lucide-react";
 import { authService } from "@/services/auth";
@@ -88,7 +89,7 @@ const Dashboard = () => {
               value="customers"
               className="data-[state=active]:bg-primary data-[state=active]:text-white"
             >
-              <Trophy className="w-4 h-4 mr-2" />
+              <Users className="w-4 h-4 mr-2" />
               Ver Clientes
             </TabsTrigger>
           </TabsList>

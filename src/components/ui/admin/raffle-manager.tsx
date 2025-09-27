@@ -198,9 +198,9 @@ export const RaffleManager = () => {
       const axiosError = error as AxiosErrorResponse;
       alert(
         "Error al crear la rifa: " +
-        (axiosError.response?.data?.error ||
-          axiosError.message ||
-          "Error desconocido")
+          (axiosError.response?.data?.error ||
+            axiosError.message ||
+            "Error desconocido")
       );
     } finally {
       setIsCreating(false);

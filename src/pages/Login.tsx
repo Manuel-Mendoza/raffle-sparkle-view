@@ -15,6 +15,8 @@ import { authService } from "@/services/auth";
 import { AxiosErrorResponse } from "@/types/api";
 import { toast } from "sonner";
 
+import { Footer } from "@/components/Footer";
+
 const Login = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
@@ -131,6 +133,7 @@ const Login = () => {
           </CardContent>
         </Card>
       </div>
+      <Footer />
     </div>
   );
 };

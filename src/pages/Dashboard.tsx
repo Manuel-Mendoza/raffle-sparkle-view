@@ -14,6 +14,8 @@ import { DashboardStats } from "@/components/ui/admin/dashboard-stats";
 import { RaffleManager } from "@/components/ui/admin/raffle-manager";
 import { CustomerManager } from "@/components/ui/admin/CustomerManager";
 
+import { Footer } from "@/components/Footer";
+
 const Dashboard = () => {
   const navigate = useNavigate();
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -101,6 +103,7 @@ const Dashboard = () => {
           </TabsContent>
         </Tabs>
       </main>
+      <Footer />
     </div>
   );
 };

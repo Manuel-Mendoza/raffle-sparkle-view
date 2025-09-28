@@ -25,6 +25,7 @@ import {
   type TopCustomerResponse,
 } from "@/services/statistics";
 import { useIndividualWinners } from "@/hooks/use-individual-winners";
+import { Footer } from "@/components/Footer";
 
 // Lazy load components
 const TicketVerification = lazy(() =>
@@ -217,6 +218,9 @@ const Index = () => {
           </Suspense>
         </DialogContent>
       </Dialog>
+
+      {/* Footer */}
+      <Footer />
     </div>
   );
 };

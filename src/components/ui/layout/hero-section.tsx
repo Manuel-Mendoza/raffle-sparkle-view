@@ -409,9 +409,9 @@ export function HeroSection({
                     Disponible: {(100 - progressPercentage).toFixed(1)}%
                   </span>
                 </div>
-                <div className="w-full bg-white/20 rounded-full h-2">
+                <div className="w-full bg-white/20 rounded-full h-3 md:h-2">
                   <div
-                    className="bg-gradient-to-r from-accent to-primary h-2 rounded-full transition-all duration-300"
+                    className="bg-gradient-to-r from-accent to-primary h-3 md:h-2 rounded-full transition-all duration-300"
                     style={{ width: `${progressPercentage}%` }}
                   />
                 </div>

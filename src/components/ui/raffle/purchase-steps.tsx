@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/base/button";
 import {
   Card,
@@ -24,6 +24,8 @@ interface PurchaseStepsProps {
 export function PurchaseSteps({ raffleData }: PurchaseStepsProps) {
   const [currentStep, setCurrentStep] = useState(1);
   const [loading, setLoading] = useState(false);
+  const [progress, setProgress] = useState(0);
+  const [showProgressBar, setShowProgressBar] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [purchaseResult, setPurchaseResult] = useState<{
     tickets: Ticket[];
@@ -77,6 +79,7 @@ export function PurchaseSteps({ raffleData }: PurchaseStepsProps) {
           : "Error al subir el comprobante";
       toast.error(errorMessage);
     } finally {
+      completeProgressBar();
       setLoading(false);
     }
   };
@@ -170,8 +173,38 @@ export function PurchaseSteps({ raffleData }: PurchaseStepsProps) {
       toast.error(errorMessage);
     } finally {
       toast.dismiss(loadingToastId);
+      completeProgressBar();
       setLoading(false);
     }
+  };
+
+  // Simulate progressive loading bar while any operation is in progress
+  useEffect(() => {
+    let intervalId: number | undefined;
+    if (loading) {
+      setShowProgressBar(true);
+      // Start from a small baseline so the bar is visible immediately
+      setProgress((prev) => (prev < 10 ? 10 : prev));
+      intervalId = window.setInterval(() => {
+        setProgress((prev) => {
+          const next = prev + Math.random() * 8 + 2; // Increment 2-10%
+          // Cap at 90% until we explicitly complete
+          return next >= 90 ? 90 : next;
+        });
+      }, 300);
+    }
+    return () => {
+      if (intervalId) window.clearInterval(intervalId);
+    };
+  }, [loading]);
+
+  const completeProgressBar = () => {
+    // Smoothly finish to 100%, then hide after a brief delay
+    setProgress(100);
+    window.setTimeout(() => {
+      setShowProgressBar(false);
+      setProgress(0);
+    }, 400);
   };
 
   const handleNextStep = () => {
@@ -219,6 +252,14 @@ export function PurchaseSteps({ raffleData }: PurchaseStepsProps) {
 
   return (
     <>
+      {showProgressBar && (
+        <div className="fixed top-0 left-0 right-0 h-1 z-50">
+          <div
+            className="h-full bg-secondary transition-[width] duration-200 ease-out"
+            style={{ width: `${progress}%` }}
+          />
+        </div>
+      )}
       <Card className="w-full max-w-4xl mx-auto bg-gradient-to-br from-card to-accent/5 border-accent/20 shadow-card">
         <CardHeader>
           <CardTitle className="text-center text-2xl text-secondary">

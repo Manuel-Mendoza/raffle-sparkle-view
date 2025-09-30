@@ -1,12 +1,16 @@
-import { Suspense, useState } from "react";
+import { Suspense, useState, useEffect } from "react";
 import { HeroSection } from "@/components/ui/layout/hero-section";
 import { RaffleCard } from "@/components/ui/raffle/raffle-card";
 import { PurchaseSteps } from "@/components/ui/raffle/purchase-steps";
 import { LoadingSkeleton } from "@/components/ui/base/loading-skeleton";
 import { PrizeModal } from "@/components/ui/modals/prize-modal";
 import type { Raffle } from "@/services/raffle";
-import type { TopCustomerResponse } from "@/services/statistics";
-import type { Winner } from "@/services/statistics";
+import {
+  statisticsService,
+  type DashboardStatistics,
+  type TopCustomerResponse,
+  type Winner,
+} from "@/services/statistics";
 import type { WinnerResponse } from "@/services/admin";
 
 interface IndividualWinners {
@@ -39,6 +43,20 @@ export function RaffleContent({
   onRefetchWinners,
 }: RaffleContentProps) {
   const [isPrizeModalOpen, setIsPrizeModalOpen] = useState(false);
+  const [stats, setStats] = useState<DashboardStatistics | null>(null);
+
+  useEffect(() => {
+    const loadStats = async () => {
+      try {
+        const data = await statisticsService.getDashboardStats();
+        setStats(data);
+      } catch (error) {
+        console.error("Error loading statistics:", error);
+      }
+    };
+
+    loadStats();
+  }, []);
 
   const handleViewPrize = () => {
     setIsPrizeModalOpen(true);
@@ -55,6 +73,7 @@ export function RaffleContent({
           winners={winners}
           individualWinners={individualWinners}
           winnersLoading={winnersLoading}
+          stats={stats}
           onBuyTicket={onScrollToPurchase}
           onVerifyTickets={onVerifyTickets}
           onViewPrize={handleViewPrize}

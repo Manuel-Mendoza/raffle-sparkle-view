@@ -3,7 +3,10 @@ import { Button } from "@/components/ui/base/button";
 import { OptimizedImage } from "@/components/ui/base/optimized-image";
 import { ShoppingCart, Search, RefreshCw } from "lucide-react";
 import type { Raffle } from "@/services/raffle";
-import type { TopCustomerResponse } from "@/services/statistics";
+import type {
+  TopCustomerResponse,
+  DashboardStatistics,
+} from "@/services/statistics";
 import type { WinnerResponse } from "@/services/admin";
 import { formatBsV } from "@/lib/currency";
 import { useTopCustomer } from "@/hooks/use-top-customer";
@@ -30,6 +33,7 @@ interface HeroSectionProps {
   winners?: WinnerResponse[] | null;
   individualWinners?: IndividualWinners;
   winnersLoading?: boolean;
+  stats?: DashboardStatistics | null;
   onVerifyTickets?: () => void;
   onBuyTicket?: () => void;
   onViewPrize?: () => void;
@@ -43,6 +47,7 @@ export function HeroSection({
   winners,
   individualWinners,
   winnersLoading,
+  stats,
   onVerifyTickets,
   onBuyTicket,
   onViewPrize,
@@ -164,9 +169,8 @@ export function HeroSection({
     );
   }
 
+  const progressPercentage = stats?.soldPercentage ?? 0;
   const availableTickets = raffleData.totalTickets - raffleData.soldTickets;
-  const progressPercentage =
-    (raffleData.soldTickets / raffleData.totalTickets) * 100;
 
   const backgroundImage = raffleData.image || "/placeholder.svg";
 

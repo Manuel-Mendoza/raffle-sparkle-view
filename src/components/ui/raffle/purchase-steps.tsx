@@ -125,6 +125,7 @@ export function PurchaseSteps({ raffleData }: PurchaseStepsProps) {
     }
 
     setLoading(true);
+    const loadingToastId = toast.loading("Procesando compra...");
     try {
       const response = await customerService.buyTickets({
         name: purchaseData.userData.name.trim(),
@@ -168,6 +169,7 @@ export function PurchaseSteps({ raffleData }: PurchaseStepsProps) {
 
       toast.error(errorMessage);
     } finally {
+      toast.dismiss(loadingToastId);
       setLoading(false);
     }
   };

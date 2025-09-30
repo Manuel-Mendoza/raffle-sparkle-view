@@ -1,5 +1,6 @@
 import { api } from "@/lib/api";
 import type { AxiosError } from "axios";
+import { isAxiosError } from "axios";
 import {
   BuyTicketRequest,
   BuyTicketResponse,
@@ -52,8 +53,8 @@ export const customerService = {
       throw new Error("ID de rifa requerido");
     }
 
-    if (!data.quantity || data.quantity < 2 || data.quantity > 100) {
-      throw new Error("La cantidad debe estar entre 2 y 100");
+    if (!data.quantity || data.quantity < 2) {
+      throw new Error("La cantidad debe ser minimo 2");
     }
 
     // Limpiar datos antes de enviar
@@ -70,28 +71,30 @@ export const customerService = {
         cleanData
       );
       return response.data;
-    } catch (error: AxiosError) {
-      console.error("Error en buyTickets:", error.message);
+    } catch (error: unknown) {
+      if (isAxiosError(error)) {
+        console.error("Error en buyTickets:", error.message);
 
-      // Mejorar mensajes de error específicos
-      if (error.response?.status === 400) {
-        const errorMsg =
-          error.response?.data?.error ||
-          error.response?.data?.message ||
-          "Datos inválidos";
-        throw new Error(`Error de validación: ${errorMsg}`);
-      }
+        // Mejorar mensajes de error específicos
+        if (error.response?.status === 400) {
+          const errorMsg =
+            error.response?.data?.error ||
+            error.response?.data?.message ||
+            "Datos inválidos";
+          throw new Error(`Error de validación: ${errorMsg}`);
+        }
 
-      if (error.response?.status === 422) {
-        throw new Error(
-          "Los datos enviados no son válidos. Verifica la información."
-        );
-      }
+        if (error.response?.status === 422) {
+          throw new Error(
+            "Los datos enviados no son válidos. Verifica la información."
+          );
+        }
 
-      if (error.response?.status >= 500) {
-        throw new Error(
-          "Error del servidor. Intenta nuevamente en unos momentos."
-        );
+        if (error.response?.status && error.response.status >= 500) {
+          throw new Error(
+            "Error del servidor. Intenta nuevamente en unos momentos."
+          );
+        }
       }
 
       throw error;

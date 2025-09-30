@@ -7,6 +7,7 @@ import {
   CardTitle,
 } from "@/components/ui/base/card";
 import { TicketNumbersModal } from "@/components/ui/modals/ticket-numbers-modal";
+import { Dialog, DialogContent, DialogTitle } from "@/components/ui/base/dialog";
 
 import type { Raffle } from "@/services/raffle";
 import { customerService } from "@/services/customer";
@@ -253,12 +254,27 @@ export function PurchaseSteps({ raffleData }: PurchaseStepsProps) {
   return (
     <>
       {showProgressBar && (
-        <div className="fixed top-0 left-0 right-0 h-1 z-50">
-          <div
-            className="h-full bg-secondary transition-[width] duration-200 ease-out"
-            style={{ width: `${progress}%` }}
-          />
-        </div>
+        <Dialog open={showProgressBar} onOpenChange={() => {}}>
+          <DialogContent
+            className="max-w-sm"
+            onEscapeKeyDown={(e) => e.preventDefault()}
+            onPointerDownOutside={(e) => e.preventDefault()}
+            onInteractOutside={(e) => e.preventDefault()}
+          >
+            <DialogTitle className="text-center">Procesando compra</DialogTitle>
+            <div className="space-y-3">
+              <div className="w-full h-2 bg-accent/20 rounded-full overflow-hidden">
+                <div
+                  className="h-full bg-secondary transition-[width] duration-200 ease-out"
+                  style={{ width: `${progress}%` }}
+                />
+              </div>
+              <p className="text-sm text-muted-foreground text-center">
+                Por favor espera... {Math.floor(progress)}%
+              </p>
+            </div>
+          </DialogContent>
+        </Dialog>
       )}
       <Card className="w-full max-w-4xl mx-auto bg-gradient-to-br from-card to-accent/5 border-accent/20 shadow-card">
         <CardHeader>

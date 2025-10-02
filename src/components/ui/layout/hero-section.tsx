@@ -209,30 +209,12 @@ export function HeroSection({
               {raffleData.title} - Sorteo finalizado
             </p>
 
-            {/* Refresh button for individual winners */}
-            {hasIndividualWinners && onRefetchWinners && (
-              <div className="mb-6">
-                <Button
-                  onClick={onRefetchWinners}
-                  variant="outline"
-                  size="sm"
-                  disabled={winnersLoading}
-                  className="border-primary-foreground/30 text-primary-foreground hover:bg-primary-foreground/10"
-                >
-                  <RefreshCw
-                    className={`w-4 h-4 mr-2 ${winnersLoading ? "animate-spin" : ""}`}
-                  />
-                  Actualizar Ganadores
-                </Button>
-              </div>
-            )}
-
             {/* Individual Winners Display */}
             {hasIndividualWinners && (
               <div className="space-y-4 mb-8">
                 {/* First Place */}
                 <Badge
-                  className={`bg-yellow-500/20 text-yellow-300 border-yellow-400/30 backdrop-blur-sm text-lg px-6 py-3 font-semibold block ${
+                  className={`bg-yellow-500/20 text-yellow-300 border-yellow-400/30 backdrop-blur-sm text-2xl px-8 py-4 font-bold block ${
                     winnersLoading ? "opacity-50" : ""
                   }`}
                 >

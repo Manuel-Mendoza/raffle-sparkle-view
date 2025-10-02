@@ -23,9 +23,11 @@ const badgeVariants = cva(
   }
 );
 
-export interface BadgeProps
-  extends React.HTMLAttributes<HTMLDivElement>,
-    VariantProps<typeof badgeVariants> {}
+// Explicitly include `variant` so downstream usage like <Badge variant="outline" />
+// is always recognized by TypeScript, even if VariantProps inference fails.
+export interface BadgeProps extends React.HTMLAttributes<HTMLDivElement> {
+  variant?: "default" | "secondary" | "destructive" | "outline";
+}
 
 function Badge({ className, variant, ...props }: BadgeProps) {
   return (

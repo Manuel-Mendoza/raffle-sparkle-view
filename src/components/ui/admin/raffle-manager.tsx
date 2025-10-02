@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
-import { Button } from "@/components/ui/base/button";
+import { Button } from "@/components/ui/base";
 import { Input } from "@/components/ui/base/input";
 import { Label } from "@/components/ui/base/label";
 import { Textarea } from "@/components/ui/base/textarea";
@@ -284,24 +284,51 @@ export const RaffleManager = () => {
   };
 
   const confirmFinishRaffle = async () => {
-    const fullNumber = parseInt(pinDigits.join(""));
-    if (!raffleToFinish || !fullNumber || fullNumber <= 0) {
-      alert("Por favor ingresa un número ganador válido");
+    const fullNumber = pinDigits.join("");
+    if (!raffleToFinish || !fullNumber || fullNumber.length !== 4) {
+      alert("Por favor ingresa un número ganador válido de 4 dígitos");
       return;
     }
 
     try {
       setIsFinishing(true);
-      const winner = await adminService.setFirstWinner(
-        raffleToFinish.id,
-        fullNumber.toString()
-      );
+      let winner;
+      
+      // Call different methods based on place to declare
+      switch (placeToDeclare) {
+        case 1:
+          winner = await adminService.setFirstPlaceWinner(
+            raffleToFinish.id,
+            fullNumber
+          );
+          break;
+        case 2:
+          winner = await adminService.setSecondPlaceWinner(
+            raffleToFinish.id,
+            fullNumber
+          );
+          break;
+        case 3:
+          winner = await adminService.setThirdPlaceWinner(
+            raffleToFinish.id,
+            fullNumber
+          );
+          break;
+        default:
+          throw new Error("Lugar inválido");
+      }
+      
       await loadRaffles();
+
+      // Dispatch custom event to refresh winners
+      window.dispatchEvent(new CustomEvent('winnerDeclared', { 
+        detail: { place: placeToDeclare, raffleId: raffleToFinish.id } 
+      }));
 
       setWinnerModal({
         isOpen: true,
-        winner: winner,
-        totalParticipants: 0, // No disponible en la nueva API
+        winner: winner.winner || winner,
+        totalParticipants: 0,
         raffleName: raffleToFinish.title,
       });
 

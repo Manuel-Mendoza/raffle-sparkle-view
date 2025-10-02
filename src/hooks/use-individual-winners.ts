@@ -17,6 +17,7 @@ export function useIndividualWinners(raffleId: string | null) {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
+    console.log("useIndividualWinners - raffleId:", raffleId);
     if (!raffleId) {
       setWinners({ first: null, second: null, third: null });
       return;
@@ -25,6 +26,7 @@ export function useIndividualWinners(raffleId: string | null) {
     const fetchWinners = async () => {
       setLoading(true);
       setError(null);
+      console.log("Fetching individual winners for raffle:", raffleId);
 
       try {
         const [first, second, third] = await Promise.all([
@@ -33,6 +35,7 @@ export function useIndividualWinners(raffleId: string | null) {
           adminService.getThirdPlaceWinner(raffleId),
         ]);
 
+        console.log("Individual winners fetched:", { first, second, third });
         setWinners({ first, second, third });
       } catch (err) {
         setError("Error al cargar los ganadores");

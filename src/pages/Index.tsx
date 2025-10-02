@@ -52,6 +52,15 @@ const Index = () => {
   } = useIndividualWinners(currentRaffle?.id || null);
 
   useEffect(() => {
+    const handleWinnerDeclared = () => {
+      refetchWinners();
+    };
+
+    window.addEventListener('winnerDeclared', handleWinnerDeclared);
+    return () => window.removeEventListener('winnerDeclared', handleWinnerDeclared);
+  }, [refetchWinners]);
+
+  useEffect(() => {
     const fetchData = async () => {
       try {
         setLoading(true);

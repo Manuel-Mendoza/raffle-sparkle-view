@@ -82,14 +82,16 @@ export function RaffleContent({
       </section>
 
       {/* Main Content */}
-      <div id="purchase-section" className="w-full mx-auto px-4 py-8">
-        {/* Right Column - Purchase Steps */}
-        <div className="lg:col-span-2 order-1 lg:order-2">
-          <Suspense fallback={<LoadingSkeleton className="w-full h-96" />}>
-            <PurchaseSteps raffleData={currentRaffle} />
-          </Suspense>
+      {!individualWinners?.first && (
+        <div id="purchase-section" className="w-full mx-auto px-4 py-8">
+          {/* Right Column - Purchase Steps */}
+          <div className="lg:col-span-2 order-1 lg:order-2">
+            <Suspense fallback={<LoadingSkeleton className="w-full h-96" />}>
+              <PurchaseSteps raffleData={currentRaffle} />
+            </Suspense>
+          </div>
         </div>
-      </div>
+      )}
 
       {/* Prize Modal */}
       <PrizeModal

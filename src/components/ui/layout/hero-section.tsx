@@ -433,17 +433,6 @@ export function HeroSection({
                 Verificar Tickets
               </Button>
             </div>
-
-            <div className="text-primary-foreground/80">
-              <p className="text-sm sm:text-base">
-                Sorteo:{" "}
-                {new Date(raffleData.endDate).toLocaleDateString("es-ES", {
-                  day: "numeric",
-                  month: "long",
-                  year: "numeric",
-                })}
-              </p>
-            </div>
           </>
         )}
       </div>

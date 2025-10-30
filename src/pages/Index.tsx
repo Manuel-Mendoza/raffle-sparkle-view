@@ -56,8 +56,9 @@ const Index = () => {
       refetchWinners();
     };
 
-    window.addEventListener('winnerDeclared', handleWinnerDeclared);
-    return () => window.removeEventListener('winnerDeclared', handleWinnerDeclared);
+    window.addEventListener("winnerDeclared", handleWinnerDeclared);
+    return () =>
+      window.removeEventListener("winnerDeclared", handleWinnerDeclared);
   }, [refetchWinners]);
 
   useEffect(() => {

@@ -171,7 +171,6 @@ export const RaffleManager = () => {
       formData.prizes.some((p) => !p.trim()) ||
       !formData.ticketPrice ||
       formData.ticketPrice <= 0 ||
-      !formData.endDate ||
       !formData.image
     ) {
       alert("Todos los campos son requeridos");
@@ -293,7 +292,7 @@ export const RaffleManager = () => {
     try {
       setIsFinishing(true);
       let winner;
-      
+
       // Call different methods based on place to declare
       switch (placeToDeclare) {
         case 1:
@@ -317,13 +316,15 @@ export const RaffleManager = () => {
         default:
           throw new Error("Lugar inválido");
       }
-      
+
       await loadRaffles();
 
       // Dispatch custom event to refresh winners
-      window.dispatchEvent(new CustomEvent('winnerDeclared', { 
-        detail: { place: placeToDeclare, raffleId: raffleToFinish.id } 
-      }));
+      window.dispatchEvent(
+        new CustomEvent("winnerDeclared", {
+          detail: { place: placeToDeclare, raffleId: raffleToFinish.id },
+        })
+      );
 
       setWinnerModal({
         isOpen: true,
@@ -505,7 +506,7 @@ export const RaffleManager = () => {
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="endDate">Fecha de Fin *</Label>
+                  <Label htmlFor="endDate">Fecha de Fin</Label>
                   <Input
                     id="endDate"
                     name="endDate"

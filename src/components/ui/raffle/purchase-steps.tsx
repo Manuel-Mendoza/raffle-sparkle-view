@@ -7,7 +7,11 @@ import {
   CardTitle,
 } from "@/components/ui/base/card";
 import { TicketNumbersModal } from "@/components/ui/modals/ticket-numbers-modal";
-import { Dialog, DialogContent, DialogTitle } from "@/components/ui/base/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogTitle,
+} from "@/components/ui/base/dialog";
 
 import type { Raffle } from "@/services/raffle";
 import { customerService } from "@/services/customer";
